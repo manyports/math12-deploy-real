@@ -42,11 +42,16 @@ export default function Navbar() {
                 )}
             </nav>
             {isOpen && isMobile && (
-                <div className="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center">
-                    <div className="flex space-y-4 text-center flex-col">
-                        <a href="/" className="text-white p-2">Home</a>
-                        <a href="/deals" className="text-white p-2">My deals</a>
-                        <a href="/listings" className="text-white p-2">List an item</a>
+                <div className="fixed inset-0 bg-white flex">
+                    <div className="flex flex-col text-[30px] p-[7vh] justify-around">
+                        <div className='flex flex-col'>
+                            <a href="/" className="p-2 text-[#2563eb] font-extrabold">-> Home</a>
+                            <a href="/dashboard" className="p-2 text-[#2563eb] font-extrabold">-> Dashboard</a>
+                            <a href="/listings" className= "p-2 text-[#2563eb] font-extrabold">-> Test</a>
+                        </div>
+                        <div className='flex flex-col'>
+                            <button className='border rounded-2xl border-[#2563eb] text-[#2563eb] text-[24px] font-bold'>Go back -></button>
+                        </div>
                     </div>
                 </div>
             )}
