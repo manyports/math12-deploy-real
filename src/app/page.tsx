@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className="mx-4 md:mx-[50px]">
-      <div className="flex h-screen items-center justify-evenly flex-col-reverse sm:flex-row justify-between">
+      <div className="flex h-screen items-center justify-evenly flex-col-reverse sm:flex-row">
         <div>
           <div>
             <p className="font-bold text-[35px] md:text-[45px] text-blue-600">Математика <u>легко и просто.</u></p>
