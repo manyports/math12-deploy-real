@@ -28,6 +28,7 @@ export default function Home() {
           alt="woman image"
           width={400}
           height={400}
+          className="hide-on-mobile"
           />
         </div>
       </div>
