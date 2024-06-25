@@ -41,20 +41,20 @@ export default function Navbar() {
                     </div>
                 )}
             </nav>
-            {isOpen && isMobile && (
-                <div className="fixed inset-0 bg-white flex">
-                    <div className="flex flex-col text-[30px] p-[7vh] justify-around">
-                        <div className='flex flex-col'>
-                            <a href="/" className="p-2 text-[#2563eb] font-extrabold">-> Home</a>
-                            <a href="/dashboard" className="p-2 text-[#2563eb] font-extrabold">-> Dashboard</a>
-                            <a href="/listings" className= "p-2 text-[#2563eb] font-extrabold">-> Test</a>
-                        </div>
-                        <div className='flex flex-col'>
-                            <button className='border rounded-2xl border-[#2563eb] text-[#2563eb] text-[24px] font-bold'>Go back -></button>
+                {isOpen && isMobile && (
+                    <div className="fixed inset-0 bg-white flex">
+                        <div className="flex flex-col text-[30px] p-[7vh] justify-around">
+                            <div className='flex flex-col'>
+                                <a href="/" className="p-2 text-[#2563eb] font-extrabold">-&gt; Home</a>
+                                <a href="/dashboard" className="p-2 text-[#2563eb] font-extrabold">-&gt; Dashboard</a>
+                                <a href="/listings" className= "p-2 text-[#2563eb] font-extrabold">-&gt; Test</a>
+                            </div>
+                            <div className='flex flex-col'>
+                                <button className='border rounded-2xl border-[#2563eb] text-[#2563eb] text-[24px] font-bold'>Go back -&gt;</button>
+                            </div>
                         </div>
                     </div>
+                )}
                 </div>
-            )}
-        </div>
-    );
+                );
 }
