@@ -10,14 +10,14 @@ export default function Home() {
           <div>
             <p className="font-bold text-[35px] md:text-[45px] text-blue-600">Математика <u>легко и просто.</u></p>
             <p className="text-gray-500 text-[18px] md:text-[20px]">
-              Будьте лучшими в классе с нашим приложением 😎
+              для НИШевцев 😎
             </p>
           </div>
           <div className="mt-8">
             <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 h-10 px-4 py-2">
-              Личный кабинет
+              Связаться с нами
             </button>
-            <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-black hover:bg-gray-200 h-10 px-4 py-2 ml-2">
+            <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 ml-2 border-blue-600 border">
               Узнать больше
             </button>
           </div>

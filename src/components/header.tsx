@@ -1,6 +1,7 @@
-"use client"
+"use client";
 
 import { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false);
@@ -23,6 +24,27 @@ export default function Navbar() {
         }
     }, []);
 
+    function CloseBurger() {
+        setIsOpen(false);
+    }
+
+    const variants = {
+        hidden: { opacity: 0, x: 100 },
+        visible: { opacity: 1, x: 0 },
+    };
+
+    const list = {
+        visible: {
+            opacity: 1,
+            transition: {
+                staggerChildren: 0.1,
+            },
+        },
+        hidden: {
+            opacity: 0,
+        },
+    };
+
     return (
         <div className='mx-4 md:mx-[50px] pt-6'>
             <nav className="flex items-center justify-between">
@@ -41,20 +63,34 @@ export default function Navbar() {
                     </div>
                 )}
             </nav>
+            <AnimatePresence>
                 {isOpen && isMobile && (
-                    <div className="fixed inset-0 bg-white flex">
-                        <div className="flex flex-col text-[30px] p-[7vh] justify-around">
-                            <div className='flex flex-col'>
+                    <motion.div
+                        initial={{ x: '100%' }}
+                        animate={{ x: 0 }}
+                        exit={{ x: '100%' }}
+                        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+                        className="fixed inset-0 bg-white flex"
+                    >
+                        <motion.div
+                            initial="hidden"
+                            animate="visible"
+                            exit="hidden"
+                            variants={list}
+                            className="flex flex-col text-[30px] p-[7vh] justify-around"
+                        >
+                            <motion.div variants={variants} className='flex flex-col'>
                                 <a href="/" className="p-2 text-[#2563eb] font-extrabold">-&gt; Home</a>
                                 <a href="/dashboard" className="p-2 text-[#2563eb] font-extrabold">-&gt; Dashboard</a>
                                 <a href="/listings" className= "p-2 text-[#2563eb] font-extrabold">-&gt; Test</a>
-                            </div>
-                            <div className='flex flex-col'>
-                                <button className='border rounded-2xl border-[#2563eb] text-[#2563eb] text-[24px] font-bold'>Go back -&gt;</button>
-                            </div>
-                        </div>
-                    </div>
+                            </motion.div>
+                            <motion.div variants={variants} className='flex flex-col'>
+                                <button className='border rounded-2xl border-[#2563eb] text-[#2563eb] text-[24px] font-bold' onClick={CloseBurger}>Go back -&gt;</button>
+                            </motion.div>
+                        </motion.div>
+                    </motion.div>
                 )}
-                </div>
-                );
+            </AnimatePresence>
+        </div>
+    );
 }
