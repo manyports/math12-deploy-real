@@ -5,7 +5,7 @@ import Link from "next/link";
 export default function Home() {
   return (
     <div className="mx-4 md:mx-[50px]">
-      <div className="flex h-screen items-center justify-between">
+      <div className="flex h-screen items-center justify-evenly flex-col-reverse sm:flex-row justify-between">
         <div>
           <div>
             <p className="font-bold text-[35px] md:text-[45px] text-blue-600">Математика <u>легко и просто.</u></p>
@@ -28,7 +28,6 @@ export default function Home() {
           alt="woman image"
           width={400}
           height={400}
-          className="hide-on-mobile"
           />
         </div>
       </div>
@@ -104,7 +103,7 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="container mx-auto my-8">
+      <div className="container my-8">
         <h2 className="text-3xl font-bold mb-8">Тарифы</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div className="bg-background border rounded-lg p-6">

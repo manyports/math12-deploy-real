@@ -12,8 +12,3 @@
   box-sizing: border-box;
 }
 
-@media (max-width: 640px) {
-  .hide-on-mobile {
-    display: none;
-  }
-}
