@@ -8,7 +8,7 @@ export default function Home() {
       <div className="flex h-screen items-center justify-evenly flex-col-reverse sm:flex-row">
         <div>
           <div>
-            <p className="font-bold text-[35px] md:text-[45px] text-blue-600">Математика <u>легко и просто.</u></p>
+            <p className="font-bold text-[35px] md:text-[45px] text-blue-600"> Понятная математика <u> с помощью ИИ.</u></p>
             <p className="text-gray-500 text-[18px] md:text-[20px]">
               для НИШевцев 😎
             </p>
