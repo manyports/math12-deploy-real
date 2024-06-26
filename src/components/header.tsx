@@ -56,10 +56,9 @@ export default function Navbar() {
                 </button>
                 {!isMobile && (
                     <div className="flex space-x-4">
-                        <a href="/" className="p-2 hover:underline hover:text-blue-600">Home</a>
-                        <a href="#features" className="p-2 hover:underline hover:text-blue-600">Features</a>
-                        <a href="#pricings" className="p-2 hover:underline hover:text-blue-600">Pricings</a>
-                        <a href="/dashboard" className="p-2 hover:underline hover:text-blue-600">Dashboard</a>
+                        <a href="/" className="p-2 hover:underline hover:text-blue-600">Главная</a>
+                        <a href="/dashboard" className="p-2 hover:underline hover:text-blue-600">Личный кабинет</a>
+                        <a href="/subscriptions" className="p-2 hover:underline hover:text-blue-600">Подписки</a>
                     </div>
                 )}
             </nav>
@@ -80,9 +79,9 @@ export default function Navbar() {
                             className="flex flex-col text-[30px] p-[7vh] justify-around"
                         >
                             <motion.div variants={variants} className='flex flex-col'>
-                                <a href="/" className="p-2 text-[#2563eb] font-extrabold">-&gt; Home</a>
-                                <a href="/dashboard" className="p-2 text-[#2563eb] font-extrabold">-&gt; Dashboard</a>
-                                <a href="/listings" className= "p-2 text-[#2563eb] font-extrabold">-&gt; Test</a>
+                                <a href="/" className="p-2 text-[#2563eb] font-extrabold">-&gt; Главная</a>
+                                <a href="/dashboard" className="p-2 text-[#2563eb] font-extrabold">-&gt; Кабинет</a>
+                                <a href="/subscriptions" className= "p-2 text-[#2563eb] font-extrabold">-&gt; Подписки </a>
                             </motion.div>
                             <motion.div variants={variants} className='flex flex-col'>
                                 <button className='border rounded-2xl border-[#2563eb] text-[#2563eb] text-[24px] font-bold' onClick={CloseBurger}>Go back -&gt;</button>
