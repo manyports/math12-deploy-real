@@ -18,7 +18,7 @@ export default function Home() {
               Связаться с нами
             </button>
             <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 ml-2 border-blue-600 border">
-              Узнать больше
+              Сдать тест
             </button>
           </div>
         </div>
@@ -107,7 +107,7 @@ export default function Home() {
         <h2 className="text-3xl font-bold mb-8">Тарифы</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div className="bg-background border rounded-lg p-6">
-            <h3 className="text-xl font-bold mb-4">База</h3>
+            <h3 className="text-xl font-bold mb-4 text-blue-600">База</h3>
             <p className="text-4xl font-bold mb-4">₸0</p>
             <ul className="space-y-2 mb-6">
               <li className="flex items-center">
@@ -135,9 +135,9 @@ export default function Home() {
             </button>
           </div>
           <div className="bg-background border rounded-lg p-6">
-            <h3 className="text-xl font-bold mb-4">Pro</h3>
+            <h3 className="text-xl font-bold mb-4 text-blue-600">Pro</h3>
             <p className="text-4xl font-bold mb-1">₸749 в неделю</p>
-            <div className="mb-4 bg-blue-600 text-white text-center rounded-xl md:w-[60%]">
+            <div className="mb-4 bg-blue-600 text-white text-center rounded-xl sm:w-[60%] md:w-[60%]">
               <p>Первая неделя бесплатно</p>
             </div>
             <ul className="space-y-2 mb-6">
