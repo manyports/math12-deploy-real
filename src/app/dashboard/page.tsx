@@ -1,3 +1,5 @@
+"use client";
+
 import Image from "next/image";
 
 export default function Dashboard() {
@@ -16,7 +18,7 @@ export default function Dashboard() {
                         </svg>
                         <h2 className="text-2xl font-bold mb-4">Пройти тест</h2>
                         <p className="mb-4 text-center">Продемонстрируйте свои знания и докажите свое академическое мастерство, пройдя наш тест.</p>
-                        <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600">
+                        <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600" onClick={() => window.location.href = "/test"}>
                             🔥 начать
                         </button>
                     </div>
@@ -39,11 +41,110 @@ export default function Dashboard() {
                             <path d="M7 22h10"></path>
                             <path d="M12 22v-4"></path>
                         </svg>
-                        <h2 className="text-2xl font-bold mb-4">Переписка с ИИ</h2>
-                        <p className="mb-4 text-center">Примите участие в увлекательной беседе с нашим интеллектуальным помощником MathAI и откройте для себя новые идеи.</p>
-                        <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600">
+                        <h2 className="text-2xl font-bold mb-4">Спросить вопросы</h2>
+                        <p className="mb-4 text-center">Примите участие в увлекательной беседе с нашим интеллектуальным помощником MathAI и откройте для себя новое восприятие математики.</p>
+                        <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600" onClick={() => window.location.href = "/chats"}>
                             💯 напиши
                         </button>
+                    </div>
+                </div>
+            </div>
+            <div className="mt-8 flex flex-col">
+                <div>
+                    <p className="font-bold text-2xl md:text-4xl text-blue-600">Ваши пройденные тесты</p>
+                </div>
+                <div className="mt-6 mb-6 overflow-auto max-h-96">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                        <div className="border rounded p-6">
+                            <div>
+                                <h1 className="font-extrabold text-2xl text-blue-600">
+                                    math - test #1
+                                </h1>
+                                <div className="border-2 border-blue-600 text-blue-600 text-center rounded-xl mt-3">
+                                    Your score is <b> 100% </b>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="border rounded p-6">
+                            <div>
+                                <h1 className="font-extrabold text-2xl text-blue-600">
+                                    math - test #2
+                                </h1>
+                                <div className="border-2 border-blue-600 text-blue-600 text-center rounded-xl mt-3">
+                                    Your score is <b> 100% </b>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="border rounded p-6">
+                            <div>
+                                <h1 className="font-extrabold text-2xl text-blue-600">
+                                    math - test #3
+                                </h1>
+                                <div className="border-2 border-blue-600 text-blue-600 text-center rounded-xl mt-3">
+                                    Your score is <b> 100% </b>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="border rounded p-6">
+                            <div>
+                                <h1 className="font-extrabold text-2xl text-blue-600">
+                                    math - test #3
+                                </h1>
+                                <div className="border-2 border-blue-600 text-blue-600 text-center rounded-xl mt-3">
+                                    Your score is <b> 100% </b>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="border rounded p-6">
+                            <div>
+                                <h1 className="font-extrabold text-2xl text-blue-600">
+                                    math - test #3
+                                </h1>
+                                <div className="border-2 border-blue-600 text-blue-600 text-center rounded-xl mt-3">
+                                    Your score is <b> 100% </b>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="border rounded p-6">
+                            <div>
+                                <h1 className="font-extrabold text-2xl text-blue-600">
+                                    math - test #3
+                                </h1>
+                                <div className="border-2 border-blue-600 text-blue-600 text-center rounded-xl mt-3">
+                                    Your score is <b> 100% </b>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="border rounded p-6">
+                            <div>
+                                <h1 className="font-extrabold text-2xl text-blue-600">
+                                    math - test #3
+                                </h1>
+                                <div className="border-2 border-blue-600 text-blue-600 text-center rounded-xl mt-3">
+                                    Your score is <b> 100% </b>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="border rounded p-6">
+                            <div>
+                                <h1 className="font-extrabold text-2xl text-blue-600">
+                                    math - test #3
+                                </h1>
+                                <div className="border-2 border-blue-600 text-blue-600 text-center rounded-xl mt-3">
+                                    Your score is <b> 100% </b>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="border rounded p-6">
+                            <div>
+                                <h1 className="font-extrabold text-2xl text-blue-600">
+                                    math - test #3
+                                </h1>
+                                <div className="border-2 border-blue-600 text-blue-600 text-center rounded-xl mt-3">
+                                    Your score is <b> 100% </b>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

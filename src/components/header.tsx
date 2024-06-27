@@ -46,7 +46,7 @@ export default function Navbar() {
     };
 
     return (
-        <div className='mx-4 md:mx-[50px] pt-6'>
+        <div className='relative mx-4 md:mx-[50px] pt-6 z-50'>
             <nav className="flex items-center justify-between">
                 <h1 className={`text-2xl font-bold ${isOpen && isMobile ? 'hidden' : ''}`}>math12</h1>
                 <button type="button" className={`text-gray-500 hover:text-white focus:outline-none focus:text-white ${isMobile ? '' : 'hidden'}`} onClick={() => setIsOpen(!isOpen)}>
