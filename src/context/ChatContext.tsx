@@ -120,11 +120,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         },
         body: JSON.stringify({ prompt: finalPrompt }),
       });
-
-      if (!response) {
-        throw new Error('Failed to fetch response from API');
-      }
-
+      
       const data = await response.json();
       const aiMessage: Message = {
         role: 'ai',
