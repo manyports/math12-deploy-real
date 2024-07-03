@@ -1,5 +1,5 @@
 "use client";
-import React, { createContext, useState, ReactNode, useContext, useEffect, useCallback } from 'react';
+import React, { createContext, useState, ReactNode, useContext, useEffect } from 'react';
 
 interface Message {
   role: 'human' | 'ai';
@@ -32,52 +32,68 @@ const RESET_INTERVAL = 60 * 1000; // 1 minute cooldown
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [input, setInput] = useState<string>('');
-  const [messages, setMessages] = useState<Message[]>(() => {
-    const savedMessages = localStorage.getItem('chatMessages');
-    return savedMessages ? JSON.parse(savedMessages) : [];
-  });
+  const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [remainingQuestions, setRemainingQuestions] = useState<number>(() => {
-    const savedQuestionsData = localStorage.getItem('questionsData');
-    if (savedQuestionsData) {
-      const { remaining, lastReset } = JSON.parse(savedQuestionsData);
-      const now = Date.now();
-      return now - lastReset > RESET_INTERVAL ? INITIAL_QUESTIONS : remaining;
-    }
-    return INITIAL_QUESTIONS;
-  });
-
-  const saveQuestionsData = useCallback((remaining: number) => {
-    const data = { remaining, lastReset: Date.now() };
-    localStorage.setItem('questionsData', JSON.stringify(data));
-  }, []);
-
-  const newChat = useCallback(() => {
-    setMessages([]);
-    localStorage.removeItem('chatMessages');
-    setRemainingQuestions(INITIAL_QUESTIONS);
-    saveQuestionsData(INITIAL_QUESTIONS);
-  }, [saveQuestionsData]);
+  const [remainingQuestions, setRemainingQuestions] = useState<number>(INITIAL_QUESTIONS);
 
   useEffect(() => {
-    localStorage.setItem('chatMessages', JSON.stringify(messages));
+    const loadSavedData = () => {
+      const savedMessages = localStorage.getItem('chatMessages');
+      if (savedMessages) {
+        setMessages(JSON.parse(savedMessages));
+      }
+
+      const savedQuestionsData = localStorage.getItem('questionsData');
+      if (savedQuestionsData) {
+        const { remaining, lastReset } = JSON.parse(savedQuestionsData);
+        const now = Date.now();
+        if (now - lastReset > RESET_INTERVAL) {
+          setRemainingQuestions(INITIAL_QUESTIONS);
+          saveQuestionsData(INITIAL_QUESTIONS);
+        } else {
+          setRemainingQuestions(remaining);
+        }
+      } else {
+        saveQuestionsData(INITIAL_QUESTIONS);
+      }
+    };
+
+    loadSavedData();
+  }, []);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      localStorage.setItem('chatMessages', JSON.stringify(messages));
+    }
   }, [messages]);
 
-  const processGeminiResponse = (response: string): string => {
-    return response
-      .replace(/\$\$(.*?)\$\$/gs, (_, p1) => `\\[${p1}\\]`)
-      .replace(/\$(.*?)\$/g, (_, p1) => `\\(${p1}\\)`)
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-      .replace(/\*(.*?)\*/g, '<em>$1</em>')
-      .replace(/## (.*?)$/gm, '<h2>$1</h2>')
-      .replace(/# (.*?)$/gm, '<h1>$1</h1>')
-      .replace(/---/g, '<hr>')
-      .replace(/^\> (.*?)$/gm, '<blockquote>$1</blockquote>')
-      .replace(/`(.*?)`/g, '<code>$1</code>')
-      .replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+  const saveQuestionsData = (remaining: number) => {
+    const data = { remaining, lastReset: Date.now() };
+    localStorage.setItem('questionsData', JSON.stringify(data));
   };
 
-  const onSent = useCallback(async (prompt?: string) => {
+  const newChat = () => {
+    setMessages([]);
+    localStorage.removeItem('chatMessages');
+    saveQuestionsData(INITIAL_QUESTIONS);
+  };
+
+  const processGeminiResponse = (response: string): string => {
+    response = response.replace(/\$\$(.*?)\$\$/gs, (match, p1) => `\\[${p1}\\]`);
+    response = response.replace(/\$(.*?)\$/g, (match, p1) => `\\(${p1}\\)`);
+    response = response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    response = response.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    response = response.replace(/## (.*?)$/gm, '<h2>$1</h2>');
+    response = response.replace(/# (.*?)$/gm, '<h1>$1</h1>');
+    response = response.replace(/---/g, '<hr>');
+    response = response.replace(/^\> (.*?)$/gm, '<blockquote>$1</blockquote>');
+    response = response.replace(/`(.*?)`/g, '<code>$1</code>');
+    response = response.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+
+    return response;
+  };
+
+  const onSent = async (prompt?: string) => {
     if (remainingQuestions <= 0) return;
 
     setLoading(true);
@@ -133,7 +149,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       setLoading(false);
       setInput('');
     }
-  }, [input, messages, remainingQuestions, saveQuestionsData]);
+  };
 
   return (
     <ChatContext.Provider
