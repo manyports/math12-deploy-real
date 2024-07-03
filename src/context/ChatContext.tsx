@@ -28,7 +28,7 @@ export const useChatContext = () => {
 };
 
 const INITIAL_QUESTIONS = 5;
-const RESET_INTERVAL = 24 * 60 * 60 * 1000; 
+const RESET_INTERVAL = 60 * 1000; // 1 minute cooldown
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [input, setInput] = useState<string>('');
@@ -120,7 +120,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         },
         body: JSON.stringify({ prompt: finalPrompt }),
       });
-      
+
+      if (!response.ok) {
+        throw new Error('Failed to fetch response from API');
+      }
+
       const data = await response.json();
       const aiMessage: Message = {
         role: 'ai',
