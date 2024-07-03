@@ -113,7 +113,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     saveQuestionsData(newRemaining);
 
     try {
-      const response = await fetch('math12-backend-production.up.railway.app/api/chat', {
+      const response = await fetch('https://math12-backend-production.up.railway.app/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
