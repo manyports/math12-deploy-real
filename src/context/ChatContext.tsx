@@ -121,7 +121,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         body: JSON.stringify({ prompt: finalPrompt }),
       });
 
-      if (!response.ok) {
+      if (!response) {
         throw new Error('Failed to fetch response from API');
       }
 
