@@ -21,7 +21,6 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
-        <Script src="https://polyfill.io/v3/polyfill.min.js?features=es6" strategy="beforeInteractive" />
         <Script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" strategy="afterInteractive" />
       </head>
       <ChatProvider>
