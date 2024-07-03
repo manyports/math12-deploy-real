@@ -1,8 +1,10 @@
 'use client';
 
 import { useChatContext } from '../../context/ChatContext';
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { format } from 'date-fns';
+import { motion, AnimatePresence } from 'framer-motion';
+import ReactTypingEffect from 'react-typing-effect';
 
 declare global {
   interface Window {
@@ -12,103 +14,131 @@ declare global {
 
 const ChatComponent = () => {
   const { input, setInput, messages, loading, remainingQuestions, onSent, newChat } = useChatContext();
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(e.target.value);
   };
 
   const handleSendMessage = () => {
-    onSent();
+    if (input.trim()) {
+      onSent();
+      setInput('');
+    }
+  };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView?.({ behavior: "smooth" });
   };
 
   useEffect(() => {
     if (window.MathJax) {
       window.MathJax.typesetPromise();
     }
+    scrollToBottom();
   }, [messages]);
 
   return (
-    <div className="p-4 md:px-[25vw] h-screen flex flex-col">
+    <div className="p-4 md:px-[15vw] h-screen flex flex-col">
       <div className="flex flex-col mb-8 items-center">
-        <p className="text-center font-bold text-2xl text-blue-500">
-          Ask any question to the AI 👾
-        </p>
-        <p className="text-center font-bold text-lg text-blue-500 border rounded-xl p-3 md:w-1/2 w-full">
-          You have {remainingQuestions} questions remaining
+        <h1 className="text-center font-bold text-3xl text-blue-600 mb-4">
+          MathAI Chat 👾
+        </h1>
+        <p className="text-center font-semibold text-lg text-blue-500 border border-blue-300 rounded-xl p-3 mb-4 bg-blue-50">
+          Осталось вопросов: {remainingQuestions}
         </p>
         <button 
           onClick={newChat} 
-          className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+          className="px-6 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition duration-300 ease-in-out transform hover:scale-105"
         >
-          New Chat
+          Новый чат
         </button>
       </div>
-      <div className="flex-grow overflow-auto">
-        <div className="flex flex-col h-full rounded-lg border">
-          <div className="flex-1 overflow-auto p-4">
+      <div className="flex-grow overflow-auto bg-white rounded-lg shadow-md">
+        <div className="flex flex-col h-full p-4">
+          <AnimatePresence>
             {messages.map((message, index) => (
-              <div key={index} className={`flex items-start gap-4 mt-4 ${message.role === 'ai' ? 'justify-start' : 'justify-end'}`}>
-                <div className={`font-bold ${message.role === 'ai' ? 'text-blue-500' : 'text-green-500'}`}>
-                  {message.role === 'ai' ? 'AI' : 'You'}
-                </div>
-                <div className="prose text-muted-foreground">
-                  {message.role === 'ai' ? (
-                    <div dangerouslySetInnerHTML={{ __html: message.content }} />
-                  ) : (
-                    <p>{message.content}</p>
-                  )}
-                  <small className="text-gray-500">
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.3 }}
+                className={`flex items-start gap-4 mb-4 ${
+                  message.role === 'ai' ? 'justify-start' : 'justify-end'
+                }`}
+              >
+                <div
+                  className={`max-w-[70%] p-3 rounded-lg ${
+                    message.role === 'ai'
+                      ? 'bg-blue-100 text-blue-800'
+                      : 'bg-green-100 text-green-800'
+                  }`}
+                >
+                  <div className="prose">
+                    {message.role === 'ai' ? (
+                      <div dangerouslySetInnerHTML={{ __html: message.content }} />
+                    ) : (
+                      <p>{message.content}</p>
+                    )}
+                  </div>
+                  <small className="text-gray-500 mt-1 block">
                     {format(message.timestamp, 'HH:mm:ss')}
                   </small>
                 </div>
-              </div>
+              </motion.div>
             ))}
-            {loading && (
-              <div className="flex items-start gap-4 mt-4">
-                <div className="font-bold text-blue-500">AI</div>
-                <div className="prose text-muted-foreground">
-                  <p>Loading...</p>
-                </div>
+          </AnimatePresence>
+          {loading && (
+            <div className="flex items-start gap-4 mt-4">
+              <div className="font-bold text-blue-500">AI</div>
+              <div className="bg-blue-100 text-blue-800 p-3 rounded-lg">
+                <ReactTypingEffect
+                  text={["Думаю...", "Обрабатываю запрос...", "Генерирую ответ..."]}
+                  speed={50}
+                  eraseSpeed={50}
+                  typingDelay={1000}
+                  eraseDelay={2000}
+                />
               </div>
-            )}
-          </div>
-          <div className="w-full sticky bottom-0 py-2 flex flex-col gap-1.5 px-4 bg-background">
-            <div className="relative">
-              <textarea
-                className="flex w-full bg-background text-sm ring-offset-background placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 min-h-[48px] rounded-2xl resize-none p-4 border border-neutral-400 shadow-sm pr-16"
-                placeholder="Message the AI"
-                name="message"
-                id="message"
-                rows={1}
-                value={input}
-                onChange={handleInputChange}
-                disabled={remainingQuestions <= 0}
-              />
-              <button
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-primary text-primary-foreground hover:bg-primary/90 absolute w-8 h-8 top-3 right-3"
-                type="submit"
-                onClick={handleSendMessage}
-                disabled={loading || remainingQuestions <= 0}
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="w-4 h-4 text-blue-500"
-                >
-                  <path d="m5 12 7-7 7 7"></path>
-                  <path d="M12 19V5"></path>
-                </svg>
-                <span className="sr-only">Send</span>
-              </button>
             </div>
-          </div>
+          )}
+          <div ref={messagesEndRef} />
+        </div>
+      </div>
+      <div className="w-full sticky bottom-0 py-4">
+        <div className="relative">
+          <textarea
+            className="w-full bg-white text-sm rounded-2xl resize-none p-4 pr-16 border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-300 ease-in-out"
+            placeholder="Введите ваше сообщение..."
+            name="message"
+            id="message"
+            rows={2}
+            value={input}
+            onChange={handleInputChange}
+            disabled={remainingQuestions <= 0}
+          />
+          <button
+            className="absolute right-3 bottom-3 inline-flex items-center justify-center w-10 h-10 rounded-full bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-opacity-50 transition duration-300 ease-in-out transform hover:scale-110"
+            type="button"
+            onClick={handleSendMessage}
+            disabled={loading || remainingQuestions <= 0}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="w-5 h-5"
+            >
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+            <span className="sr-only">Отправить</span>
+          </button>
         </div>
       </div>
     </div>

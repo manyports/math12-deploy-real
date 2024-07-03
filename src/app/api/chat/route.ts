@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { GoogleGenerativeAI, HarmCategory, HarmBlockThreshold } from "@google/generative-ai";
 
-const MODEL_NAME = "gemini-1.0-pro";
+const MODEL_NAME = "gemini-1.5-pro";
 const API_KEY = process.env.GOOGLE_GENERATIVE_AI_API_KEY as string;
 
 export async function POST(request: NextRequest) {

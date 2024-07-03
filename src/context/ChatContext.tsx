@@ -28,7 +28,7 @@ export const useChatContext = () => {
 };
 
 const INITIAL_QUESTIONS = 5;
-const RESET_INTERVAL = 24 * 60 * 60 * 1000; // 24 часа в миллисекундах
+const RESET_INTERVAL = 24 * 60 * 60 * 1000; 
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [input, setInput] = useState<string>('');
@@ -75,7 +75,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const newChat = () => {
     setMessages([]);
     localStorage.removeItem('chatMessages');
-    setRemainingQuestions(INITIAL_QUESTIONS);
     saveQuestionsData(INITIAL_QUESTIONS);
   };
 

@@ -1,35 +1,63 @@
-"use client"
+"use client";
 
+import { useEffect } from 'react';
+import Lenis from '@studio-freight/lenis';
 import Image from "next/image";
-import woman from "./woman.svg"
+import woman from "./woman.svg";
 import Link from "next/link";
 
 export default function Home() {
+  useEffect(() => {
+    const lenis = new Lenis({
+      duration: 1.2,
+      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    });
+
+    const raf = (time: number) => {
+      lenis.raf(time);
+      requestAnimationFrame(raf);
+    };
+
+    requestAnimationFrame(raf);
+
+    return () => {
+      lenis.destroy();
+    };
+  }, []);
+
   return (
     <div className="mx-4 md:mx-[50px]">
-      <div className="flex h-screen items-center justify-evenly flex-col-reverse sm:flex-row">
+      <div className="flex h-screen items-center justify-between flex-col-reverse sm:flex-row mb-8">
         <div>
           <div>
-            <p className="font-bold text-[35px] md:text-[45px] text-blue-600"> Понятная математика <u> с помощью ИИ.</u></p>
+            <p className="font-bold text-[35px] md:text-[45px] text-blue-600">
+              Понятная математика <u>с помощью ИИ.</u>
+            </p>
             <p className="text-gray-500 text-[18px] md:text-[20px]">
-              для НИШевцев 😎
+              Освойте математику НИШ с персональным ИИ-репетитором
             </p>
           </div>
           <div className="mt-8">
-            <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 h-10 px-4 py-2" onClick={() => window.location.href = "https://t.me/math12_sup_bot"}>
+            <button
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 h-10 px-4 py-2"
+              onClick={() => window.location.href = "https://t.me/math12_sup_bot"}
+            >
               Связаться с нами
             </button>
-            <button className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 ml-2 border-blue-600 border">
+            <button
+              className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 ml-2 border-blue-600 border"
+              onClick={() => window.location.href = "/test"}
+            >
               Сдать тест
             </button>
           </div>
         </div>
         <div>
           <Image
-          src={woman}
-          alt="woman image"
-          width={400}
-          height={400}
+            src={woman}
+            alt="woman image"
+            width={400}
+            height={400}
           />
         </div>
       </div>
@@ -56,7 +84,7 @@ export default function Home() {
               </svg>
               <h3 className="text-xl font-bold mb-2">Отслеживание успеваемости</h3>
               <p className="text-muted-foreground">
-                Следите за своими оценками и прогрессом по всем предметам в одном месте. Вы сможете видеть, как меняются ваши результаты, и быстро выявлять области, которые требуют дополнительного внимания.
+                Следите за своими оценками и прогрессом благодаря тестам. Вы сможете видеть, как меняются ваши результаты, и быстро выявлять области, которые требуют дополнительного внимания.
               </p>
             </div>
             <div className="bg-background border rounded-lg p-6 feature-box">
@@ -147,7 +175,7 @@ export default function Home() {
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 mr-2 text-blue-600">
                   <path d="M20 6 9 17l-5-5"></path>
                 </svg>
-                Полный доступ ко всем ресурсам для обучения, включая продвинутые лекции и дополнительные материалы.
+                Больше тестов, больше ответов от ИИ помощника MathAI для обучения.
               </li>
               <li className="flex items-center">
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4 mr-2 text-blue-600">
