@@ -78,21 +78,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     saveQuestionsData(INITIAL_QUESTIONS);
   };
 
-  const processGeminiResponse = (response: string): string => {
-    response = response.replace(/\$\$(.*?)\$\$/gs, (match, p1) => `\\[${p1}\\]`);
-    response = response.replace(/\$(.*?)\$/g, (match, p1) => `\\(${p1}\\)`);
-    response = response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    response = response.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    response = response.replace(/## (.*?)$/gm, '<h2>$1</h2>');
-    response = response.replace(/# (.*?)$/gm, '<h1>$1</h1>');
-    response = response.replace(/---/g, '<hr>');
-    response = response.replace(/^\> (.*?)$/gm, '<blockquote>$1</blockquote>');
-    response = response.replace(/`(.*?)`/g, '<code>$1</code>');
-    response = response.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
-
-    return response;
-  };
-
+    
   const onSent = async (prompt?: string) => {
     if (remainingQuestions <= 0) return;
 
@@ -128,7 +114,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       const data = await response.json();
       const aiMessage: Message = {
         role: 'ai',
-        content: processGeminiResponse(data.text),
+        content: data.text,
         timestamp: Date.now(),
       };
 
