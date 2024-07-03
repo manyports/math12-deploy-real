@@ -113,19 +113,13 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     saveQuestionsData(newRemaining);
 
     try {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
-  
       const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ prompt: finalPrompt }),
-        signal: controller.signal
       });
-  
-      clearTimeout(timeoutId);  
 
       if (!response.ok) {
         throw new Error('Failed to fetch response from API');
