@@ -68,6 +68,19 @@ export default function Dashboard() {
                             💯 напиши
                         </button>
                     </div>
+                    <div className="bg-card text-card-foreground rounded-lg shadow-md w-full md:w-1/4 p-6 flex flex-col items-center justify-between">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-12 w-12 mb-4 text-blue-600">
+                            <circle cx="12" cy="10" r="8"></circle>
+                            <circle cx="12" cy="10" r="3"></circle>
+                            <path d="M7 22h10"></path>
+                            <path d="M12 22v-4"></path>
+                        </svg>
+                        <h2 className="text-2xl font-bold mb-4">Решение по картинкам</h2>
+                        <p className="mb-4 text-center">Сфотографируйте любую задачу по математике и ИИ решит ее за считанные секунды 😎</p>
+                        <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600" onClick={() => window.location.href = "/imagesolver"}>
+                            🎥 фотографируй
+                        </button>
+                    </div>
                 </div>
             </div>
             <div className="mt-8 flex flex-col">
