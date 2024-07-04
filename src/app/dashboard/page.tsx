@@ -32,7 +32,7 @@ export default function Dashboard() {
                     <p className="text-gray-500 text-lg md:text-xl text-center">Здесь вы можете работать с нашей платформой :)</p>
                 </div>
                 <div className="flex flex-col md:flex-row gap-6 mt-6 w-full">
-                    <div className="bg-card text-card-foreground rounded-lg p-6 shadow-md w-full md:w-1/3 flex flex-col items-center justify-between">
+                    <div className="bg-card text-card-foreground rounded-lg p-6 shadow-md w-full md:w-1/4 flex flex-col items-center justify-between">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-12 w-12 mb-4 text-blue-600">
                             <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
                             <path d="m15 5 4 4"></path>
@@ -43,7 +43,7 @@ export default function Dashboard() {
                             🔥 начать
                         </button>
                     </div>
-                    <div className="bg-card text-card-foreground rounded-lg p-6 shadow-md w-full md:w-1/3 flex flex-col items-center justify-between">
+                    <div className="bg-card text-card-foreground rounded-lg p-6 shadow-md w-full md:w-1/4 flex flex-col items-center justify-between">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-12 w-12 mb-4 text-blue-600">
                             <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                             <polyline points="16 17 21 12 16 7"></polyline>
@@ -55,7 +55,7 @@ export default function Dashboard() {
                             👋 пока
                         </button>
                     </div>
-                    <div className="bg-card text-card-foreground rounded-lg shadow-md w-full md:w-1/2 p-6 flex flex-col items-center justify-between">
+                    <div className="bg-card text-card-foreground rounded-lg shadow-md w-full md:w-1/4 p-6 flex flex-col items-center justify-between">
                         <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-12 w-12 mb-4 text-blue-600">
                             <circle cx="12" cy="10" r="8"></circle>
                             <circle cx="12" cy="10" r="3"></circle>
