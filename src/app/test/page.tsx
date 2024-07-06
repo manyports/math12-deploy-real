@@ -139,7 +139,7 @@ export default function Test() {
               <FaExclamationTriangle className="mx-auto text-yellow-500 mb-4" size={48} />
               <h2 className="text-2xl font-bold text-gray-700 mb-2">Ничего не найдено</h2>
               <p className="text-gray-500">
-                По вашему запросу "{searchQuery}" не найдено ни одного теста. Попробуйте изменить параметры поиска.
+                По вашему запросу &quot;{searchQuery}&quot; не найдено ни одного теста. Попробуйте изменить параметры поиска.
               </p>
             </motion.div>
           )}
