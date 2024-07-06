@@ -46,9 +46,9 @@ export default function Navbar() {
     };
 
     return (
-        <div className='relative z-50 mx-4 md:mx-[50px] pt-6'>
+        <div className='relative z-50 mx-4 md:mx-[50px] pt-6 bg-transparent'>
             <nav className="flex items-center justify-between">
-                <h1 className={`text-2xl font-bold ${isOpen && isMobile ? 'hidden' : ''}`}>math12.ai</h1>
+                <h1 className={`text-2xl font-bold ${isOpen && isMobile ? 'hidden' : ''}`} onClick={() => window.location.href = "/" }>math12.ai</h1>
                 <button type="button" className={`text-gray-500 hover:text-white focus:outline-none focus:text-white ${isMobile ? '' : 'hidden'}`} onClick={() => setIsOpen(!isOpen)}>
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" className="h-6 w-6">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />

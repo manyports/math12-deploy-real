@@ -5,6 +5,7 @@ import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import Lenis from '@studio-freight/lenis';
 import { useRouter } from 'next/navigation';
+import { FaSearch, FaChalkboardTeacher, FaCalendarAlt, FaBookOpen, FaExclamationTriangle } from 'react-icons/fa';
 
 interface Topic {
   _id: string;
@@ -53,7 +54,7 @@ export default function Test() {
   );
 
   const handleClick = (id: string) => {
-    setSelectedTopic(id);
+    setSelectedTopic(id === selectedTopic ? null : id);
   };
 
   const openTest = (topic: Topic) => {
@@ -61,44 +62,88 @@ export default function Test() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <h1 className="text-4xl font-bold mb-8 text-center text-blue-600">Математические тесты</h1>
-      <div className="mb-8">
-        <input
-          type="text"
-          placeholder="Поиск..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600"
-        />
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredTopics.map(topic => (
-          <motion.div
-            key={topic._id}
-            className="border border-gray-200 p-6 rounded-lg shadow-md cursor-pointer"
-            onClick={() => handleClick(topic._id)}
-            whileTap={{ scale: 0.95 }}
-            whileHover={{ scale: 1.05 }}
-          >
-            <h2 className="text-xl font-semibold mb-2 text-blue-600">{topic.topic}</h2>
-            <p className="text-gray-600">Класс: {topic.class}</p>
-            <p className="text-gray-600">Четверть: {topic.term}</p>
-            <AnimatePresence>
-              {selectedTopic === topic._id && (
-                <motion.button
-                  className="mt-4 bg-blue-500 text-white px-4 py-2 rounded-full hover:bg-blue-600 transition-colors duration-300"
-                  initial={{ opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  onClick={() => openTest(topic)}
+    <div className="min-h-screen py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto">
+        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6 sm:mb-12 text-center text-blue-600 tracking-tight">
+          Математические тесты
+        </h1>
+        <div className="mb-6 sm:mb-8 relative">
+          <input
+            type="text"
+            placeholder="Поиск по теме, классу или четверти..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="w-full px-4 py-2 sm:py-3 pl-10 sm:pl-12 text-base sm:text-lg border-2 border-blue-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 ease-in-out"
+          />
+          <FaSearch className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-blue-400" size={20} />
+        </div>
+        <AnimatePresence>
+          {filteredTopics.length > 0 ? (
+            <motion.div 
+              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, staggerChildren: 0.1 }}
+            >
+              {filteredTopics.map(topic => (
+                <motion.div
+                  key={topic._id}
+                  className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md sm:shadow-lg cursor-pointer overflow-hidden"
+                  onClick={() => handleClick(topic._id)}
+                  whileHover={{ scale: 1.02, boxShadow: "0 8px 16px rgba(0,0,0,0.1)" }}
+                  whileTap={{ scale: 0.98 }}
+                  layout
                 >
-                  Начать тест!
-                </motion.button>
-              )}
-            </AnimatePresence>
-          </motion.div>
-        ))}
+                  <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 text-blue-700">{topic.topic}</h2>
+                  <div className="flex items-center mb-1 sm:mb-2 text-sm sm:text-base text-gray-600">
+                    <FaChalkboardTeacher className="mr-2" />
+                    <p>Класс: {topic.class}</p>
+                  </div>
+                  <div className="flex items-center mb-3 sm:mb-4 text-sm sm:text-base text-gray-600">
+                    <FaCalendarAlt className="mr-2" />
+                    <p>Четверть: {topic.term}</p>
+                  </div>
+                  <AnimatePresence>
+                    {selectedTopic === topic._id && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        transition={{ duration: 0.3 }}
+                      >
+                        <motion.button
+                          className="mt-2 sm:mt-4 w-full bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center text-sm sm:text-base"
+                          whileHover={{ scale: 1.03 }}
+                          whileTap={{ scale: 0.97 }}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            openTest(topic);
+                          }}
+                        >
+                          <FaBookOpen className="mr-2" />
+                          Начать тест!
+                        </motion.button>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </motion.div>
+              ))}
+            </motion.div>
+          ) : (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+              className="text-center py-12"
+            >
+              <FaExclamationTriangle className="mx-auto text-yellow-500 mb-4" size={48} />
+              <h2 className="text-2xl font-bold text-gray-700 mb-2">Ничего не найдено</h2>
+              <p className="text-gray-500">
+                По вашему запросу "{searchQuery}" не найдено ни одного теста. Попробуйте изменить параметры поиска.
+              </p>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );
