@@ -1,8 +1,6 @@
 "use client";
 
 import React, { useState, FormEvent } from 'react';
-import Image from "next/image";
-import woman from "./woman.svg"
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
 
@@ -23,76 +21,69 @@ export default function Login() {
       });
       const data = await response.json();
       if (response.ok) {
-        setMessage('Login successful!');
+        setMessage('Вход выполнен успешно!');
         router.push('/dashboard');
       } else {
-        setMessage(data.message || 'Login failed');
+        setMessage(data.message || 'Ошибка входа');
       }
     } catch (error) {
-      setMessage('An error occurred');
+      setMessage('Произошла ошибка');
     }
   };
 
   return (
-    <div className="mx-4 md:mx-[50px]">
-      <div className="flex h-screen items-center justify-evenly flex-col-reverse sm:flex-row">
-        <div className="w-full sm:w-1/2 max-w-md">
-          <h2 className="font-bold text-[35px] md:text-[45px] text-blue-600 mb-8">Вход в аккаунт</h2>
-          <form className="space-y-6" onSubmit={handleSubmit}>
+    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-md w-full space-y-8">
+        <div>
+          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
+            Вход в аккаунт
+          </h2>
+        </div>
+        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
+          <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="username" className="block text-sm font-medium text-gray-700">
-                Имя пользователя
-              </label>
               <input
                 id="username"
                 name="username"
                 type="text"
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Имя пользователя"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Пароль
-              </label>
               <input
                 id="password"
                 name="password"
                 type="password"
                 autoComplete="current-password"
                 required
-                className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
+                className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+                placeholder="Пароль"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
               />
             </div>
-            <div>
-              <button
-                type="submit"
-                className="w-full inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-blue-600 text-white hover:bg-blue-700 h-10 px-4 py-2"
-              >
-                Войти
-              </button>
-            </div>
-          </form>
-          {message && <p className="mt-4 text-center text-sm text-red-600">{message}</p>}
-          <p className="mt-4 text-center text-sm text-gray-600">
-            Нет аккаунта?{" "}
-            <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500">
-              Зарегистрироваться
-            </Link>
-          </p>
-        </div>
-        <div className="hidden sm:block">
-          <Image
-            src={woman}
-            alt="woman image"
-            width={400}
-            height={400}
-          />
-        </div>
+          </div>
+
+          <div>
+            <button
+              type="submit"
+              className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            >
+              Войти
+            </button>
+          </div>
+        </form>
+        {message && <p className="mt-2 text-center text-sm text-red-600">{message}</p>}
+        <p className="mt-2 text-center text-sm text-gray-600">
+          Нет аккаунта?{" "}
+          <Link href="/register" className="font-medium text-blue-600 hover:text-blue-500">
+            Зарегистрироваться
+          </Link>
+        </p>
       </div>
     </div>
   );
