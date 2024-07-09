@@ -9,8 +9,7 @@ import toast, { Toaster } from 'react-hot-toast';
 
 interface SolutionData {
   fullSolution: string;
-  latexExpressions: string[];
-  numericalAnswer: string;
+  error?: string;
 }
 
 interface UploadInfo {
@@ -19,9 +18,9 @@ interface UploadInfo {
 }
 
 export default function SolveMath() {
-  const [selectedImage, setSelectedImage] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
-  const [solution, setSolution] = useState<SolutionData | null>(null);
+  const [selectedImages, setSelectedImages] = useState<File[]>([]);
+  const [previews, setPreviews] = useState<string[]>([]);
+  const [solutions, setSolutions] = useState<SolutionData[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [uploadInfo, setUploadInfo] = useState<UploadInfo>({ count: 0, lastUploadTime: 0 });
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -34,10 +33,10 @@ export default function SolveMath() {
   }, []);
 
   useEffect(() => {
-    if (solution) {
+    if (solutions.length > 0) {
       renderLatex();
     }
-  }, [solution]);
+  }, [solutions]);
 
   const checkUploadLimit = useCallback((): boolean => {
     const now = Date.now();
@@ -48,8 +47,8 @@ export default function SolveMath() {
       return true;
     }
 
-    if (uploadInfo.count >= 3) {
-      toast.error("Вы достигли лимита загрузок (3 изображения за 24 часа). Попробуйте позже.");
+    if (uploadInfo.count >= 10) {
+      toast.error("Вы достигли лимита загрузок (10 попыток за 24 часа). Попробуйте позже.");
       return false;
     }
 
@@ -66,48 +65,53 @@ export default function SolveMath() {
   }, [uploadInfo]);
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      processImage(file);
+    const files = Array.from(e.target.files || []);
+    if (files.length > 0) {
+      processImages(files);
     }
   };
 
   const handlePaste = (e: React.ClipboardEvent) => {
     const items = e.clipboardData?.items;
     if (items) {
+      const imageFiles: File[] = [];
       for (let i = 0; i < items.length; i++) {
         if (items[i].type.indexOf('image') !== -1) {
           const file = items[i].getAsFile();
           if (file) {
-            processImage(file);
+            imageFiles.push(file);
           }
-          break;
         }
+      }
+      if (imageFiles.length > 0) {
+        processImages(imageFiles);
       }
     }
   };
 
-  const processImage = (file: File) => {
-    if (checkUploadLimit()) {
-      setSelectedImage(file);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-      updateUploadInfo();
-    }
+  const processImages = (files: File[]) => {
+    setSelectedImages(prevImages => [...prevImages, ...files]);
+    const newPreviews = files.map(file => URL.createObjectURL(file));
+    setPreviews(prevPreviews => [...prevPreviews, ...newPreviews]);
+  };
+
+  const handleImageDelete = (index: number) => {
+    setSelectedImages(prevImages => prevImages.filter((_, i) => i !== index));
+    setPreviews(prevPreviews => prevPreviews.filter((_, i) => i !== index));
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!selectedImage) return;
+    if (selectedImages.length === 0) return;
+    if (!checkUploadLimit()) return;
 
     setIsLoading(true);
-    setSolution(null);
+    setSolutions([]);
 
     const formData = new FormData();
-    formData.append('image', selectedImage);
+    selectedImages.forEach((image, index) => {
+      formData.append(`images`, image);
+    });
 
     try {
       const response = await fetch('https://math12-backend-production.up.railway.app/api/solveMath', {
@@ -116,19 +120,15 @@ export default function SolveMath() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to solve math problem');
+        throw new Error('Failed to solve math problems');
       }
 
-      const data: SolutionData = await response.json();
-      setSolution(data);
+      const data = await response.json();
+      setSolutions(data.results);
+      updateUploadInfo();
     } catch (error) {
-      console.error('Error solving math problem:', error);
-      toast.error("Произошла ошибка при решении задачи. Пожалуйста, попробуйте еще раз.");
-      setSolution({
-        fullSolution: "An error occurred while solving the problem. Please try again.",
-        latexExpressions: [],
-        numericalAnswer: "N/A"
-      });
+      console.error('Error solving math problems:', error);
+      toast.error("Произошла ошибка при решении задач. Пожалуйста, попробуйте еще раз.");
     } finally {
       setIsLoading(false);
     }
@@ -155,9 +155,9 @@ export default function SolveMath() {
 
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith('image/')) {
-      processImage(file);
+    const files = Array.from(e.dataTransfer.files).filter(file => file.type.startsWith('image/'));
+    if (files.length > 0) {
+      processImages(files);
     }
   };
 
@@ -188,7 +188,7 @@ export default function SolveMath() {
           <form onSubmit={handleSubmit} className="mb-6 sm:mb-8 space-y-4 sm:space-y-6">
             <div>
               <label htmlFor="mathImage" className="block text-sm font-medium text-gray-700 mb-2">
-                Загрузите или вставьте изображение своей задачи (лимит: 3 изображения за 24 часа)
+                Загрузите или вставьте изображения своих задач (лимит: 10 попыток за 24 часа)
               </label>
               <div 
                 className="mt-1 flex justify-center px-4 sm:px-6 pt-4 sm:pt-5 pb-4 sm:pb-6 border-2 border-gray-300 border-dashed rounded-md cursor-pointer hover:border-blue-500 transition-colors"
@@ -203,11 +203,11 @@ export default function SolveMath() {
                   </svg>
                   <div className="flex text-sm text-gray-600">
                     <span className="relative cursor-pointer bg-white rounded-md font-medium text-blue-600 hover:text-blue-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-blue-500">
-                      Загрузить файл
+                      Загрузить файлы
                     </span>
                     <p className="pl-1">или перетащите сюда</p>
                   </div>
-                  <p className="text-xs text-gray-500">PNG, JPG, GIF до 10MB</p>
+                  <p className="text-xs text-gray-500">PNG, JPG, GIF до 10MB каждый</p>
                 </div>
               </div>
               <input
@@ -218,38 +218,64 @@ export default function SolveMath() {
                 className="hidden"
                 onChange={handleImageChange}
                 accept="image/*"
+                multiple
               />
             </div>
 
-            {preview && (
-              <div className="mt-4">
-                <Image src={preview} alt="Preview" width={300} height={300} className="rounded-lg mx-auto max-w-full h-auto" />
+            {previews.length > 0 && (
+              <div className="mt-4 grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {previews.map((preview, index) => (
+                  <div key={index} className="relative">
+                    <Image 
+                      src={preview} 
+                      alt={`Preview ${index + 1}`} 
+                      width={150} 
+                      height={150} 
+                      className="rounded-lg mx-auto max-w-full h-auto"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => handleImageDelete(index)}
+                      className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center shadow-md hover:bg-red-600 transition-colors"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
               </div>
             )}
 
             <button
               type="submit"
-              disabled={!selectedImage || isLoading || uploadInfo.count >= 3}
+              disabled={selectedImages.length === 0 || isLoading || uploadInfo.count >= 10}
               className="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 ease-in-out"
             >
-              {isLoading ? 'Решаем...' : 'Решить задачу'}
+              {isLoading ? 'Решаем...' : 'Решить задачи'}
             </button>
           </form>
 
           {isLoading && (
             <div className="text-center">
               <div className="inline-block animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600"></div>
-              <p className="mt-2 text-gray-600">ИИ пытается решить вашу задачу...</p>
+              <p className="mt-2 text-gray-600">ИИ пытается решить ваши задачи...</p>
             </div>
           )}
 
-          {solution && (
-            <div className="bg-gray-50 rounded-lg p-4 sm:p-6 shadow-inner">
-              <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">Решение:</h2>
-              <div 
-                className="text-gray-800 whitespace-pre-wrap prose prose-sm sm:prose prose-blue max-w-none"
-                dangerouslySetInnerHTML={{ __html: formatSolution(solution.fullSolution) }}
-              />
+          {solutions.length > 0 && (
+            <div className="space-y-6">
+              {solutions.map((solution, index) => (
+                <div key={index} className="bg-gray-50 rounded-lg p-4 sm:p-6 shadow-inner">
+                  <h2 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">Решение задачи {index + 1}:</h2>
+                  {solution.error ? (
+                    <p className="text-red-500">{solution.error}</p>
+                  ) : (
+                    <div 
+                      className="text-gray-800 whitespace-pre-wrap prose prose-sm sm:prose prose-blue max-w-none"
+                      dangerouslySetInnerHTML={{ __html: formatSolution(solution.fullSolution) }}
+                    />
+                  )}
+                </div>
+              ))}
             </div>
           )}
         </div>

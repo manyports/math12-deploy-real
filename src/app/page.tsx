@@ -50,17 +50,17 @@ const Home: React.FC = () => {
         <section className="mb-20">
           <h2 className="text-3xl font-bold text-center text-blue-800 mb-12">Наши уникальные возможности</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition duration-300 hover:scale-110" onClick={() => window.location.href ="/imagesolver"}>
               <div className="text-blue-600 text-4xl mb-4">📸</div>
-              <h3 className="text-xl font-bold mb-4">Решение задач по фото</h3>
+              <h3 className="text-xl font-bold mb-4">Решение задач по фото</h3> 
               <p className="text-gray-600">Просто сфотографируйте задачу, и наш ИИ мгновенно предоставит подробное решение с объяснениями.</p>
             </div>
-            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition duration-300 hover:scale-110" onClick={() => window.location.href ="/test"}>
               <div className="text-blue-600 text-4xl mb-4">🎯</div>
               <h3 className="text-xl font-bold mb-4">Персонализированные тесты</h3>
               <p className="text-gray-600">Адаптивная система тестирования, которая подстраивается под ваш уровень знаний и помогает эффективно прогрессировать.</p>
             </div>
-            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition duration-300">
+            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition duration-300 hover:scale-110" onClick={() => window.location.href ="/chats"}>
               <div className="text-blue-600 text-4xl mb-4">💬</div>
               <h3 className="text-xl font-bold mb-4">ИИ-ассистент в чате</h3>
               <p className="text-gray-600">Задавайте вопросы в любое время и получайте мгновенные, подробные ответы от нашего умного ИИ-помощника.</p>

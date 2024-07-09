@@ -2,28 +2,8 @@
 
 import Image from "next/image";
 import { useEffect } from "react";
-import Lenis from '@studio-freight/lenis';
 
 export default function Dashboard() {
-
-    useEffect(() => {
-        const lenis = new Lenis({
-          duration: 1.2,
-          easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-        });
-    
-        const raf = (time: number) => {
-          lenis.raf(time);
-          requestAnimationFrame(raf);
-        };
-    
-        requestAnimationFrame(raf);
-    
-        return () => {
-          lenis.destroy();
-        };
-      }, []); 
-
     return (
         <div className="min-h-screen flex flex-col justify-between mx-4 md:mx-12 mt-8">
             <div className="flex-1 flex items-center justify-center flex-col mb-8">

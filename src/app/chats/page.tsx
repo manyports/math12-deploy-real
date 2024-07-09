@@ -106,7 +106,7 @@ const ChatComponent = () => {
           <div ref={messagesEndRef} />
         </div>
       </div>
-      <div className="w-full sticky bottom-0 py-4">
+      <div className="w-full sticky bottom-0 py-4 ">
         <div className="relative">
           <textarea
             className="w-full bg-white text-sm rounded-2xl resize-none p-4 pr-16 border border-gray-300 focus:border-blue-500 focus:ring focus:ring-blue-200 focus:ring-opacity-50 transition duration-300 ease-in-out"
