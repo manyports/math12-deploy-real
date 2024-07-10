@@ -22,7 +22,9 @@ export default function Login() {
       const data = await response.json();
       if (response.ok) {
         setMessage('Вход выполнен успешно!');
-        router.push('/dashboard');
+        setTimeout(() => {
+          router.push('/dashboard');
+        }, 1000);  
       } else {
         setMessage(data.message || 'Ошибка входа');
       }

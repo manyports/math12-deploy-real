@@ -2,6 +2,7 @@
 
 import React, { useEffect } from 'react';
 import Lenis from '@studio-freight/lenis';
+import ReactTypingEffect from 'react-typing-effect';
 
 const Home: React.FC = () => {
   useEffect(() => {
@@ -26,8 +27,14 @@ const Home: React.FC = () => {
     <div className="bg-white min-h-screen">
       <div className="container mx-auto px-4 py-16">
         <header className="text-center mb-16">
-          <h1 className="text-5xl font-extrabold text-blue-800 mb-4 text-center">
-            Революция в изучении математики
+        <h1 className="text-5xl font-extrabold text-blue-800 mb-4 text-center">
+            <ReactTypingEffect
+              text={["Революция в изучении математики", "Пойми математику сегодня"]}
+              speed={100}
+              eraseSpeed={100}
+              typingDelay={500}
+              eraseDelay={2000}
+            />
           </h1>
           <p className="text-xl text-gray-600 mb-8 text-center">
             Персонализированное обучение с использованием передовых технологий ИИ на базе НИШ

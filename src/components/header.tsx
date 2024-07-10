@@ -2,10 +2,12 @@
 
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useRouter } from 'next/navigation';
 
-export default function Navbar() {
+const Navbar: React.FC = () => {
     const [isOpen, setIsOpen] = useState(false);
     const [isMobile, setIsMobile] = useState(false);
+    const router = useRouter();
 
     useEffect(() => {
         const checkMobile = () => {
@@ -28,6 +30,12 @@ export default function Navbar() {
         setIsOpen(false);
     }
 
+    const handleDashboardClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
+        e.preventDefault();
+        router.push('/dashboard');
+        setIsOpen(false);
+    };
+
     const variants = {
         hidden: { opacity: 0, x: 100 },
         visible: { opacity: 1, x: 0 },
@@ -48,26 +56,26 @@ export default function Navbar() {
     return (
         <div className='relative z-50 mx-4 md:mx-[50px] pt-6 bg-transparent'>
             <nav className="flex items-center justify-between">
-                <a className={`text-2xl font-bold ${isOpen && isMobile ? 'hidden' : ''}`} href='/'>math12.ai</a>
+                <a className={`text-2xl font-bold ${isOpen && isMobile ? 'hidden' : ''} hover:text-gray-700`} href='/'>math12.ai</a>
                 <button 
-                type="button" 
-                className={`text-gray-500 hover:text-white focus:outline-none focus:text-white ${isMobile ? '' : 'hidden'}`} 
-                onClick={() => setIsOpen(!isOpen)}
+                    type="button" 
+                    className={`text-gray-500 hover:text-white focus:outline-none focus:text-white ${isMobile ? '' : 'hidden'}`} 
+                    onClick={() => setIsOpen(!isOpen)}
                 >
-                <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="#2563eb" 
-                    className="h-6 w-6"
-                >
-    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-  </svg>
-</button>
+                    <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        stroke="#2563eb" 
+                        className="h-6 w-6"
+                    >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
                 {!isMobile && (
                     <div className="flex space-x-4">
                         <a href="/" className="p-2 hover:underline hover:text-blue-600">Главная</a>
-                        <a href="/dashboard" className="p-2 hover:underline hover:text-blue-600">Личный кабинет</a>
+                        <a href="#" onClick={handleDashboardClick} className="p-2 hover:underline hover:text-blue-600">Личный кабинет</a>
                         <a href="/subscriptions" className="p-2 hover:underline hover:text-blue-600">Подписки</a>
                     </div>
                 )}
@@ -89,9 +97,9 @@ export default function Navbar() {
                             className="flex flex-col text-[30px] p-[7vh] justify-around"
                         >
                             <motion.div variants={variants} className='flex flex-col'>
-                                <a href="/" className="p-2 text-[#2563eb] font-extrabold">-&gt; Главная</a>
-                                <a href="/dashboard" className="p-2 text-[#2563eb] font-extrabold">-&gt; Кабинет</a>
-                                <a href="/subscriptions" className= "p-2 text-[#2563eb] font-extrabold">-&gt; Подписки </a>
+                                <a href="/" className="p-2 text-[#2563eb] font-extrabold" onClick={CloseBurger}>-&gt; Главная</a>
+                                <a href="#" onClick={handleDashboardClick} className="p-2 text-[#2563eb] font-extrabold">-&gt; Кабинет</a>
+                                <a href="/subscriptions" className= "p-2 text-[#2563eb] font-extrabold" onClick={CloseBurger}>-&gt; Подписки </a>
                             </motion.div>
                             <motion.div variants={variants} className='flex flex-col'>
                                 <button className='border rounded-2xl border-[#2563eb] text-[#2563eb] text-[24px] font-bold' onClick={CloseBurger}>Вернуться -&gt;</button>
@@ -103,3 +111,5 @@ export default function Navbar() {
         </div>
     );
 }
+
+export default Navbar;
