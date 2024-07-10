@@ -97,7 +97,7 @@ export default function TestPage() {
     return shuffleArray(testContent.questions[currentQuestion].answers);
   }, [testContent, currentQuestion]);
 
-  const handleAnswerOptionClick = (answerIndex: number, isCorrect: boolean) => {
+  const handleAnswerOptionClick = async (answerIndex: number, isCorrect: boolean) => {
     setUserAnswers([...userAnswers, answerIndex]);
 
     if (isCorrect) {
@@ -109,6 +109,15 @@ export default function TestPage() {
       setCurrentQuestion(nextQuestion);
     } else {
       setShowScore(true);
+      try {
+        await axios.post('https://math12-backend-production.up.railway.app/api/saveTestResult', {
+          topicId: id,
+          score: score + (isCorrect ? 1 : 0),
+          totalQuestions: testContent?.questions.length
+        }, { withCredentials: true });
+      } catch (error) {
+        console.error('Error saving test result:', error);
+      }
     }
   };
 
