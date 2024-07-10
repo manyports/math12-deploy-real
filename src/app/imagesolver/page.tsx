@@ -117,6 +117,7 @@ export default function SolveMath() {
       const response = await fetch('https://math12-backend-production.up.railway.app/api/solveMath', {
         method: 'POST',
         body: formData,
+        credentials: 'include'
       });
 
       if (!response.ok) {
