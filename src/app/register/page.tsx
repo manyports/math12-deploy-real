@@ -30,7 +30,7 @@ export default function Register() {
           setMessage(data.message || 'Ошибка регистрации');
         }
       } else {
-        const response = await fetch('https://math12-backend-production.up.railway.app/verify-otp', {
+        const response = await fetch('https://math12-backend-production.up.railway.app/api/verify-otp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, email, password, otp }),
