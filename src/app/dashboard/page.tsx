@@ -26,7 +26,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchUserTests = async () => {
       try {
-        const response = await axios.get('https://math12-backend-production.up.railway.app/api/getUserTests', { withCredentials: true });
+        const response = await axios.get('https://www.api.webdoors.tech/api/getUserTests', { withCredentials: true });
         setUserTests(response.data);
         setLoading(false);
       } catch (error) {
@@ -40,7 +40,7 @@ export default function DashboardPage() {
 
   const logout = async () => {
     try {
-      await axios.get('https://math12-backend-production.up.railway.app/api/logout', { withCredentials: true });
+      await axios.get('https://www.api.webdoors.tech/api/logout', { withCredentials: true });
       router.push('/login');
     } catch (error) {
       console.error('Error logging out:', error);

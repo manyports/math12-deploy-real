@@ -58,7 +58,7 @@ export default function TestPage() {
       loadingStageRef.current = 1;
       setLoadingStage(1);
       console.log('Loading stage:', 1);
-      const response = await axios.get(`https://math12-backend-production.up.railway.app/api/topics/${id}`, { withCredentials: true });
+      const response = await axios.get(`https://www.api.webdoors.tech/api/topics/${id}`, { withCredentials: true });
       console.log('Topic response:', response.data);
       const topic = response.data;
       await new Promise(resolve => setTimeout(resolve, 1500));
@@ -66,7 +66,7 @@ export default function TestPage() {
       loadingStageRef.current = 2;
       setLoadingStage(2);
       console.log('Loading stage:', 2);
-      const testResponse = await axios.post('https://math12-backend-production.up.railway.app/api/generateTest', {
+      const testResponse = await axios.post('https://www.api.webdoors.tech/api/generateTest', {
         topic: topic.topic,
         class: topic.class,
         term: topic.term
@@ -110,7 +110,7 @@ export default function TestPage() {
     } else {
       setShowScore(true);
       try {
-        await axios.post('https://math12-backend-production.up.railway.app/api/saveTestResult', {
+        await axios.post('https://www.api.webdoors.tech/api/saveTestResult', {
           topicId: id,
           score: score + (isCorrect ? 1 : 0),
           totalQuestions: testContent?.questions.length

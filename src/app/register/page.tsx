@@ -17,7 +17,7 @@ export default function Register() {
     e.preventDefault();
     try {
       if (!otpSent) {
-        const response = await fetch('https://math12-backend-production.up.railway.app/api/register', {
+        const response = await fetch('https://www.api.webdoors.tech/api/register', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, email, password }),
@@ -30,7 +30,7 @@ export default function Register() {
           setMessage(data.message || 'Ошибка регистрации');
         }
       } else {
-        const response = await fetch('https://math12-backend-production.up.railway.app/api/verify-otp', {
+        const response = await fetch('https://www.api.webdoors.tech/api/verify-otp', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ username, email, password, otp }),

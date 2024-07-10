@@ -40,7 +40,7 @@ export default function Test() {
   const [searchQuery, setSearchQuery] = useState<string>('');
 
   useEffect(() => {
-    axios.get('https://math12-backend-production.up.railway.app/api/topics', { withCredentials: true })
+    axios.get('https://www.api.webdoors.tech/api/topics', { withCredentials: true })
       .then(response => {
         setTopics(response.data);
       })
