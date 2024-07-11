@@ -13,23 +13,6 @@ export default function Register() {
   const [otpSent, setOtpSent] = useState(false);
   const router = useRouter();
 
-  const checkTokenAndRedirect = async () => {
-    const maxRetries = 10;
-    let retries = 0;
-    while (retries < maxRetries) {
-      const response = await fetch("/api/check-token", {
-        credentials: "include",
-      });
-      if (response.ok) {
-        router.push("/dashboard");
-        return;
-      }
-      retries++;
-      await new Promise((resolve) => setTimeout(resolve, 500)); // wait for 500ms before retrying
-    }
-    setMessage("Ошибка верификации токена");
-  };
-
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
@@ -40,7 +23,6 @@ export default function Register() {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ username, email, password }),
-            credentials: "include",
           }
         );
         const data = await response.json();
@@ -65,7 +47,9 @@ export default function Register() {
         const data = await response.json();
         if (response.ok) {
           setMessage("Регистрация успешна!");
-          await checkTokenAndRedirect();
+          setTimeout(() => {
+            router.push("/dashboard");
+          }, 2000);
         } else {
           setMessage(data.message || "Ошибка верификации кода");
         }
