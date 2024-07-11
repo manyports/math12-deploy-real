@@ -49,7 +49,7 @@ export default function Register() {
           setMessage("Регистрация успешна!");
           setTimeout(() => {
             router.push("/dashboard");
-          }, 2000);
+          }, 2500);
         } else {
           setMessage(data.message || "Ошибка верификации кода");
         }

@@ -24,7 +24,7 @@ export default function Login() {
         setMessage('Вход выполнен успешно!');
         setTimeout(() => {
           router.push('/dashboard');
-        }, 2000);  
+        }, 2500);  
       } else {
         setMessage(data.message || 'Ошибка входа');
       }
