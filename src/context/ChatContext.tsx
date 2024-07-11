@@ -119,6 +119,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ prompt: finalPrompt }),
+        credentials: 'include'
       });
 
       if (!response.ok) {
