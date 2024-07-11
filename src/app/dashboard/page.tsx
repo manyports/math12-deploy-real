@@ -21,6 +21,7 @@ interface TestTaken {
 export default function DashboardPage() {
   const [userTests, setUserTests] = useState<TestTaken[]>([]);
   const [loading, setLoading] = useState(true);
+  const [logoutError, setLogoutError] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -40,10 +41,15 @@ export default function DashboardPage() {
 
   const logout = async () => {
     try {
-      await axios.get('https://www.api.webdoors.tech/api/logout', { withCredentials: true });
-      router.push('/login');
+      const response = await axios.get('https://www.api.webdoors.tech/api/logout', { withCredentials: true });
+      if (response.status === 200) {
+        router.push('/login');
+      } else {
+        console.log('Logout failed. Please try again.');
+      }
     } catch (error) {
       console.error('Error logging out:', error);
+      console.log('An error occurred during logout. Please try again.');
     }
   };
 
