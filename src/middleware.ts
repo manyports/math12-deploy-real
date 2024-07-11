@@ -16,7 +16,7 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/dashboard', request.url));
     }
 
-    if (request.nextUrl.pathname === '/dashboard' && !isAuth) {
+    if (request.nextUrl.pathname === '/dashboard' || request.nextUrl.pathname === '/test' || request.nextUrl.pathname === '/imagesolver' || request.nextUrl.pathname === '/chats'  && !isAuth) {
         return NextResponse.redirect(new URL('/register', request.url));
     }
 
