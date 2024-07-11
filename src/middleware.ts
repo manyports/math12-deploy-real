@@ -16,11 +16,18 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/dashboard', request.url));
     }
 
-    if (request.nextUrl.pathname === '/dashboard' || request.nextUrl.pathname === '/test' || request.nextUrl.pathname === '/imagesolver' || request.nextUrl.pathname === '/chats'  && !isAuth) {
+    if (request.nextUrl.pathname === '/dashboard'  && !isAuth) {
         return NextResponse.redirect(new URL('/register', request.url));
     }
-
-    return NextResponse.next();
+        else if(request.nextUrl.pathname === '/chats' && !isAuth){
+            return NextResponse.redirect(new URL('/register', request.url));
+        }
+            else if(request.nextUrl.pathname === '/imagesolver' && !isAuth){
+                return NextResponse.redirect(new URL('/register', request.url));
+            }
+                else if(request.nextUrl.pathname === '/test' && !isAuth){
+                    return NextResponse.redirect(new URL('/register', request.url));
+                }
 }
 
 export const config = {
