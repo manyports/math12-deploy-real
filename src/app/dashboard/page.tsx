@@ -39,6 +39,7 @@ export default function DashboardPage() {
     fetchUserTests();
   }, []);
 
+  
   const logout = async () => {
     try {
       const response = await axios.get('https://www.api.webdoors.tech/api/logout', { withCredentials: true });
