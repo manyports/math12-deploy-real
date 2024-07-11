@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState, FormEvent } from 'react';
 import Link from "next/link";
 import { useRouter } from 'next/navigation';
+import React, { FormEvent, useState } from 'react';
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -24,7 +24,7 @@ export default function Login() {
         setMessage('Вход выполнен успешно!');
         setTimeout(() => {
           router.push('/dashboard');
-        }, 1000);  
+        }, 2000);  
       } else {
         setMessage(data.message || 'Ошибка входа');
       }

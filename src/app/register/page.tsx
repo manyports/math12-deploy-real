@@ -1,53 +1,77 @@
 "use client";
 
-import React, { useState, FormEvent } from 'react';
 import Link from "next/link";
-import { useRouter } from 'next/navigation';
+import { useRouter } from "next/navigation";
+import React, { FormEvent, useState } from "react";
 
 export default function Register() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [otp, setOtp] = useState('');
-  const [message, setMessage] = useState('');
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [otp, setOtp] = useState("");
+  const [message, setMessage] = useState("");
   const [otpSent, setOtpSent] = useState(false);
   const router = useRouter();
+
+  const checkTokenAndRedirect = async () => {
+    const maxRetries = 10;
+    let retries = 0;
+    while (retries < maxRetries) {
+      const response = await fetch("/api/check-token", {
+        credentials: "include",
+      });
+      if (response.ok) {
+        router.push("/dashboard");
+        return;
+      }
+      retries++;
+      await new Promise((resolve) => setTimeout(resolve, 500)); // wait for 500ms before retrying
+    }
+    setMessage("Ошибка верификации токена");
+  };
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       if (!otpSent) {
-        const response = await fetch('https://www.api.webdoors.tech/api/register', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, email, password }),
-        });
+        const response = await fetch(
+          "https://www.api.webdoors.tech/api/register",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, email, password }),
+            credentials: "include",
+          }
+        );
         const data = await response.json();
         if (response.ok) {
-          setMessage('Шестизначный код отправлен на вашу почту. Проверьте папку "спам".');
+          setMessage(
+            'Шестизначный код отправлен на вашу почту. Проверьте папку "спам".'
+          );
           setOtpSent(true);
         } else {
-          setMessage(data.message || 'Ошибка регистрации');
+          setMessage(data.message || "Ошибка регистрации");
         }
       } else {
-        const response = await fetch('https://www.api.webdoors.tech/api/verify-otp', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ username, email, password, otp }),
-          credentials: 'include'
-        });
+        const response = await fetch(
+          "https://www.api.webdoors.tech/api/verify-otp",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ username, email, password, otp }),
+            credentials: "include",
+          }
+        );
         const data = await response.json();
         if (response.ok) {
-          setMessage('Регистрация успешна!');
-          setTimeout(() => {
-            router.push('/dashboard');
-          }, 1000);
+          setMessage("Регистрация успешна!");
+          await checkTokenAndRedirect();
         } else {
-          setMessage(data.message || 'Ошибка верификации кода');
+          setMessage(data.message || "Ошибка верификации кода");
         }
       }
     } catch (error) {
-      setMessage('Произошла ошибка');
+      setMessage("Произошла ошибка");
     }
   };
 
@@ -123,14 +147,19 @@ export default function Register() {
               type="submit"
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
             >
-              {otpSent ? 'Подтвердить код' : 'Зарегистрироваться'}
+              {otpSent ? "Подтвердить код" : "Зарегистрироваться"}
             </button>
           </div>
         </form>
-        {message && <p className="mt-2 text-center text-sm text-red-600">{message}</p>}
+        {message && (
+          <p className="mt-2 text-center text-sm text-red-600">{message}</p>
+        )}
         <p className="mt-2 text-center text-sm text-gray-600">
           Уже есть аккаунт?{" "}
-          <Link href="/login" className="font-medium text-blue-600 hover:text-blue-500">
+          <Link
+            href="/login"
+            className="font-medium text-blue-600 hover:text-blue-500"
+          >
             Войти
           </Link>
         </p>
