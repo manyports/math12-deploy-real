@@ -27,8 +27,7 @@ export const useChatContext = () => {
   return context;
 };
 
-const INITIAL_QUESTIONS = 5;
-const RESET_INTERVAL = 24 * 60 * 60 * 1000; 
+const INITIAL_QUESTIONS = 10;
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [input, setInput] = useState<string>('');
@@ -37,59 +36,52 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [remainingQuestions, setRemainingQuestions] = useState<number>(INITIAL_QUESTIONS);
 
   useEffect(() => {
-    const loadSavedData = () => {
-      const savedMessages = localStorage.getItem('chatMessages');
-      if (savedMessages) {
-        setMessages(JSON.parse(savedMessages));
-      }
-
-      const savedQuestionsData = localStorage.getItem('questionsData');
-      if (savedQuestionsData) {
-        const { remaining, lastReset } = JSON.parse(savedQuestionsData);
-        const now = Date.now();
-        if (now - lastReset > RESET_INTERVAL) {
-          setRemainingQuestions(INITIAL_QUESTIONS);
-          saveQuestionsData(INITIAL_QUESTIONS);
-        } else {
-          setRemainingQuestions(remaining);
-        }
-      } else {
-        saveQuestionsData(INITIAL_QUESTIONS);
-      }
-    };
-
-    loadSavedData();
+    fetchChatHistory();
   }, []);
 
-  useEffect(() => {
-    if (messages.length > 0) {
-      localStorage.setItem('chatMessages', JSON.stringify(messages));
+  const fetchChatHistory = async () => {
+    try {
+      const response = await fetch('https://www.api.webdoors.tech/api/chat/history', {
+        credentials: 'include'
+      });
+      if (response.ok) {
+        const data = await response.json();
+        setMessages(data.history);
+        setRemainingQuestions(data.remainingQuestions);
+      }
+    } catch (error) {
+      console.error('Error fetching chat history:', error);
     }
-  }, [messages]);
-
-  const saveQuestionsData = (remaining: number) => {
-    const data = { remaining, lastReset: Date.now() };
-    localStorage.setItem('questionsData', JSON.stringify(data));
   };
 
-  const newChat = () => {
-    setMessages([]);
-    localStorage.removeItem('chatMessages');
-    saveQuestionsData(INITIAL_QUESTIONS);
+  const newChat = async () => {
+    try {
+      await fetch('https://www.api.webdoors.tech/api/chat/new', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      setMessages([]);
+      setRemainingQuestions(INITIAL_QUESTIONS);
+    } catch (error) {
+      console.error('Error creating new chat:', error);
+    }
   };
 
   const processGeminiResponse = (response: string): string => {
-    response = response.replace(/\$\$(.*?)\$\$/gs, (match, p1) => `\\[${p1}\\]`);
-    response = response.replace(/\$(.*?)\$/g, (match, p1) => `\\(${p1}\\)`);
+    response = response.replace(/\$\$(.*?)\$\$/gs, (_, p1) => `\\[${p1}\\]`);
+    response = response.replace(/\$(.*?)\$/g, (_, p1) => `\\(${p1}\\)`);
     response = response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
     response = response.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    response = response.replace(/## (.*?)$/gm, '<h2>$1</h2>');
-    response = response.replace(/# (.*?)$/gm, '<h1>$1</h1>');
+    response = response.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
+    response = response.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
+    response = response.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
+    response = response.replace(/\n/g, '<br>');
+    response = response.replace(/^\* (.*?)$/gm, '<li>$1</li>');
+    response = response.replace(/^- (.*?)$/gm, '<li>$1</li>');
     response = response.replace(/---/g, '<hr>');
     response = response.replace(/^\> (.*?)$/gm, '<blockquote>$1</blockquote>');
     response = response.replace(/`(.*?)`/g, '<code>$1</code>');
     response = response.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
-
     return response;
   };
 
@@ -106,11 +98,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
     const updatedMessages = [...messages, humanMessage];
     setMessages(updatedMessages);
-    localStorage.setItem('chatMessages', JSON.stringify(updatedMessages));
-
-    const newRemaining = remainingQuestions - 1;
-    setRemainingQuestions(newRemaining);
-    saveQuestionsData(newRemaining);
 
     try {
       const response = await fetch('https://www.api.webdoors.tech/api/chat', {
@@ -135,7 +122,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
       const finalMessages = [...updatedMessages, aiMessage];
       setMessages(finalMessages);
-      localStorage.setItem('chatMessages', JSON.stringify(finalMessages));
+      setRemainingQuestions(data.remainingQuestions);
     } catch (error) {
       console.error('Error:', error);
       const errorMessage: Message = {
@@ -145,7 +132,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       };
       const finalMessages = [...updatedMessages, errorMessage];
       setMessages(finalMessages);
-      localStorage.setItem('chatMessages', JSON.stringify(finalMessages));
     } finally {
       setLoading(false);
       setInput('');
