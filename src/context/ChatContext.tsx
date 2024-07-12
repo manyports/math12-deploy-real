@@ -12,7 +12,6 @@ interface ChatContextType {
   setInput: (input: string) => void;
   messages: Message[];
   loading: boolean;
-  remainingQuestions: number;
   newChat: () => void;
   onSent: (prompt?: string) => void;
 }
@@ -27,13 +26,10 @@ export const useChatContext = () => {
   return context;
 };
 
-const INITIAL_QUESTIONS = 10;
-
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [input, setInput] = useState<string>('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [remainingQuestions, setRemainingQuestions] = useState<number>(INITIAL_QUESTIONS);
 
   useEffect(() => {
     fetchChatHistory();
@@ -47,7 +43,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       if (response.ok) {
         const data = await response.json();
         setMessages(data.history);
-        setRemainingQuestions(data.remainingQuestions);
       }
     } catch (error) {
       console.error('Error fetching chat history:', error);
@@ -61,7 +56,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         credentials: 'include'
       });
       setMessages([]);
-      setRemainingQuestions(INITIAL_QUESTIONS);
     } catch (error) {
       console.error('Error creating new chat:', error);
     }
@@ -86,8 +80,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const onSent = async (prompt?: string) => {
-    if (remainingQuestions <= 0) return;
-
     setLoading(true);
     const finalPrompt = prompt || input;
     const humanMessage: Message = {
@@ -122,7 +114,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
       const finalMessages = [...updatedMessages, aiMessage];
       setMessages(finalMessages);
-      setRemainingQuestions(data.remainingQuestions);
     } catch (error) {
       console.error('Error:', error);
       const errorMessage: Message = {
@@ -145,7 +136,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         setInput,
         messages,
         loading,
-        remainingQuestions,
         newChat,
         onSent,
       }}

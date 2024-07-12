@@ -13,7 +13,7 @@ declare global {
 }
 
 const ChatComponent = () => {
-  const { input, setInput, messages, loading, remainingQuestions, onSent, newChat } = useChatContext();
+  const { input, setInput, messages, loading, onSent, newChat } = useChatContext();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const [showScrollButton, setShowScrollButton] = useState(false);
 
@@ -55,9 +55,6 @@ const ChatComponent = () => {
         <div className="max-w-4xl mx-auto flex justify-between items-center">
           <h1 className="text-2xl font-bold text-white">MathAI Chat 🤖</h1>
           <div className="flex items-center space-x-4">
-            <p className="text-sm font-medium text-white">
-              Осталось вопросов: <span className="font-bold">{remainingQuestions}</span>
-            </p>
             <button 
               onClick={newChat} 
               className="px-4 py-2 bg-white text-blue-600 text-sm font-medium rounded-md hover:bg-opacity-90 transition duration-300 ease-in-out"
@@ -127,12 +124,11 @@ const ChatComponent = () => {
               rows={2}
               value={input}
               onChange={handleInputChange}
-              disabled={remainingQuestions <= 0}
             />
             <button
               className="absolute right-2 bottom-2 bg-blue-600 text-white rounded-full p-2 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition duration-300 ease-in-out"
               onClick={handleSendMessage}
-              disabled={loading || remainingQuestions <= 0}
+              disabled={loading}
             >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
                 <path d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z" />
