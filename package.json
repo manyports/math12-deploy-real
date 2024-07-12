@@ -29,7 +29,8 @@
     "react-hot-toast": "^2.4.1",
     "react-icons": "^5.2.1",
     "react-type-animation": "^3.2.0",
-    "react-typing-effect": "^2.0.5"
+    "react-typing-effect": "^2.0.5",
+    "whatwg-fetch": "^3.6.20"
   },
   "devDependencies": {
     "@svgr/webpack": "^8.1.0",

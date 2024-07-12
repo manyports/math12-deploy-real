@@ -35,6 +35,24 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     fetchChatHistory();
   }, []);
 
+  const processGeminiResponse = (response: string): string => {
+    response = response.replace(/\$\$(.*?)\$\$/gs, (_, p1) => `\\[${p1}\\]`);
+    response = response.replace(/\$(.*?)\$/g, (_, p1) => `\\(${p1}\\)`);
+    response = response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    response = response.replace(/\*(.*?)\*/g, '<em>$1</em>');
+    response = response.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
+    response = response.replace(/^## (.*?)$/gm, '<h2>$1</2>');
+    response = response.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
+    response = response.replace(/\n/g, '<br>');
+    response = response.replace(/^\* (.*?)$/gm, '<li>$1</li>');
+    response = response.replace(/^- (.*?)$/gm, '<li>$1</li>');
+    response = response.replace(/---/g, '<hr>');
+    response = response.replace(/^\> (.*?)$/gm, '<blockquote>$1</blockquote>');
+    response = response.replace(/`(.*?)`/g, '<code>$1</code>');
+    response = response.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
+    return response;
+  };
+
   const fetchChatHistory = async () => {
     try {
       const response = await fetch('https://www.api.webdoors.tech/api/chat/history', {
@@ -42,7 +60,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       });
       if (response.ok) {
         const data = await response.json();
-        setMessages(data.history);
+        const processedMessages = data.history.map((message: Message) => ({
+          ...message,
+          content: message.role === 'ai' ? processGeminiResponse(message.content) : message.content,
+        }));
+        setMessages(processedMessages);
       }
     } catch (error) {
       console.error('Error fetching chat history:', error);
@@ -59,24 +81,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     } catch (error) {
       console.error('Error creating new chat:', error);
     }
-  };
-
-  const processGeminiResponse = (response: string): string => {
-    response = response.replace(/\$\$(.*?)\$\$/gs, (_, p1) => `\\[${p1}\\]`);
-    response = response.replace(/\$(.*?)\$/g, (_, p1) => `\\(${p1}\\)`);
-    response = response.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-    response = response.replace(/\*(.*?)\*/g, '<em>$1</em>');
-    response = response.replace(/^# (.*?)$/gm, '<h1>$1</h1>');
-    response = response.replace(/^## (.*?)$/gm, '<h2>$1</h2>');
-    response = response.replace(/^### (.*?)$/gm, '<h3>$1</h3>');
-    response = response.replace(/\n/g, '<br>');
-    response = response.replace(/^\* (.*?)$/gm, '<li>$1</li>');
-    response = response.replace(/^- (.*?)$/gm, '<li>$1</li>');
-    response = response.replace(/---/g, '<hr>');
-    response = response.replace(/^\> (.*?)$/gm, '<blockquote>$1</blockquote>');
-    response = response.replace(/`(.*?)`/g, '<code>$1</code>');
-    response = response.replace(/\[(.*?)\]\((.*?)\)/g, '<a href="$2">$1</a>');
-    return response;
   };
 
   const onSent = async (prompt?: string) => {
