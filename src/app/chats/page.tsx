@@ -53,7 +53,7 @@ const ChatComponent = () => {
     <div className="flex flex-col h-screen bg-gradient-to-br from-blue-500 to-purple-600">
       <header className="bg-white bg-opacity-10 backdrop-blur-md shadow-md p-4 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-white">MathAI Chat 👾</h1>
+          <h1 className="text-2xl font-bold text-white">MathAI Chat 🤖</h1>
           <div className="flex items-center space-x-4">
             <p className="text-sm font-medium text-white">
               Осталось вопросов: <span className="font-bold">{remainingQuestions}</span>
