@@ -24,13 +24,14 @@ export default function RootLayout({
       <head>
         <Script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" strategy="afterInteractive" />
       </head>
-      <ChatProvider>
-        <body className={inter.className}>
+      <body className={inter.className}>
+        <ChatProvider>
+          <Analytics />
           <Navbar />  
           {children}
           <Footer />
-        </body>
-      </ChatProvider>
+        </ChatProvider>
+      </body>
     </html>
   );
 }
