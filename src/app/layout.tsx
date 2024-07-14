@@ -5,6 +5,7 @@ import Navbar from "@/components/header";
 import Footer from "@/components/footer";
 import { ChatProvider } from '../context/ChatContext';
 import Script from 'next/script';
+import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({ subsets: ["latin"] });
 
