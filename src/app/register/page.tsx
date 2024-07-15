@@ -48,8 +48,9 @@ export default function Register() {
         if (response.ok) {
           setMessage("Регистрация успешна!");
           setTimeout(() => {
-            router.push("/dashboard");
-          }, 2500);
+            router.push('/dashboard');
+            window.location.reload();
+          }, 1000);  
         } else {
           setMessage(data.message || "Ошибка верификации кода");
         }
