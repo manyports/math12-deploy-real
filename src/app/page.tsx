@@ -39,14 +39,14 @@ const Home: React.FC = () => {
           <p className="text-xl text-gray-600 mb-8 text-center">
             Персонализированное обучение с использованием передовых технологий ИИ на базе НИШ
           </p>
-          <div className="flex justify-center space-x-4">
+          <div className="flex justify-center space-x-4 ">
             <button 
-            className="bg-blue-600 text-white px-6 py-3 rounded-full text-lg font-semibold hover:bg-blue-700 transition duration-300"
+            className="bg-blue-600 text-white px-6 py-2 rounded-full text-lg font-semibold hover:bg-blue-700 transition duration-300 w-1/2"
             onClick={() => window.location.href = "/test"}>
               Начать тест
             </button>
             <button 
-            className="bg-white text-blue-600 px-6 py-3 rounded-full text-lg font-semibold border-2 border-blue-600 hover:bg-blue-50 transition duration-300"
+            className="bg-white text-blue-600 px-6 py-3 rounded-full text-lg font-semibold border-2 border-blue-600 hover:bg-blue-50 transition duration-300 w-1/2"
             onClick={() => window.location.href = "https://t.me/math12_sup_bot"}
             >
               Связаться с нами
