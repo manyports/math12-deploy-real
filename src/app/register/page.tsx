@@ -18,7 +18,7 @@ export default function Register() {
     try {
       if (!otpSent) {
         const response = await fetch(
-          "https://www.api.webdoors.tech/api/register",
+          "https://www.api.math12.studio/api/register",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -36,7 +36,7 @@ export default function Register() {
         }
       } else {
         const response = await fetch(
-          "https://www.api.webdoors.tech/api/verify-otp",
+          "https://www.api.math12.studio/api/verify-otp",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

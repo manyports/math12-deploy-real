@@ -114,7 +114,7 @@ export default function SolveMath() {
     });
 
     try {
-      const response = await fetch('https://www.api.webdoors.tech/api/solveMath', {
+      const response = await fetch('https://www.api.math12.studio/api/solveMath', {
         method: 'POST',
         body: formData,
         credentials: 'include'

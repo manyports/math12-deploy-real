@@ -55,7 +55,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
   const fetchChatHistory = async () => {
     try {
-      const response = await fetch('https://www.api.webdoors.tech/api/chat/history', {
+      const response = await fetch('https://www.api.math12.studio/api/chat/history', {
         credentials: 'include'
       });
       if (response.ok) {
@@ -73,7 +73,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
   const newChat = async () => {
     try {
-      await fetch('https://www.api.webdoors.tech/api/chat/new', {
+      await fetch('https://www.api.math12.studio/api/chat/new', {
         method: 'POST',
         credentials: 'include'
       });
@@ -96,7 +96,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     setMessages(updatedMessages);
 
     try {
-      const response = await fetch('https://www.api.webdoors.tech/api/chat', {
+      const response = await fetch('https://www.api.math12.studio/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

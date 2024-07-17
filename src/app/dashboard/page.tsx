@@ -27,7 +27,7 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchUserTests = async () => {
       try {
-        const response = await axios.get('https://www.api.webdoors.tech/api/getUserTests', { withCredentials: true });
+        const response = await axios.get('https://www.api.math12.studio/api/getUserTests', { withCredentials: true });
         setUserTests(response.data);
         setLoading(false);
       } catch (error) {
@@ -42,7 +42,7 @@ export default function DashboardPage() {
   
   const logout = async () => {
     try {
-      const response = await axios.get('https://www.api.webdoors.tech/api/logout', { withCredentials: true });
+      const response = await axios.get('https://www.api.math12.studio/api/logout', { withCredentials: true });
       if (response.status === 200) {
         router.push('/login');
       } else {

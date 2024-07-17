@@ -13,7 +13,7 @@ export default function Login() {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await fetch('https://www.api.webdoors.tech/api/login', {
+      const response = await fetch('https://www.api.math12.studio/api/login', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),
