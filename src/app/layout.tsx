@@ -23,6 +23,10 @@ export default function RootLayout({
     <html lang="en">
       <head>
         <Script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" strategy="afterInteractive" />
+        <meta property="og:title" content="math12 - ваш учитель математики НИШ" />
+        <meta property="og:description" content="ИИ-стартап, нацеленный на развитие математических знаний у казахстанцев на базе силлабуса НИШ 😎" />
+        <meta property="og:image" content="https://utfs.io/f/55096462-99f2-42fa-8ba0-79e1ed992be3-934hm2.png" />
+        <meta property="og:type" content="website" />
       </head>
       <body className={inter.className}>
         <ChatProvider>
