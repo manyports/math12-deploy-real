@@ -21,7 +21,6 @@ interface TestTaken {
 export default function DashboardPage() {
   const [userTests, setUserTests] = useState<TestTaken[]>([]);
   const [loading, setLoading] = useState(true);
-  const [logoutError, setLogoutError] = useState('');
   const router = useRouter();
 
   useEffect(() => {
@@ -39,18 +38,12 @@ export default function DashboardPage() {
     fetchUserTests();
   }, []);
 
-  
   const logout = async () => {
     try {
-      const response = await axios.get('https://www.api.math12.studio/api/logout', { withCredentials: true });
-      if (response.status === 200) {
-        router.push('/login');
-      } else {
-        console.log('Logout failed. Please try again.');
-      }
+      await axios.get('https://www.api.math12.studio/api/logout', { withCredentials: true });
+      router.push('/login');
     } catch (error) {
       console.error('Error logging out:', error);
-      console.log('An error occurred during logout. Please try again.');
     }
   };
 
@@ -113,6 +106,29 @@ export default function DashboardPage() {
           </div>
         </div>
       </div>
+      <div className='mt-8 flex flex-col'>
+  <div>
+    <p className="font-bold text-2xl md:text-4xl text-blue-600">🚗 Математические гонки</p>
+  </div>
+  <div className='flex justify-center mt-6 flex-col items-center'>
+    <p className="text-gray-600 text-lg md:text-xl text-center mb-6">
+      Соревнуйтесь с друзьями и узнайте, кто лучше в математике!
+    </p>
+    <div className="bg-card text-card-foreground rounded-lg p-6 shadow-md w-full md:w-3/4 flex flex-col items-center justify-between">
+      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-12 w-12 mb-4 text-blue-600">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+      </svg>
+      <h2 className="text-2xl font-bold mb-4 text-center">Начать соревнование</h2>
+      <p className="mb-4 text-center">Проверьте свои навыки, заработайте очки и поднимитесь на вершину рейтинга!</p>
+      <button 
+        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600"
+        onClick={() => router.push('/gamification')}
+      >
+        🏆 Начать игру
+      </button>
+    </div>
+  </div>
+</div>
       <div className="mt-8 flex flex-col">
         <div>
           <p className="font-bold text-2xl md:text-4xl text-blue-600">Ваши пройденные тесты</p>
@@ -130,7 +146,7 @@ export default function DashboardPage() {
                     className="px-4 py-4 sm:px-6 hover:bg-gray-50"
                   >
                     <div className="flex items-center justify-between">
-                      <div className="text-xl font-semibold text-blue-600 truncate">
+                      <div className="text-xl font-semibol text-blue-600 truncate">
                         {test.topicId.topic}
                       </div>
                       <div className="ml-2 flex-shrink-0 flex">
