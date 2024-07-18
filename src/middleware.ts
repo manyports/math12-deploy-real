@@ -11,7 +11,8 @@ export function middleware(request: NextRequest) {
     const pathname = request.nextUrl.pathname;
 
     const isAuthPage = pathname === '/register' || pathname === '/login';
-    const protectedRoutes = ['/dashboard', '/imagesolver', '/chats', '/test'];
+    const protectedRoutes = ['/dashboard', '/imagesolver', '/chats', '/test', '/special-test', '/gamification'
+    ];
 
     if (isAuthPage && isAuth) {
         return NextResponse.redirect(new URL('/dashboard', request.url));
@@ -23,5 +24,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/dashboard', '/register', '/login', '/imagesolver', '/chats', '/test'],
+    matcher: ['/dashboard', '/register', '/login', '/imagesolver', '/chats', '/test', 'special-test', '/gamification'],
 };
