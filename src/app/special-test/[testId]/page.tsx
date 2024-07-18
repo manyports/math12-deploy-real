@@ -66,8 +66,6 @@ export default function SpecialTestPage() {
       setScore(score + 1);
     }
 
-
-    
     const nextQuestion = currentQuestion + 1;
     if (nextQuestion < (testContent?.questions.length || 0)) {
       setCurrentQuestion(nextQuestion);
