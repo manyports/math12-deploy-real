@@ -24,5 +24,5 @@ export function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/dashboard', '/register', '/login', '/imagesolver', '/chats', '/test', 'special-test', '/gamification'],
+    matcher: ['/dashboard', '/register', '/login', '/imagesolver', '/chats', '/test', '/special-test', '/gamification'],
 };
