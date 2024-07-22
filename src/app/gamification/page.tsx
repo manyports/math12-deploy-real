@@ -108,30 +108,31 @@ export default function GamificationPage() {
         </motion.h1>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <motion.div
-  initial={{ x: -100, opacity: 0 }}
-  animate={{ x: 0, opacity: 1 }}
-  transition={{ delay: 0.2 }}
-  className="bg-white rounded-xl shadow-lg overflow-hidden"
->
-  <div className="bg-blue-600 text-white p-6">
-    <h2 className="text-2xl font-bold">Ваша серия побед</h2>
-  </div>
-  <div className="w-full flex justify-center">
-    <div className="w-1/2 my-2"></div>
-  </div>
-  <div className="p-6 flex flex-col justify-center items-center">
-    <p className="text-5xl font-bold text-center text-blue-600">
-      {userStreak?.streak || 0}
-    </p>
-    <p className="text-center mt-2 text-gray-600">огоньков 🔥</p>
-    {userStreak && (
-      <p className="text-center mt-2 text-sm text-gray-500">
-        Последнее обновление: {new Date(userStreak.lastUpdateDate).toLocaleDateString()}
-      </p>
-    )}
-  </div>
-</motion.div>
+          <motion.div
+            initial={{ x: -100, opacity: 0 }}
+            animate={{ x: 0, opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="bg-white rounded-xl shadow-lg overflow-hidden"
+          >
+            <div className="bg-blue-600 text-white p-6">
+              <h2 className="text-2xl font-bold">Ваша серия побед</h2>
+            </div>
+            <div className="w-full flex justify-center">
+              <div className="w-1/2 my-2"></div>
+            </div>
+            <div className="p-6 flex flex-col justify-center items-center">
+              <p className="text-5xl font-bold text-center text-blue-600">
+                {userStreak?.streak || 0}
+              </p>
+              <p className="text-center mt-2 text-gray-600">огоньков 🔥</p>
+              {userStreak && (
+                <p className="text-center mt-2 text-sm text-gray-500">
+                  Последнее обновление:{" "}
+                  {new Date(userStreak.lastUpdateDate).toLocaleDateString()}
+                </p>
+              )}
+            </div>
+          </motion.div>
 
           <motion.div
             initial={{ x: 100, opacity: 0 }}
@@ -143,19 +144,19 @@ export default function GamificationPage() {
               <h2 className="text-2xl font-bold">Таблица лидеров</h2>
             </div>
             <ul className="divide-y divide-gray-200">
-            {leaderboard.slice(0, 5).map((player, index) => (
-              <li
-                key={player.userId}
-                className="flex justify-between items-center p-4"
-              >
-                <span className="font-semibold">
-                  {index + 1}. {player.username}
-                </span>
-                <span className="text-blue-600 font-bold">
-                  {player.streak} 🔥
-                </span>
-              </li>
-            ))}
+              {leaderboard.slice(0, 5).map((player, index) => (
+                <li
+                  key={player.userId}
+                  className="flex justify-between items-center p-4"
+                >
+                  <span className="font-semibold">
+                    {index + 1}. {player.username}
+                  </span>
+                  <span className="text-blue-600 font-bold">
+                    {player.streak} 🔥
+                  </span>
+                </li>
+              ))}
             </ul>
           </motion.div>
         </div>
@@ -171,15 +172,20 @@ export default function GamificationPage() {
           </h2>
           <p className="text-center mb-6 text-xl">
             Пройдите особенный тест с вопросами из разных четвертей и классов!
+            (Сброс каждый день в 9:05 утра по Астане)
           </p>
           <div className="flex justify-center">
-          <button
-            className="bg-white text-blue-600 font-bold py-3 px-6 rounded-full hover:bg-blue-100 transition duration-300 disabled:opacity-50 text-lg"
-            onClick={handleStartSpecialTest}
-            disabled={loading || !specialTestId || testCompleted}
-          >
-            {loading ? "Загрузка..." : testCompleted ? "Тест уже пройден" : "Начать особенный тест"}
-          </button>
+            <button
+              className="bg-white text-blue-600 font-bold py-3 px-6 rounded-full hover:bg-blue-100 transition duration-300 disabled:opacity-50 text-lg"
+              onClick={handleStartSpecialTest}
+              disabled={loading || !specialTestId || testCompleted}
+            >
+              {loading
+                ? "Загрузка..."
+                : testCompleted
+                ? "Тест уже пройден"
+                : "Начать особенный тест"}
+            </button>
           </div>
         </motion.div>
       </div>
