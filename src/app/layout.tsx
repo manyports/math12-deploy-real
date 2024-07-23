@@ -22,6 +22,14 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head>
+      <Script async src="https://www.googletagmanager.com/gtag/js?id=G-HQVTHW994V"></Script>
+      <Script id="google-analytics">
+        {`window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-HQVTHW994V');`}
+      </Script>
         <Script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" strategy="afterInteractive" />
         <meta property="og:title" content="math12 - ваш учитель математики НИШ" />
         <meta property="og:description" content="ИИ-стартап, нацеленный на развитие математических знаний у казахстанцев на базе силлабуса НИШ 😎" />
