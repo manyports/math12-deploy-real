@@ -42,8 +42,8 @@ const Home: React.FC = () => {
           <div className="flex justify-center space-x-4 ">
             <button 
             className="bg-blue-600 text-white px-6 py-2 rounded-full text-md font-semibold hover:bg-blue-700 transition duration-300"
-            onClick={() => window.location.href = "/test"}>
-              Начать тест
+            onClick={() => window.location.href = "/register"}>
+              Зарегистрируйся сейчас
             </button>
             <button 
             className="bg-white text-blue-600 px-6 py-3 rounded-full text-md font-semibold border-2 border-blue-600 hover:bg-blue-50 transition duration-300"
