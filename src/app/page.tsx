@@ -43,7 +43,7 @@ const Home: React.FC = () => {
             <button 
             className="bg-blue-600 text-white px-6 py-2 rounded-full text-md font-semibold hover:bg-blue-700 transition duration-300"
             onClick={() => window.location.href = "/register"}>
-              Зарегистрируйся сейчас
+              Войти в аккаунт
             </button>
             <button 
             className="bg-white text-blue-600 px-6 py-3 rounded-full text-md font-semibold border-2 border-blue-600 hover:bg-blue-50 transition duration-300"
