@@ -30,6 +30,10 @@ export default function RootLayout({
 
         gtag('config', 'G-HQVTHW994V');`}
       </Script>
+      <Script defer src="https://api.pirsch.io/pa.js"
+      id="pianjs"
+      data-code="bG2VUg6L0jd4o31kxeBltdQCrY5hBqPh">
+      </Script>
         <Script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" strategy="afterInteractive" />
         <meta property="og:title" content="math12 - ваш учитель математики НИШ" />
         <meta property="og:description" content="ИИ-стартап, нацеленный на развитие математических знаний у казахстанцев на базе силлабуса НИШ 😎" />
