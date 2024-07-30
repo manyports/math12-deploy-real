@@ -39,6 +39,7 @@ export default function RootLayout({
         <meta property="og:description" content="ИИ-стартап, нацеленный на развитие математических знаний у казахстанцев на базе силлабуса НИШ 😎" />
         <meta property="og:image" content="https://utfs.io/f/55096462-99f2-42fa-8ba0-79e1ed992be3-934hm2.png" />
         <meta property="og:type" content="website" />
+        <meta name="description" content="ИИ-стартап, нацеленный на развитие математических знаний у казахстанцев на базе силлабуса НИШ 😎"></meta>
         <link rel="canonical" href="https://math12.studio/" />
       </head>
       <body className={inter.className}>
