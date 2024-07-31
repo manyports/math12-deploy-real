@@ -223,8 +223,7 @@ export default function SolveMath() {
                 htmlFor="mathImage"
                 className="block text-sm font-medium text-gray-700 mb-2"
               >
-                Загрузите или вставьте изображения своих задач (лимит: 10
-                попыток за 24 часа)
+                Загрузите или вставьте изображения своих задач 
               </label>
               <div
                 className="mt-1 flex justify-center px-4 sm:px-6 pt-4 sm:pt-5 pb-4 sm:pb-6 border-2 border-gray-300 border-dashed rounded-md cursor-pointer hover:border-blue-500 transition-colors"
