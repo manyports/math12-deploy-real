@@ -99,61 +99,40 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const onSent = async (prompt?: string) => {
-    setLoading(true);
-    const finalPrompt = prompt || input;
-    const humanMessage: Message = {
-      role: 'human',
-      content: finalPrompt,
-      timestamp: Date.now(),
-    };
-  
-    console.log('Adding human message:', humanMessage);
-    const updatedMessages = [...messages, humanMessage];
-    console.log('Updated messages after adding human message:', updatedMessages);
-    setMessages(updatedMessages);
-  
-    try {
-      const response = await fetch('https://www.api.math12.studio/api/chat', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ prompt: finalPrompt }),
-        credentials: 'include'
-      });
-  
-      if (!response.ok) {
-        throw new Error('Failed to fetch response from API');
-      }
-  
-      const data = await response.json();
-      console.log('Received AI response:', data);
-  
-      const aiMessage: Message = {
-        role: 'ai',
-        content: processGeminiResponse(data.text),
-        timestamp: Date.now(),
-      };
-  
-      console.log('Processed AI message:', aiMessage);
-      const finalMessages = [...updatedMessages, aiMessage];
-      console.log('Final messages after adding AI response:', finalMessages);
-      setMessages(finalMessages);
-    } catch (error) {
-      console.error('Error:', error);
-      const errorMessage: Message = {
-        role: 'ai',
-        content: 'An error occurred while processing your request.',
-        timestamp: Date.now(),
-      };
-      const finalMessages = [...updatedMessages, errorMessage];
-      console.log('Final messages after error:', finalMessages);
-      setMessages(finalMessages);
-    } finally {
-      setLoading(false);
-      setInput('');
+  setLoading(true);
+  const finalPrompt = prompt || input;
+
+  try {
+    const response = await fetch('https://www.api.math12.studio/api/chat', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ prompt: finalPrompt }),
+      credentials: 'include'
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch response from API');
     }
-  };
+
+    const data = await response.json();
+
+    // Обновление локального состояния
+    setMessages(prevMessages => [
+      ...prevMessages,
+      { role: 'human', content: finalPrompt, timestamp: Date.now() },
+      { role: 'ai', content: processGeminiResponse(data.text), timestamp: Date.now() }
+    ]);
+
+  } catch (error) {
+    console.error('Error:', error);
+    // Обработка ошибки...
+  } finally {
+    setLoading(false);
+    setInput('');
+  }
+};
 
   return (
     <ChatContext.Provider
