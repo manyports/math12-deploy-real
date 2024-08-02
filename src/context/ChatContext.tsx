@@ -99,40 +99,51 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const onSent = async (prompt?: string) => {
-  setLoading(true);
-  const finalPrompt = prompt || input;
-
-  try {
-    const response = await fetch('https://www.api.math12.studio/api/chat', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ prompt: finalPrompt }),
-      credentials: 'include'
-    });
-
-    if (!response.ok) {
-      throw new Error('Failed to fetch response from API');
-    }
-
-    const data = await response.json();
-
-    // Обновление локального состояния
-    setMessages(prevMessages => [
-      ...prevMessages,
-      { role: 'human', content: finalPrompt, timestamp: Date.now() },
-      { role: 'ai', content: processGeminiResponse(data.text), timestamp: Date.now() }
-    ]);
-
-  } catch (error) {
-    console.error('Error:', error);
-    // Обработка ошибки...
-  } finally {
-    setLoading(false);
+    setLoading(true);
+    const finalPrompt = prompt || input;
+    const humanMessage: Message = {
+      role: 'human',
+      content: finalPrompt,
+      timestamp: Date.now(),
+    };
+    setMessages(prevMessages => [...prevMessages, humanMessage]);
     setInput('');
-  }
-};
+  
+    try {
+      const response = await fetch('https://www.api.math12.studio/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ prompt: finalPrompt }),
+        credentials: 'include'
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch response from API');
+      }
+  
+      const data = await response.json();
+      console.log('Received AI response:', data);
+  
+      const aiMessage: Message = {
+        role: 'ai',
+        content: processGeminiResponse(data.text),
+        timestamp: Date.now(),
+      };
+      setMessages(prevMessages => [...prevMessages, aiMessage]);
+    } catch (error) {
+      console.error('Error:', error);
+      const errorMessage: Message = {
+        role: 'ai',
+        content: 'An error occurred while processing your request.',
+        timestamp: Date.now(),
+      };
+      setMessages(prevMessages => [...prevMessages, errorMessage]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <ChatContext.Provider
