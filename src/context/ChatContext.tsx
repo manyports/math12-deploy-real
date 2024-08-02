@@ -60,14 +60,29 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       });
       if (response.ok) {
         const data = await response.json();
-        const processedMessages = data.history.map((message: Message) => ({
-          ...message,
-          content: message.role === 'ai' ? processGeminiResponse(message.content) : message.content,
-        }));
+        console.log('Raw chat history data:', data);  
+        
+        if (!data.history || !Array.isArray(data.history)) {
+          console.error('Unexpected data structure:', data);
+          return;
+        }
+        
+        const processedMessages = data.history.map((message: Message) => {
+          const processed = {
+            ...message,
+            content: message.role === 'ai' ? processGeminiResponse(message.content) : message.content,
+          };
+          console.log('Processed message:', processed); 
+          return processed;
+        });
+        
+        console.log('Setting messages state:', processedMessages);
         setMessages(processedMessages);
+      } else {
+        console.error('Error fetching chat history:', response.status, response.statusText);
       }
     } catch (error) {
-      console.error('Error fetching chat history:', error);
+      console.error('Error in fetchChatHistory:', error);
     }
   };
 
