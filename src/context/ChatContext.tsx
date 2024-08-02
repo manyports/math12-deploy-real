@@ -106,10 +106,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       content: finalPrompt,
       timestamp: Date.now(),
     };
-
+  
+    console.log('Adding human message:', humanMessage);
     const updatedMessages = [...messages, humanMessage];
+    console.log('Updated messages after adding human message:', updatedMessages);
     setMessages(updatedMessages);
-
+  
     try {
       const response = await fetch('https://www.api.math12.studio/api/chat', {
         method: 'POST',
@@ -119,19 +121,23 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         body: JSON.stringify({ prompt: finalPrompt }),
         credentials: 'include'
       });
-
+  
       if (!response.ok) {
         throw new Error('Failed to fetch response from API');
       }
-
+  
       const data = await response.json();
+      console.log('Received AI response:', data);
+  
       const aiMessage: Message = {
         role: 'ai',
         content: processGeminiResponse(data.text),
         timestamp: Date.now(),
       };
-
+  
+      console.log('Processed AI message:', aiMessage);
       const finalMessages = [...updatedMessages, aiMessage];
+      console.log('Final messages after adding AI response:', finalMessages);
       setMessages(finalMessages);
     } catch (error) {
       console.error('Error:', error);
@@ -141,6 +147,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         timestamp: Date.now(),
       };
       const finalMessages = [...updatedMessages, errorMessage];
+      console.log('Final messages after error:', finalMessages);
       setMessages(finalMessages);
     } finally {
       setLoading(false);
