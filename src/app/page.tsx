@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect } from 'react';
-import Lenis from '@studio-freight/lenis';
-import ReactTypingEffect from 'react-typing-effect';
+import Lenis from "@studio-freight/lenis";
+import React, { useEffect } from "react";
+import ReactTypingEffect from "react-typing-effect";
 
 const Home: React.FC = () => {
   useEffect(() => {
@@ -27,9 +27,12 @@ const Home: React.FC = () => {
     <div className="bg-white min-h-screen">
       <div className="container mx-auto px-4 py-16">
         <header className="text-center mb-16">
-        <h1 className="text-5xl font-extrabold text-blue-800 mb-4 text-center">
+          <h1 className="text-5xl font-extrabold text-blue-800 mb-4 text-center">
             <ReactTypingEffect
-              text={["Революция в изучении математики", "Пойми математику сегодня"]}
+              text={[
+                "Революция в изучении математики",
+                "Пойми математику сегодня",
+              ]}
               speed={100}
               eraseSpeed={100}
               typingDelay={500}
@@ -37,17 +40,21 @@ const Home: React.FC = () => {
             />
           </h1>
           <p className="text-xl text-gray-600 mb-8 text-center">
-            Персонализированное обучение с использованием передовых технологий ИИ на базе НИШ
+            Персонализированное обучение с использованием передовых технологий
+            ИИ на базе НИШ
           </p>
           <div className="flex justify-center space-x-4">
-            <button 
-            className="bg-blue-600 text-white px-6 py-2 rounded-full text-md font-semibold hover:bg-blue-700 transition duration-300"
-            onClick={() => window.location.href = "/register"}>
+            <button
+              className="bg-blue-600 text-white px-6 py-2 rounded-full text-md font-semibold hover:bg-blue-700 transition duration-300"
+              onClick={() => (window.location.href = "/register")}
+            >
               Войти в аккаунт
             </button>
-            <button 
-            className="bg-white text-blue-600 px-6 py-3 rounded-full text-md font-semibold border-2 border-blue-600 hover:bg-blue-50 transition duration-300"
-            onClick={() => window.location.href = "https://t.me/math12_sup_bot"}
+            <button
+              className="bg-white text-blue-600 px-6 py-3 rounded-full text-md font-semibold border-2 border-blue-600 hover:bg-blue-50 transition duration-300"
+              onClick={() =>
+                (window.location.href = "https://t.me/math12_sup_bot")
+              }
             >
               Связаться с нами
             </button>
@@ -55,26 +62,72 @@ const Home: React.FC = () => {
         </header>
 
         <section className="mb-20">
-          <h2 className="text-3xl font-bold text-center text-blue-800 mb-12">Наши уникальные возможности</h2>
+          <h2 className="text-3xl font-bold text-center text-blue-800 mb-12">
+            Наши уникальные возможности
+          </h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition duration-300 hover:scale-110" onClick={() => window.location.href ="/imagesolver"}>
+            <div
+              className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition duration-300 hover:scale-110"
+              onClick={() => (window.location.href = "/imagesolver")}
+            >
               <div className="text-blue-600 text-4xl mb-4">📸</div>
-              <h3 className="text-xl font-bold mb-4">Решение задач по фото</h3> 
-              <p className="text-gray-600">Просто сфотографируйте задачу, и наш ИИ мгновенно предоставит подробное решение с объяснениями.</p>
+              <h3 className="text-xl font-bold mb-4">Решение задач по фото</h3>
+              <p className="text-gray-600">
+                Просто сфотографируйте задачу, и наш ИИ мгновенно предоставит
+                подробное решение с объяснениями.
+              </p>
             </div>
-            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition duration-300 hover:scale-110" onClick={() => window.location.href ="/test"}>
+            <div
+              className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition duration-300 hover:scale-110"
+              onClick={() => (window.location.href = "/test")}
+            >
               <div className="text-blue-600 text-4xl mb-4">🎯</div>
-              <h3 className="text-xl font-bold mb-4">Персонализированные тесты</h3>
-              <p className="text-gray-600">Адаптивная система тестирования, которая подстраивается под ваш уровень знаний и помогает эффективно прогрессировать.</p>
+              <h3 className="text-xl font-bold mb-4">
+                Персонализированные тесты
+              </h3>
+              <p className="text-gray-600">
+                Адаптивная система тестирования, которая подстраивается под ваш
+                уровень знаний и помогает эффективно прогрессировать.
+              </p>
             </div>
-            <div className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition duration-300 hover:scale-110" onClick={() => window.location.href ="/chats"}>
+            <div
+              className="bg-white p-8 rounded-xl shadow-lg hover:shadow-xl transition duration-300 hover:scale-110"
+              onClick={() => (window.location.href = "/chats")}
+            >
               <div className="text-blue-600 text-4xl mb-4">💬</div>
               <h3 className="text-xl font-bold mb-4">ИИ-ассистент в чате</h3>
-              <p className="text-gray-600">Задавайте вопросы в любое время и получайте мгновенные, подробные ответы от нашего умного ИИ-помощника.</p>
+              <p className="text-gray-600">
+                Задавайте вопросы в любое время и получайте мгновенные,
+                подробные ответы от нашего умного ИИ-помощника.
+              </p>
             </div>
           </div>
         </section>
-
+        <section className= "py-20">
+          <h2 className="text-3xl font-bold text-center text-blue-800 mb-12">
+            Отзывы наших пользователей
+          </h2>
+          <div className="max-w-4xl mx-auto">
+            <div className="flex flex-col md:flex-row space-y-8 md:space-y-0 md:space-x-8">
+              <div className="bg-white p-8 rounded-xl shadow-lg">
+                <p className="text-gray-600 mb-4">
+                  "Эта платформа изменила мой подход к изучению математики!
+                  Теперь я понимаю даже самые сложные темы."
+                </p>
+                <p className="text-blue-800 font-bold">
+                  - Айдана, ученица 11 класса
+                </p>
+              </div>
+              <div className="bg-white p-8 rounded-xl shadow-lg">
+                <p className="text-gray-600 mb-4">
+                  "ИИ-ассистент действительно помогает! Он всегда отвечает на
+                  мои вопросы и объясняет все очень просто."
+                </p>
+                <p className="text-blue-800 font-bold">- Алибек, студент</p>
+              </div>
+            </div>
+          </div>
+        </section>
         <section className="mb-20">
           <h2 className="text-3xl font-bold text-center text-blue-800 mb-12">Тарифные планы</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
