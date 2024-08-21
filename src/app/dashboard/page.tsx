@@ -1,9 +1,9 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { motion } from 'framer-motion';
-import { useRouter } from 'next/navigation';
+import axios from "axios";
+import { motion } from "framer-motion";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface TestTaken {
   _id: string;
@@ -26,11 +26,14 @@ export default function DashboardPage() {
   useEffect(() => {
     const fetchUserTests = async () => {
       try {
-        const response = await axios.get('https://www.api.math12.studio/api/getUserTests', { withCredentials: true });
+        const response = await axios.get(
+          "https://www.api.math12.studio/api/getUserTests",
+          { withCredentials: true }
+        );
         setUserTests(response.data);
         setLoading(false);
       } catch (error) {
-        console.error('Error fetching user tests:', error);
+        console.error("Error fetching user tests:", error);
         setLoading(false);
       }
     };
@@ -40,10 +43,12 @@ export default function DashboardPage() {
 
   const logout = async () => {
     try {
-      await axios.get('https://www.api.math12.studio/api/logout', { withCredentials: true });
-      router.push('/login');
+      await axios.get("https://www.api.math12.studio/api/logout", {
+        withCredentials: true,
+      });
+      router.push("/login");
     } catch (error) {
-      console.error('Error logging out:', error);
+      console.error("Error logging out:", error);
     }
   };
 
@@ -51,87 +56,181 @@ export default function DashboardPage() {
     <div className="min-h-screen flex flex-col justify-between mx-4 md:mx-12 mt-8">
       <div className="flex-1 flex items-center justify-center flex-col mb-8">
         <div>
-          <p className="font-bold text-2xl md:text-4xl text-blue-600 text-center">Добро пожаловать на личный кабинет.</p>
-          <p className="text-gray-500 text-lg md:text-xl text-center">Здесь вы можете работать с нашей платформой :)</p>
+          <p className="font-bold text-2xl md:text-4xl text-blue-600 text-center">
+            Добро пожаловать на личный кабинет.
+          </p>
+          <p className="text-gray-500 text-lg md:text-xl text-center">
+            Здесь вы можете работать с нашей платформой :)
+          </p>
         </div>
         <div className="flex flex-col md:flex-row gap-6 mt-6 w-full">
           <div className="bg-card text-card-foreground rounded-lg p-6 shadow-md w-full md:w-1/4 flex flex-col items-center justify-between">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-12 w-12 mb-4 text-blue-600">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-12 w-12 mb-4 text-blue-600"
+            >
               <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
               <path d="m15 5 4 4"></path>
             </svg>
             <h2 className="text-2xl font-bold mb-4">Пройти тест</h2>
-            <p className="mb-4 text-center">Продемонстрируйте свои знания и докажите свое академическое мастерство, пройдя наш тест.</p>
-            <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600" onClick={() => window.location.href = "/test"}>
+            <p className="mb-4 text-center">
+              Продемонстрируйте свои знания и докажите свое академическое
+              мастерство, пройдя наш тест.
+            </p>
+            <button
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600"
+              onClick={() => (window.location.href = "/test")}
+            >
               🔥 начать
             </button>
           </div>
-          <div className="bg-card text-card-foreground rounded-lg p-6 shadow-md w-full md:w-1/4 flex flex-col items-center justify-between">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-12 w-12 mb-4 text-blue-600">
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-              <polyline points="16 17 21 12 16 7"></polyline>
-              <line x1="21" x2="9" y1="12" y2="12"></line>
-            </svg>
-            <h2 className="text-2xl font-bold mb-4 text-center">Выйти</h2>
-            <p className="mb-4 text-center">Нажмите кнопку ниже, чтобы безопасно и надежно выйти из своей учетной записи.</p>
-            <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600" onClick={logout}>
-              👋 пока
-            </button>
-          </div>
           <div className="bg-card text-card-foreground rounded-lg shadow-md w-full md:w-1/4 p-6 flex flex-col items-center justify-between">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-12 w-12 mb-4 text-blue-600">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-12 w-12 mb-4 text-blue-600"
+            >
               <circle cx="12" cy="10" r="8"></circle>
               <circle cx="12" cy="10" r="3"></circle>
               <path d="M7 22h10"></path>
               <path d="M12 22v-4"></path>
             </svg>
             <h2 className="text-2xl font-bold mb-4">Спросить вопросы</h2>
-            <p className="mb-4 text-center">Примите участие в увлекательной беседе с нашим интеллектуальным помощником MathAI и откройте для себя новое восприятие математики.</p>
-            <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600" onClick={() => window.location.href = "/chats"}>
+            <p className="mb-4 text-center">
+              Примите участие в увлекательной беседе с нашим интеллектуальным
+              помощником MathAI и откройте для себя новое восприятие математики.
+            </p>
+            <button
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600"
+              onClick={() => (window.location.href = "/chats")}
+            >
               💯 напиши
             </button>
           </div>
           <div className="bg-card text-card-foreground rounded-lg shadow-md w-full md:w-1/4 p-6 flex flex-col items-center justify-between">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-12 w-12 mb-4 text-blue-600">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-12 w-12 mb-4 text-blue-600"
+            >
               <circle cx="12" cy="10" r="8"></circle>
               <circle cx="12" cy="10" r="3"></circle>
               <path d="M7 22h10"></path>
               <path d="M12 22v-4"></path>
             </svg>
-            <h2 className="text-2xl font-bold mb-4 text-center">Решение по картинкам</h2>
-            <p className="mb-4 text-center">Сфотографируйте любую задачу по математике и ИИ решит ее за считанные секунды 😎</p>
-            <button className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600" onClick={() => window.location.href = "/imagesolver"}>
+            <h2 className="text-2xl font-bold mb-4 text-center">
+              Решение по картинкам
+            </h2>
+            <p className="mb-4 text-center">
+              Сфотографируйте любую задачу по математике и ИИ решит ее за
+              считанные секунды 😎
+            </p>
+            <button
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600"
+              onClick={() => (window.location.href = "/imagesolver")}
+            >
               🎥 фотографируй
+            </button>
+          </div>
+          <div className="bg-card text-card-foreground rounded-lg p-6 shadow-md w-full md:w-1/4 flex flex-col items-center justify-between">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-12 w-12 mb-4 text-blue-600"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <line x1="21" x2="9" y1="12" y2="12"></line>
+            </svg>
+            <h2 className="text-2xl font-bold mb-4 text-center">Выйти</h2>
+            <p className="mb-4 text-center">
+              Нажмите кнопку ниже, чтобы безопасно и надежно выйти из своей
+              учетной записи.
+            </p>
+            <button
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600"
+              onClick={logout}
+            >
+              👋 пока
             </button>
           </div>
         </div>
       </div>
-      <div className='mt-8 flex flex-col'>
-  <div>
-    <p className="font-bold text-2xl md:text-4xl text-blue-600">🚗 Математические гонки</p>
-  </div>
-  <div className='flex justify-center mt-6 flex-col items-center'>
-    <p className="text-gray-600 text-lg md:text-xl text-center mb-6">
-      Соревнуйтесь с друзьями и узнайте, кто лучше в математике!
-    </p>
-    <div className="bg-card text-card-foreground rounded-lg p-6 shadow-md w-full md:w-3/4 flex flex-col items-center justify-between">
-      <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-12 w-12 mb-4 text-blue-600">
-        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-      </svg>
-      <h2 className="text-2xl font-bold mb-4 text-center">Начать соревнование</h2>
-      <p className="mb-4 text-center">Проверьте свои навыки, заработайте очки и поднимитесь на вершину рейтинга!</p>
-      <button 
-        className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600"
-        onClick={() => router.push('/gamification')}
-      >
-        🏆 Начать игру
-      </button>
-    </div>
-  </div>
-</div>
       <div className="mt-8 flex flex-col">
         <div>
-          <p className="font-bold text-2xl md:text-4xl text-blue-600">Ваши пройденные тесты</p>
+          <p className="font-bold text-2xl md:text-4xl text-blue-600">
+            🚗 Математические гонки
+          </p>
+        </div>
+        <div className="flex justify-center mt-6 flex-col items-center">
+          <p className="text-gray-600 text-lg md:text-xl text-center mb-6">
+            Соревнуйтесь с друзьями и узнайте, кто лучше в математике!
+          </p>
+          <div className="bg-card text-card-foreground rounded-lg p-6 shadow-md w-full md:w-3/4 flex flex-col items-center justify-between">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              className="h-12 w-12 mb-4 text-blue-600"
+            >
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+            </svg>
+            <h2 className="text-2xl font-bold mb-4 text-center">
+              Начать соревнование
+            </h2>
+            <p className="mb-4 text-center">
+              Проверьте свои навыки, заработайте очки и поднимитесь на вершину
+              рейтинга!
+            </p>
+            <button
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600"
+              onClick={() => router.push("/gamification")}
+            >
+              🏆 Начать игру
+            </button>
+          </div>
+        </div>
+      </div>
+      <div className="mt-8 flex flex-col">
+        <div>
+          <p className="font-bold text-2xl md:text-4xl text-blue-600">
+            Ваши пройденные тесты
+          </p>
         </div>
         <div className="mt-6 mb-6 overflow-auto max-h-96">
           <div className="border-t border-gray-200">
@@ -165,9 +264,7 @@ export default function DashboardPage() {
                         </p>
                       </div>
                       <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                        <p>
-                          Дата: {new Date(test.date).toLocaleDateString()}
-                        </p>
+                        <p>Дата: {new Date(test.date).toLocaleDateString()}</p>
                       </div>
                     </div>
                   </motion.li>

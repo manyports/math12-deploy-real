@@ -56,7 +56,7 @@ const Navbar: React.FC = () => {
     return (
         <div className='relative z-50 mx-4 md:mx-[50px] pt-6 bg-transparent'>
             <nav className="flex items-center justify-between">
-                <a className={`text-2xl font-bold ${isOpen && isMobile ? 'hidden' : ''} hover:text-gray-700`} href='/'>math12.studio</a>
+                <a className={`text-2xl font-bold ${isOpen && isMobile ? 'hidden' : ''} hover:text-blue-700 text-blue-600`} href='/'>math12.studio</a>
                 <button 
                     type="button" 
                     className={`text-gray-500 hover:text-white focus:outline-none focus:text-white ${isMobile ? '' : 'hidden'}`} 
