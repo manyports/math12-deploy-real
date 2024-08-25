@@ -41,24 +41,6 @@ export default function SolveMath() {
     }
   }, [solutions]);
 
-  const checkUploadLimit = useCallback((): boolean => {
-    const now = Date.now();
-    const oneDayAgo = now - 24 * 60 * 60 * 1000;
-
-    if (uploadInfo.lastUploadTime < oneDayAgo) {
-      setUploadInfo({ count: 0, lastUploadTime: now });
-      return true;
-    }
-
-    if (uploadInfo.count >= 10) {
-      toast.error(
-        "Вы достигли лимита загрузок (10 попыток за 24 часа). Попробуйте позже."
-      );
-      return false;
-    }
-
-    return true;
-  }, [uploadInfo]);
 
   const updateUploadInfo = useCallback(() => {
     const newInfo = {
@@ -108,7 +90,6 @@ export default function SolveMath() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (selectedImages.length === 0) return;
-    if (!checkUploadLimit()) return;
 
     setIsLoading(true);
     setSolutions([]);
