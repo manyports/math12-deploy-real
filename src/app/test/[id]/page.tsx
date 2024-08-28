@@ -5,6 +5,8 @@ import { useParams } from 'next/navigation';
 import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import { TypeAnimation } from 'react-type-animation';
+import 'katex/dist/katex.min.css';
+import { InlineMath, BlockMath } from 'react-katex';
 
 interface Answer {
   text: string;
@@ -28,6 +30,20 @@ function shuffleArray<T>(array: T[]): T[] {
   }
   return shuffled;
 }
+
+function renderLatex(text: string) {
+  const latexRegex = /\$(.*?)\$/g;
+  const parts = text.split(latexRegex);
+  
+  return parts.map((part, index) => {
+    if (index % 2 === 0) {
+      return part;
+    } else {
+      return <InlineMath key={index} math={part} />;
+    }
+  });
+}
+
 
 export default function TestPage() {
   const { id } = useParams();
@@ -209,7 +225,7 @@ export default function TestPage() {
                       transition={{ delay: qIndex * 0.1 }}
                       className="border-2 border-gray-200 p-6 rounded-xl shadow-sm"
                     >
-                      <p className="font-semibold text-xl mb-4 text-blue-600">{question.question}</p>
+                      <p className="font-semibold text-xl mb-4 text-blue-600">{renderLatex(question.question)}</p>
                       {question.answers.map((answer, aIndex) => (
                         <p key={aIndex} className={`
                           py-2 px-4 rounded-lg mb-2
@@ -218,7 +234,7 @@ export default function TestPage() {
                           ${userAnswers[qIndex] === aIndex && !answer.isCorrect ? 'bg-red-100 text-red-800' : ''}
                           ${userAnswers[qIndex] !== aIndex && !answer.isCorrect ? 'text-gray-700' : ''}
                         `}>
-                          {answer.text}
+                          {renderLatex(answer.text)}
                           {userAnswers[qIndex] === aIndex && !answer.isCorrect && ' (Ваш ответ)'}
                           {answer.isCorrect && ' (Правильный ответ)'}
                         </p>
@@ -237,12 +253,7 @@ export default function TestPage() {
                 className="question-container"
               >
                 <h2 className="text-2xl font-semibold mb-6 text-center text-blue-600">
-                  <TypeAnimation
-                    sequence={[testContent?.questions[currentQuestion].question || '']}
-                    wrapper="span"
-                    speed={50}
-                    style={{ display: 'inline-block' }}
-                  />
+                  {renderLatex(testContent?.questions[currentQuestion].question || '')}
                 </h2>
                 <div className="flex flex-col space-y-4">
                   {shuffledAnswers.map((answer, index) => (
@@ -257,7 +268,7 @@ export default function TestPage() {
                       )}
                       className="p-4 bg-white border-2 border-gray-200 hover:border-blue-600 hover:bg-blue-50 rounded-xl shadow-sm transition duration-300 text-left text-gray-700"
                     >
-                      {answer.text}
+                      {renderLatex(answer.text)}
                     </motion.button>
                   ))}
                 </div>
