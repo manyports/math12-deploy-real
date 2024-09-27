@@ -178,7 +178,7 @@ export default function SolveMath() {
   };
 
   return (
-    <div className="min-h-screen py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-6 sm:py-12 px-4 sm:px-6 lg:px-8 mt-12">
       <Head>
         <style>{`
           .katex-display {

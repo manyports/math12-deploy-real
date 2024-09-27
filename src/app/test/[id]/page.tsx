@@ -60,8 +60,8 @@ export default function TestPage() {
   const loadingStages = [
     "Связываемся с ИИ...",
     "Получили ответ!",
-    "Улучшаем ответ ИИ...",
-    "Готовим тест..."
+    "Генерируем вам тест...",
+    "Почти готово..."
   ];
 
   const fetchTest = useCallback(async () => {
@@ -139,7 +139,7 @@ export default function TestPage() {
 
   if (loading) {
     return (
-      <div className="flex flex-col justify-center items-center min-h-screen bg-white">
+      <div className="flex flex-col justify-center items-center min-h-screen bg-white mt-12">
         <motion.div
           key={loadingStage}
           initial={{ opacity: 0, y: 20 }}

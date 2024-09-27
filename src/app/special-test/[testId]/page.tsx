@@ -120,7 +120,7 @@ export default function SpecialTestPage() {
   const progress = (currentQuestion / testContent.questions.length) * 100;
 
   return (
-    <div className="flex flex-col justify-center items-center min-h-screen bg-white p-4">
+    <div className="flex flex-col justify-center items-center min-h-screen bg-white p-4 mt-12">
       <motion.div 
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}

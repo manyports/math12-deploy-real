@@ -62,7 +62,7 @@ export default function Test() {
   };
 
   return (
-    <div className="min-h-screen py-6 sm:py-12 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen py-6 sm:py-12 px-4 sm:px-6 lg:px-8 mt-12">
       <div className="max-w-7xl mx-auto">
         <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6 sm:mb-12 text-center text-blue-600 tracking-tight">
           Математические тесты

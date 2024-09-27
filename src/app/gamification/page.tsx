@@ -96,7 +96,7 @@ export default function GamificationPage() {
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
-      className="min-h-screen bg-gradient-to-b py-12 px-4 sm:px-6 lg:px-8"
+      className="min-h-screen bg-gradient-to-b py-12 px-4 sm:px-6 lg:px-8 mt-12"
     >
       <div className="max-w-7xl mx-auto">
         <motion.h1
