@@ -81,7 +81,7 @@ export default function Footer() {
   };
 
   return (
-    <footer className="bg-blue-600 text-white py-8 px-4 rounded-tl-3xl rounded-tr-3xl">
+    <footer className="bg-blue-600 text-white py-8 px-4">
       <div className="container mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
         <div className="text-center md:text-left">
           <Link href="/" className="text-2xl font-bold hover:text-blue-200 transition duration-300">

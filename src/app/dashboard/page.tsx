@@ -1,27 +1,32 @@
-"use client";
+"use client"
 
-import axios from "axios";
-import { motion } from "framer-motion";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import axios from "axios"
+import { motion } from "framer-motion"
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { PenIcon, MessageCircleIcon, CameraIcon, LogOutIcon, TrophyIcon, BarChart3Icon } from "lucide-react"
+import { Progress } from "@/components/ui/progress"
 
 interface TestTaken {
-  _id: string;
+  _id: string
   topicId: {
-    _id: string;
-    topic: string;
-    class: string;
-    term: string;
-  };
-  score: number;
-  totalQuestions: number;
-  date: string;
+    _id: string
+    topic: string
+    class: string
+    term: string
+  }
+  score: number
+  totalQuestions: number
+  date: string
 }
 
 export default function DashboardPage() {
-  const [userTests, setUserTests] = useState<TestTaken[]>([]);
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
+  const [userTests, setUserTests] = useState<TestTaken[]>([])
+  const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     const fetchUserTests = async () => {
@@ -29,255 +34,209 @@ export default function DashboardPage() {
         const response = await axios.get(
           "https://www.api.math12.studio/api/getUserTests",
           { withCredentials: true }
-        );
-        setUserTests(response.data);
-        setLoading(false);
+        )
+        setUserTests(response.data)
+        setLoading(false)
       } catch (error) {
-        console.error("Error fetching user tests:", error);
-        setLoading(false);
+        console.error("Error fetching user tests:", error)
+        setLoading(false)
       }
-    };
+    }
 
-    fetchUserTests();
-  }, []);
+    fetchUserTests()
+  }, [])
 
   const logout = async () => {
     try {
       await axios.get("https://www.api.math12.studio/api/logout", {
         withCredentials: true,
-      });
-      router.push("/login");
+      })
+      router.push("/login")
     } catch (error) {
-      console.error("Error logging out:", error);
+      console.error("Error logging out:", error)
     }
-  };
+  }
+
+  const ActionCard = ({ icon, title, description, onClick }) => (
+    <Card className="hover:shadow-lg transition-shadow duration-300">
+      <CardHeader>
+        <CardTitle className="flex items-center space-x-2">
+          {icon}
+          <span>{title}</span>
+        </CardTitle>
+        <CardDescription>{description}</CardDescription>
+      </CardHeader>
+      <CardContent>
+        <Button className="w-full" onClick={onClick}>
+          Начать
+        </Button>
+      </CardContent>
+    </Card>
+  )
 
   return (
-    <div className="min-h-screen flex flex-col justify-between mx-4 md:mx-12 mt-8">
-      <div className="flex-1 flex items-center justify-center flex-col mb-8">
-        <div>
-          <p className="font-bold text-2xl md:text-4xl text-blue-600 text-center">
-            Добро пожаловать на личный кабинет.
-          </p>
-          <p className="text-gray-500 text-lg md:text-xl text-center">
-            Здесь вы можете работать с нашей платформой :)
-          </p>
-        </div>
-        <div className="flex flex-col md:flex-row gap-6 mt-6 w-full">
-          <div className="bg-card text-card-foreground rounded-lg p-6 shadow-md w-full md:w-1/4 flex flex-col items-center justify-between">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-12 w-12 mb-4 text-blue-600"
-            >
-              <path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"></path>
-              <path d="m15 5 4 4"></path>
-            </svg>
-            <h2 className="text-2xl font-bold mb-4">Пройти тест</h2>
-            <p className="mb-4 text-center">
-              Продемонстрируйте свои знания и докажите свое академическое
-              мастерство, пройдя наш тест.
-            </p>
-            <button
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600"
-              onClick={() => (window.location.href = "/test")}
-            >
-              🔥 начать
-            </button>
-          </div>
-          <div className="bg-card text-card-foreground rounded-lg shadow-md w-full md:w-1/4 p-6 flex flex-col items-center justify-between">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-12 w-12 mb-4 text-blue-600"
-            >
-              <circle cx="12" cy="10" r="8"></circle>
-              <circle cx="12" cy="10" r="3"></circle>
-              <path d="M7 22h10"></path>
-              <path d="M12 22v-4"></path>
-            </svg>
-            <h2 className="text-2xl font-bold mb-4">Спросить вопросы</h2>
-            <p className="mb-4 text-center">
-              Примите участие в увлекательной беседе с нашим интеллектуальным
-              помощником MathAI и откройте для себя новое восприятие математики.
-            </p>
-            <button
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600"
-              onClick={() => (window.location.href = "/chats")}
-            >
-              💯 напиши
-            </button>
-          </div>
-          <div className="bg-card text-card-foreground rounded-lg shadow-md w-full md:w-1/4 p-6 flex flex-col items-center justify-between">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-12 w-12 mb-4 text-blue-600"
-            >
-              <circle cx="12" cy="10" r="8"></circle>
-              <circle cx="12" cy="10" r="3"></circle>
-              <path d="M7 22h10"></path>
-              <path d="M12 22v-4"></path>
-            </svg>
-            <h2 className="text-2xl font-bold mb-4 text-center">
-              Решение по картинкам
-            </h2>
-            <p className="mb-4 text-center">
-              Сфотографируйте любую задачу по математике и ИИ решит ее за
-              считанные секунды 😎
-            </p>
-            <button
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600"
-              onClick={() => (window.location.href = "/imagesolver")}
-            >
-              🎥 фотографируй
-            </button>
-          </div>
-          <div className="bg-card text-card-foreground rounded-lg p-6 shadow-md w-full md:w-1/4 flex flex-col items-center justify-between">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-12 w-12 mb-4 text-blue-600"
-            >
-              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
-              <polyline points="16 17 21 12 16 7"></polyline>
-              <line x1="21" x2="9" y1="12" y2="12"></line>
-            </svg>
-            <h2 className="text-2xl font-bold mb-4 text-center">Выйти</h2>
-            <p className="mb-4 text-center">
-              Нажмите кнопку ниже, чтобы безопасно и надежно выйти из своей
-              учетной записи.
-            </p>
-            <button
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600"
-              onClick={logout}
-            >
-              👋 пока
-            </button>
-          </div>
-        </div>
+    <div className="container mx-auto px-4 py-8 bg-white">
+      <div className="flex flex-col sm:flex-row justify-between items-center mb-8 space-y-4 sm:space-y-0">
+        <h1 className="text-3xl sm:text-4xl font-bold text-blue-600">Личный кабинет</h1>
+        <Button variant="outline" onClick={logout} className="text-blue-600 border-blue-600 hover:bg-blue-50">
+          <LogOutIcon className="w-4 h-4 mr-2" />
+          Выйти
+        </Button>
       </div>
-      <div className="mt-8 flex flex-col">
-        <div>
-          <p className="font-bold text-2xl md:text-4xl text-blue-600">
-            🚗 Математические гонки
-          </p>
-        </div>
-        <div className="flex justify-center mt-6 flex-col items-center">
-          <p className="text-gray-600 text-lg md:text-xl text-center mb-6">
-            Соревнуйтесь с друзьями и узнайте, кто лучше в математике!
-          </p>
-          <div className="bg-card text-card-foreground rounded-lg p-6 shadow-md w-full md:w-3/4 flex flex-col items-center justify-between">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="24"
-              height="24"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              className="h-12 w-12 mb-4 text-blue-600"
-            >
-              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
-            </svg>
-            <h2 className="text-2xl font-bold mb-4 text-center">
-              Начать соревнование
-            </h2>
-            <p className="mb-4 text-center">
-              Проверьте свои навыки, заработайте очки и поднимитесь на вершину
-              рейтинга!
-            </p>
-            <button
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-600 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 bg-gray-100 text-blue-600 hover:bg-gray-200 h-10 px-4 py-2 border border-blue-600"
-              onClick={() => router.push("/gamification")}
-            >
-              🏆 Начать игру
-            </button>
-          </div>
-        </div>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <ActionCard
+          icon={<PenIcon className="w-6 h-6 text-blue-600" />}
+          title="Пройти тест"
+          description="Проверьте свои знания с помощью наших тестов"
+          onClick={() => router.push("/test")}
+        />
+        <ActionCard
+          icon={<MessageCircleIcon className="w-6 h-6 text-blue-600" />}
+          title="Спросить вопросы"
+          description="Задайте вопросы нашему ИИ-ассистенту"
+          onClick={() => router.push("/chats")}
+        />
+        <ActionCard
+          icon={<CameraIcon className="w-6 h-6 text-blue-600" />}
+          title="Решение по картинкам"
+          description="Загрузите фото задачи для быстрого решения"
+          onClick={() => router.push("/imagesolver")}
+        />
+        <ActionCard
+          icon={<TrophyIcon className="w-6 h-6 text-blue-600" />}
+          title="Математические гонки"
+          description="Соревнуйтесь с друзьями в математике"
+          onClick={() => router.push("/gamification")}
+        />
       </div>
-      <div className="mt-8 flex flex-col">
-        <div>
-          <p className="font-bold text-2xl md:text-4xl text-blue-600">
-            Ваши пройденные тесты
-          </p>
-        </div>
-        <div className="mt-6 mb-6 overflow-auto max-h-96">
-          <div className="border-t border-gray-200">
-            {userTests.length > 0 ? (
-              <ul className="divide-y divide-gray-200">
-                {userTests.map((test) => (
-                  <motion.li
+
+      <Card className="mb-12">
+        <CardHeader>
+          <CardTitle className="text-2xl text-blue-600 flex items-center">
+            <BarChart3Icon className="w-6 h-6 mr-2" />
+            Статистика тестов
+          </CardTitle>
+          <CardDescription>
+            Просмотрите свои недавние тесты и лучшие результаты
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Tabs defaultValue="recent" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 mb-6">
+              <TabsTrigger value="recent">Недавние</TabsTrigger>
+              <TabsTrigger value="best">Лучшие</TabsTrigger>
+            </TabsList>
+            <TabsContent value="recent">
+              <div className="space-y-4">
+                {userTests.slice(0, 5).map((test, index) => (
+                  <motion.div
                     key={test._id}
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
-                    className="px-4 py-4 sm:px-6 hover:bg-gray-50"
+                    transition={{ duration: 0.3, delay: index * 0.1 }}
+                    className="p-4 bg-gray-50 rounded-lg"
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="text-xl font-semibol text-blue-600 truncate">
-                        {test.topicId.topic}
-                      </div>
-                      <div className="ml-2 flex-shrink-0 flex">
-                        <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                          {test.score} / {test.totalQuestions}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="mt-2 sm:flex sm:justify-between">
-                      <div className="sm:flex">
-                        <p className="flex items-center text-sm text-gray-500">
-                          Класс: {test.topicId.class}
-                        </p>
-                        <p className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0 sm:ml-6">
-                          Четверть: {test.topicId.term}
+                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
+                      <div>
+                        <h3 className="font-semibold text-blue-600">{test.topicId.topic}</h3>
+                        <p className="text-sm text-gray-600">
+                          Класс: {test.topicId.class} | Четверть: {test.topicId.term}
                         </p>
                       </div>
-                      <div className="mt-2 flex items-center text-sm text-gray-500 sm:mt-0">
-                        <p>Дата: {new Date(test.date).toLocaleDateString()}</p>
+                      <div className="text-lg font-bold text-blue-600 mt-2 sm:mt-0">
+                        {test.score} / {test.totalQuestions}
                       </div>
                     </div>
-                  </motion.li>
+                    <Progress value={(test.score / test.totalQuestions) * 100} className="h-2" />
+                    <p className="text-sm text-gray-500 mt-2">
+                      Дата: {new Date(test.date).toLocaleDateString()}
+                    </p>
+                  </motion.div>
                 ))}
-              </ul>
-            ) : (
-              <div className="px-4 py-5 sm:px-6 text-center text-gray-500">
-                У вас пока нет пройденных тестов.
               </div>
-            )}
-          </div>
-        </div>
-      </div>
+            </TabsContent>
+            <TabsContent value="best">
+              <div className="space-y-4">
+                {userTests
+                  .sort((a, b) => b.score / b.totalQuestions - a.score / a.totalQuestions)
+                  .slice(0, 5)
+                  .map((test, index) => (
+                    <motion.div
+                      key={test._id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className="p-4 bg-gray-50 rounded-lg"
+                    >
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
+                        <div>
+                          <h3 className="font-semibold text-blue-600">{test.topicId.topic}</h3>
+                          <p className="text-sm text-gray-600">
+                            Класс: {test.topicId.class} | Четверть: {test.topicId.term}
+                          </p>
+                        </div>
+                        <div className="text-lg font-bold text-blue-600 mt-2 sm:mt-0">
+                          {test.score} / {test.totalQuestions}
+                        </div>
+                      </div>
+                      <Progress value={(test.score / test.totalQuestions) * 100} className="h-2" />
+                      <p className="text-sm text-gray-500 mt-2">
+                        Дата: {new Date(test.date).toLocaleDateString()}
+                      </p>
+                    </motion.div>
+                  ))}
+              </div>
+            </TabsContent>
+          </Tabs>
+        </CardContent>
+      </Card>
+
+      {userTests.length > 0 && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-2xl text-blue-600 flex items-center">
+              <BarChart3Icon className="w-6 h-6 mr-2" />
+              Общая статистика
+            </CardTitle>
+            <CardDescription>
+              Обзор вашей общей производительности на платформе
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Всего тестов</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-4xl font-bold text-blue-600">{userTests.length}</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Средний балл</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-4xl font-bold text-blue-600">
+                    {(userTests.reduce((acc, test) => acc + (test.score / test.totalQuestions), 0) / userTests.length * 100).toFixed(2)}%
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Лучший результат</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-4xl font-bold text-blue-600">
+                    {Math.max(...userTests.map(test => test.score / test.totalQuestions * 100)).toFixed(2)}%
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
-  );
+  )
 }
