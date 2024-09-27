@@ -257,7 +257,7 @@ const FeatureShowcase = () => {
                 animate={{ x: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
               >
-                {features[currentFeature].icon({
+                {React.createElement(features[currentFeature].icon, {
                   className: "text-blue-600 h-12 w-12",
                 })}
               </motion.div>
