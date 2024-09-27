@@ -1,32 +1,45 @@
-"use client"
+"use client";
 
-import axios from "axios"
-import { motion } from "framer-motion"
-import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { PenIcon, MessageCircleIcon, CameraIcon, LogOutIcon, TrophyIcon, BarChart3Icon } from "lucide-react"
-import { Progress } from "@/components/ui/progress"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import axios from "axios";
+import { motion } from "framer-motion";
+import {
+  BarChart3Icon,
+  CameraIcon,
+  LogOutIcon,
+  MessageCircleIcon,
+  PenIcon,
+  TrophyIcon,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface TestTaken {
-  _id: string
+  _id: string;
   topicId: {
-    _id: string
-    topic: string
-    class: string
-    term: string
-  }
-  score: number
-  totalQuestions: number
-  date: string
+    _id: string;
+    topic: string;
+    class: string;
+    term: string;
+  };
+  score: number;
+  totalQuestions: number;
+  date: string;
 }
 
 export default function DashboardPage() {
-  const [userTests, setUserTests] = useState<TestTaken[]>([])
-  const [loading, setLoading] = useState(true)
-  const router = useRouter()
+  const [userTests, setUserTests] = useState<TestTaken[]>([]);
+  const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     const fetchUserTests = async () => {
@@ -34,28 +47,28 @@ export default function DashboardPage() {
         const response = await axios.get(
           "https://www.api.math12.studio/api/getUserTests",
           { withCredentials: true }
-        )
-        setUserTests(response.data)
-        setLoading(false)
+        );
+        setUserTests(response.data);
+        setLoading(false);
       } catch (error) {
-        console.error("Error fetching user tests:", error)
-        setLoading(false)
+        console.error("Error fetching user tests:", error);
+        setLoading(false);
       }
-    }
+    };
 
-    fetchUserTests()
-  }, [])
+    fetchUserTests();
+  }, []);
 
   const logout = async () => {
     try {
       await axios.get("https://www.api.math12.studio/api/logout", {
         withCredentials: true,
-      })
-      router.push("/login")
+      });
+      router.push("/login");
     } catch (error) {
-      console.error("Error logging out:", error)
+      console.error("Error logging out:", error);
     }
-  }
+  };
 
   const ActionCard = ({ icon, title, description, onClick }) => (
     <Card className="hover:shadow-lg transition-shadow duration-300">
@@ -72,13 +85,19 @@ export default function DashboardPage() {
         </Button>
       </CardContent>
     </Card>
-  )
+  );
 
   return (
-    <div className="container mx-auto px-4 py-8 bg-white">
+    <div className="container mx-auto px-4 py-8 bg-white mt-12">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-8 space-y-4 sm:space-y-0">
-        <h1 className="text-3xl sm:text-4xl font-bold text-blue-600">Личный кабинет</h1>
-        <Button variant="outline" onClick={logout} className="text-blue-600 border-blue-600 hover:bg-blue-50">
+        <h1 className="text-3xl sm:text-4xl font-bold text-blue-600">
+          Личный кабинет
+        </h1>
+        <Button
+          variant="outline"
+          onClick={logout}
+          className="text-blue-600 border-blue-600 hover:bg-blue-50"
+        >
           <LogOutIcon className="w-4 h-4 mr-2" />
           Выйти
         </Button>
@@ -139,16 +158,22 @@ export default function DashboardPage() {
                   >
                     <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
                       <div>
-                        <h3 className="font-semibold text-blue-600">{test.topicId.topic}</h3>
+                        <h3 className="font-semibold text-blue-600">
+                          {test.topicId.topic}
+                        </h3>
                         <p className="text-sm text-gray-600">
-                          Класс: {test.topicId.class} | Четверть: {test.topicId.term}
+                          Класс: {test.topicId.class} | Четверть:{" "}
+                          {test.topicId.term}
                         </p>
                       </div>
                       <div className="text-lg font-bold text-blue-600 mt-2 sm:mt-0">
                         {test.score} / {test.totalQuestions}
                       </div>
                     </div>
-                    <Progress value={(test.score / test.totalQuestions) * 100} className="h-2" />
+                    <Progress
+                      value={(test.score / test.totalQuestions) * 100}
+                      className="h-2"
+                    />
                     <p className="text-sm text-gray-500 mt-2">
                       Дата: {new Date(test.date).toLocaleDateString()}
                     </p>
@@ -159,7 +184,10 @@ export default function DashboardPage() {
             <TabsContent value="best">
               <div className="space-y-4">
                 {userTests
-                  .sort((a, b) => b.score / b.totalQuestions - a.score / a.totalQuestions)
+                  .sort(
+                    (a, b) =>
+                      b.score / b.totalQuestions - a.score / a.totalQuestions
+                  )
                   .slice(0, 5)
                   .map((test, index) => (
                     <motion.div
@@ -171,16 +199,22 @@ export default function DashboardPage() {
                     >
                       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
                         <div>
-                          <h3 className="font-semibold text-blue-600">{test.topicId.topic}</h3>
+                          <h3 className="font-semibold text-blue-600">
+                            {test.topicId.topic}
+                          </h3>
                           <p className="text-sm text-gray-600">
-                            Класс: {test.topicId.class} | Четверть: {test.topicId.term}
+                            Класс: {test.topicId.class} | Четверть:{" "}
+                            {test.topicId.term}
                           </p>
                         </div>
                         <div className="text-lg font-bold text-blue-600 mt-2 sm:mt-0">
                           {test.score} / {test.totalQuestions}
                         </div>
                       </div>
-                      <Progress value={(test.score / test.totalQuestions) * 100} className="h-2" />
+                      <Progress
+                        value={(test.score / test.totalQuestions) * 100}
+                        className="h-2"
+                      />
                       <p className="text-sm text-gray-500 mt-2">
                         Дата: {new Date(test.date).toLocaleDateString()}
                       </p>
@@ -210,7 +244,9 @@ export default function DashboardPage() {
                   <CardTitle>Всего тестов</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <p className="text-4xl font-bold text-blue-600">{userTests.length}</p>
+                  <p className="text-4xl font-bold text-blue-600">
+                    {userTests.length}
+                  </p>
                 </CardContent>
               </Card>
               <Card>
@@ -219,7 +255,15 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-4xl font-bold text-blue-600">
-                    {(userTests.reduce((acc, test) => acc + (test.score / test.totalQuestions), 0) / userTests.length * 100).toFixed(2)}%
+                    {(
+                      (userTests.reduce(
+                        (acc, test) => acc + test.score / test.totalQuestions,
+                        0
+                      ) /
+                        userTests.length) *
+                      100
+                    ).toFixed(2)}
+                    %
                   </p>
                 </CardContent>
               </Card>
@@ -229,7 +273,12 @@ export default function DashboardPage() {
                 </CardHeader>
                 <CardContent>
                   <p className="text-4xl font-bold text-blue-600">
-                    {Math.max(...userTests.map(test => test.score / test.totalQuestions * 100)).toFixed(2)}%
+                    {Math.max(
+                      ...userTests.map(
+                        (test) => (test.score / test.totalQuestions) * 100
+                      )
+                    ).toFixed(2)}
+                    %
                   </p>
                 </CardContent>
               </Card>
@@ -238,5 +287,5 @@ export default function DashboardPage() {
         </Card>
       )}
     </div>
-  )
+  );
 }

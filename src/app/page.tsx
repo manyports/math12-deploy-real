@@ -237,7 +237,7 @@ const FeatureShowcase = () => {
   }, []);
 
   return (
-    <div className="relative max-w-4xl mx-auto">
+    <div className="relative max-w-4xl mx-auto mt-12">
       <h2 className="text-3xl font-bold mb-8 text-center">
         Инновационные функции math12.studio
       </h2>
@@ -257,8 +257,8 @@ const FeatureShowcase = () => {
                 animate={{ x: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
               >
-                {React.createElement(features[currentFeature].icon, {
-                  className: "text-blue-600 w-16 h-16 mb-4",
+                {features[currentFeature].icon({
+                  className: "text-blue-600 h-12 w-12",
                 })}
               </motion.div>
               <h3 className="text-2xl font-bold mb-2">
