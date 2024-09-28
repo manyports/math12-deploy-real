@@ -89,7 +89,7 @@ export default function DashboardPage() {
       </CardContent>
     </Card>
   );
-
+  
   return (
     <div className="container mx-auto px-4 py-8 bg-white mt-12">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-8 space-y-4 sm:space-y-0">
