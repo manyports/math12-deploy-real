@@ -16,7 +16,7 @@ interface UserStreak {
   lastUpdateDate: string;
 }
 
-export default function GamificationPage() {
+export default function MathChallengePage() {
   const router = useRouter();
   const [leaderboard, setLeaderboard] = useState<LeaderboardItem[]>([]);
   const [userStreak, setUserStreak] = useState<UserStreak | null>(null);
@@ -28,7 +28,6 @@ export default function GamificationPage() {
     fetchLeaderboardAndStreak();
     fetchLatestSpecialTest();
     checkDailyTestStatus();
-    console.log("Fetching data...");
   }, []);
 
   const checkDailyTestStatus = async () => {
@@ -69,11 +68,7 @@ export default function GamificationPage() {
       );
       setSpecialTestId(response.data.id);
     } catch (error) {
-      if (axios.isAxiosError(error)) {
-        console.error("Axios error:", error.response?.data || error.message);
-      } else {
-        console.error("Error fetching latest special test:", error);
-      }
+      console.error("Error fetching latest special test:", error);
     }
   };
 
@@ -92,114 +87,99 @@ export default function GamificationPage() {
   };
 
   return (
-    <motion.div
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      transition={{ duration: 0.5 }}
-      className="min-h-screen bg-gradient-to-b py-12 px-4 sm:px-6 lg:px-8 mt-12"
-    >
-      <div className="max-w-7xl mx-auto">
-        <motion.h1
-          initial={{ y: -50 }}
-          animate={{ y: 0 }}
-          className="text-4xl md:text-6xl font-extrabold text-center text-blue-600 mb-12"
-        >
+    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-3xl font-bold text-center text-black mb-12">
           Математический Челлендж
-        </motion.h1>
+        </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="space-y-8">
           <motion.div
-            initial={{ x: -100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="bg-white rounded-xl shadow-lg overflow-hidden"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm"
           >
-            <div className="bg-blue-600 text-white p-6">
-              <h2 className="text-2xl font-bold">Ваша серия побед</h2>
-            </div>
-            <div className="w-full flex justify-center">
-              <div className="w-1/2 my-2"></div>
-            </div>
-            <div className="p-6 flex flex-col justify-center items-center">
-              <p className="text-5xl font-bold text-center text-blue-600">
+            <h2 className="text-xl font-semibold text-black mb-4">
+              Ваша серия побед
+            </h2>
+            <div className="flex items-center justify-between">
+              <span className="text-4xl font-bold text-blue-600">
                 {userStreak?.streak || 0}
-              </p>
-              <p className="text-center mt-2 text-gray-600">огоньков 🔥</p>
-              {userStreak && (
-                <p className="text-center mt-2 text-sm text-gray-500">
-                  Последнее обновление:{" "}
-                  {new Date(userStreak.lastUpdateDate).toLocaleDateString()}
-                </p>
-              )}
+              </span>
+              <span className="text-sm text-gray-500">
+                Последнее обновление:{" "}
+                {userStreak?.lastUpdateDate
+                  ? new Date(userStreak.lastUpdateDate).toLocaleDateString()
+                  : "Н/Д"}
+              </span>
             </div>
           </motion.div>
 
           <motion.div
-            initial={{ x: 100, opacity: 0 }}
-            animate={{ x: 0, opacity: 1 }}
-            transition={{ delay: 0.4 }}
-            className="bg-white rounded-xl shadow-lg overflow-hidden"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm"
           >
-            <div className="bg-blue-600 text-white p-6">
-              <h2 className="text-2xl font-bold">Таблица лидеров</h2>
-            </div>
-            <ul className="divide-y divide-gray-200">
+            <h2 className="text-xl font-semibold text-black mb-4">
+              Таблица лидеров
+            </h2>
+            <ul className="space-y-2">
               {leaderboard.slice(0, 5).map((player, index) => (
                 <li
                   key={player.userId}
-                  className="flex justify-between items-center p-4"
+                  className="flex justify-between items-center py-2 border-b border-gray-100 last:border-b-0"
                 >
-                  <span className="font-semibold">
+                  <span className="text-black">
                     {index + 1}. {player.username}
                   </span>
-                  <span className="text-blue-600 font-bold">
-                    {player.streak} 🔥
+                  <span className="font-medium text-blue-600">
+                    {player.streak}
                   </span>
                 </li>
               ))}
             </ul>
           </motion.div>
-        </div>
 
-        <motion.div
-          initial={{ y: 100, opacity: 0 }}
-          animate={{ y: 0, opacity: 1 }}
-          transition={{ delay: 0.6 }}
-          className="mt-12 bg-blue-500 rounded-xl shadow-lg p-8 text-white"
-        >
-          <h2 className="text-3xl font-bold mb-4 text-center">
-            Готовы к вызову?
-          </h2>
-          <p className="text-center mb-6 text-xl">
-            Пройдите особенный тест с вопросами из разных четвертей и классов!
-            (Сброс каждый день в 9:05 утра по Астане)
-          </p>
-          <div className="flex justify-center">
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="bg-white border border-gray-200 rounded-lg p-6 shadow-sm"
+          >
+            <h2 className="text-xl font-semibold text-black mb-4">
+              Ежедневный вызов
+            </h2>
+            <p className="text-sm text-gray-600 mb-4">
+              Пройдите особый тест с вопросами из разных четвертей и классов.
+              Обновляется каждый день в 9:05 утра по Астане.
+            </p>
             <button
-              className="bg-white text-blue-600 font-bold py-3 px-6 rounded-full hover:bg-blue-100 transition duration-300 disabled:opacity-50 text-lg"
               onClick={handleStartSpecialTest}
               disabled={loading || !specialTestId || testCompleted}
+              className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading
                 ? "Загрузка..."
                 : testCompleted
                 ? "Тест уже пройден"
-                : "Начать особенный тест"}
+                : "Начать тест"}
             </button>
-          </div>
-        </motion.div>
+          </motion.div>
+        </div>
       </div>
 
       {loading && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded-lg shadow-xl">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-blue-600 mx-auto"></div>
-            <p className="mt-4 text-lg font-semibold text-blue-600">
+            <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-600 mx-auto"></div>
+            <p className="mt-4 text-sm font-medium text-black">
               Загрузка теста...
             </p>
           </div>
         </div>
       )}
-    </motion.div>
+    </div>
   );
 }
