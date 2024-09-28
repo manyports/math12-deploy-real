@@ -425,7 +425,7 @@ const ParallaxSection = ({ children }) => {
   );
 };
 
-export default function EnhancedLandingPage() {
+export default function LandingPage() {
   return (
     <div className="min-h-screen text-gray-900">
       <section className="relative py-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
@@ -479,7 +479,7 @@ export default function EnhancedLandingPage() {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50">
         <div className="max-w-6xl mx-auto">
           <h2 className="text-4xl font-bold mb-16 text-center">
-            Отзывы наших пользователей
+            Отзывы наших пользователей 💙
           </h2>
           <div className="grid md:grid-cols-3 gap-8">
             {testimonials.map((testimonial, index) => (
