@@ -65,12 +65,12 @@ const features = [
       "Сфотографируйте задачу и получите мгновенное решение с объяснениями",
     icon: Camera,
     content: (
-      <div className="relative w-full max-w-md h-80 bg-white rounded-lg shadow-xl overflow-hidden">
+      <div className="relative w-full max-w-md h-[400px] sm:h-80 bg-white rounded-lg shadow-xl overflow-hidden">
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="absolute top-4 left-4 right-4 h-40 bg-gray-200 rounded-lg flex items-center justify-center"
+          className="absolute top-4 left-4 right-4 h-1/3 sm:h-40 bg-gray-200 rounded-lg flex items-center justify-center"
         >
           <Camera size={64} className="text-gray-400" />
         </motion.div>
@@ -78,7 +78,7 @@ const features = [
           initial={{ y: "100%" }}
           animate={{ y: 0 }}
           transition={{ delay: 0.5, duration: 0.8, ease: "easeOut" }}
-          className="absolute bottom-0 left-0 right-0 bg-blue-600 text-white p-4 h-48"
+          className="absolute bottom-0 left-0 right-0 bg-blue-600 text-white p-4 h-2/3 sm:h-48 overflow-y-auto"
         >
           <h4 className="text-lg font-bold mb-2">Решение:</h4>
           <p className="text-sm">
@@ -237,7 +237,7 @@ const FeatureShowcase = () => {
   }, []);
 
   return (
-    <div className="relative max-w-4xl mx-auto mt-12">
+    <div className="relative max-w-4xl mx-auto mt-12 px-4 sm:px-6 lg:px-8">
       <h2 className="text-3xl font-bold mb-8 text-center">
         Инновационные функции math12.studio
       </h2>
@@ -251,11 +251,12 @@ const FeatureShowcase = () => {
             transition={{ duration: 0.5 }}
             className="flex flex-col md:flex-row items-center justify-between"
           >
-            <div className="md:w-1/2 mb-4 md:mb-0">
+            <div className="w-full md:w-1/2 mb-4 md:mb-0 text-center md:text-left">
               <motion.div
                 initial={{ x: -50 }}
                 animate={{ x: 0 }}
                 transition={{ delay: 0.2, duration: 0.5 }}
+                className="flex justify-center md:justify-start"
               >
                 {React.createElement(features[currentFeature].icon, {
                   className: "text-blue-600 h-12 w-12",
@@ -268,7 +269,7 @@ const FeatureShowcase = () => {
                 {features[currentFeature].description}
               </p>
             </div>
-            <div className="md:w-1/2 flex justify-center">
+            <div className="w-full md:w-1/2 flex justify-center mt-4 md:mt-0">
               {features[currentFeature].content}
             </div>
           </motion.div>
