@@ -33,26 +33,34 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 function renderLatex(text: string) {
-  const latexRegex = /\$(.*?)\$/g;
+  const latexRegex = /\\\((.*?)\\\)|\\\[(.*?)\\\]|\$(.*?)\$|(\\\w+\{.*?\})/g;
   const parts = text.split(latexRegex);
 
   return parts.map((part, index) => {
-    if (index % 2 === 0) {
+    if (index % 5 === 0) {
       return <React.Fragment key={index}>{part}</React.Fragment>;
     } else {
-      return (
-        <span
-          key={index}
-          dangerouslySetInnerHTML={{
-            __html: katex.renderToString(part, {
-              throwOnError: false,
-              displayMode: false,
-            }),
-          }}
-        />
-      );
+      const latexContent = part.replace(/^\$|\$$/g, '');
+      if (latexContent) {
+        try {
+          return (
+            <span
+              key={index}
+              dangerouslySetInnerHTML={{
+                __html: katex.renderToString(latexContent, {
+                  throwOnError: false,
+                  displayMode: index % 5 === 2, 
+                }),
+              }}
+            />
+          );
+        } catch (error) {
+          console.error("LaTeX rendering error:", error);
+          return <span key={index}>{part}</span>;
+        }
+      }
     }
-  });
+  }).filter(Boolean);
 }
 
 export default function TestPage() {
