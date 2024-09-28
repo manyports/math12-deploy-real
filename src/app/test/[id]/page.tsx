@@ -36,7 +36,7 @@ function renderLatex(text: string) {
 
   return parts.map((part, index) => {
     if (index % 2 === 0) {
-      return part;
+      return <React.Fragment key={index}>{part}</React.Fragment>;
     } else {
       return <InlineMath key={index} math={part} />;
     }
