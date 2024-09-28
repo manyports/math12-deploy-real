@@ -2,11 +2,11 @@
 
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
+import katex from "katex";
 import "katex/dist/katex.min.css";
 import { ArrowLeft, ArrowRight, CheckCircle, XCircle } from "lucide-react";
 import { useParams } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
-import { InlineMath } from "react-katex";
 import { TypeAnimation } from "react-type-animation";
 
 interface Answer {
@@ -40,7 +40,17 @@ function renderLatex(text: string) {
     if (index % 2 === 0) {
       return <React.Fragment key={index}>{part}</React.Fragment>;
     } else {
-      return <InlineMath key={index} math={part} />;
+      return (
+        <span
+          key={index}
+          dangerouslySetInnerHTML={{
+            __html: katex.renderToString(part, {
+              throwOnError: false,
+              displayMode: false,
+            }),
+          }}
+        />
+      );
     }
   });
 }
