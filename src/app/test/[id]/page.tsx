@@ -33,37 +33,30 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 function renderLatex(text: string): React.ReactNode {
-  const latexRegex = /\\\((.*?)\\\)|\\\[(.*?)\\\]|\$(.*?)\$|(\\\w+\{.*?\})/g;
-  const parts = text.split(latexRegex);
+  const splitText = text.split(/(\$.*?\$)/g);
 
-  return parts
-    .map((part, index) => {
-      if (index % 5 === 0) {
-        return <React.Fragment key={index}>{part}</React.Fragment>;
-      } else {
-        const latexContent = part ? part.trim() : "";
-        if (latexContent) {
-          try {
-            return (
-              <span
-                key={index}
-                dangerouslySetInnerHTML={{
-                  __html: katex.renderToString(latexContent, {
-                    throwOnError: false,
-                    displayMode: false,
-                  }),
-                }}
-              />
-            );
-          } catch (error) {
-            console.error("LaTeX rendering error:", error);
-            return <span key={index}>{part}</span>;
-          }
-        }
+  return splitText.map((part, index) => {
+    if (part.startsWith("$") && part.endsWith("$")) {
+      const latex = part.slice(1, -1);
+      try {
+        return (
+          <span
+            key={index}
+            dangerouslySetInnerHTML={{
+              __html: katex.renderToString(latex, {
+                throwOnError: false,
+                displayMode: false,
+              }),
+            }}
+          />
+        );
+      } catch (error) {
+        console.error("LaTeX rendering error:", error);
+        return <span key={index}>{part}</span>;
       }
-      return null;
-    })
-    .filter(Boolean);
+    }
+    return <span key={index}>{part}</span>;
+  });
 }
 
 export default function TestPage() {
@@ -104,10 +97,7 @@ export default function TestPage() {
         },
         { withCredentials: true }
       );
-      const parsedTestContent = JSON.parse(
-        JSON.stringify(testResponse.data.test)
-      );
-      setTestContent(parsedTestContent);
+      setTestContent(testResponse.data.test);
     } catch (error) {
       console.error("Error fetching test:", error);
       setTestContent(null);
