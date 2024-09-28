@@ -3,6 +3,7 @@
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import "katex/dist/katex.min.css";
+import { ArrowLeft, ArrowRight, CheckCircle, XCircle } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { InlineMath } from "react-katex";
@@ -53,6 +54,7 @@ export default function TestPage() {
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
   const [userAnswers, setUserAnswers] = useState<number[]>([]);
+  const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
 
   const loadingStages = [
     "Подключаемся к базе знаний...",
@@ -99,11 +101,15 @@ export default function TestPage() {
     return shuffleArray(testContent.questions[currentQuestion].answers);
   }, [testContent, currentQuestion]);
 
-  const handleAnswerOptionClick = async (
-    answerIndex: number,
-    isCorrect: boolean
-  ) => {
-    setUserAnswers([...userAnswers, answerIndex]);
+  const handleAnswerSelect = (answerIndex: number) => {
+    setSelectedAnswer(answerIndex);
+  };
+
+  const handleNextQuestion = async () => {
+    if (selectedAnswer === null) return;
+
+    const isCorrect = shuffledAnswers[selectedAnswer].isCorrect;
+    setUserAnswers([...userAnswers, selectedAnswer]);
 
     if (isCorrect) {
       setScore(score + 1);
@@ -112,6 +118,7 @@ export default function TestPage() {
     const nextQuestion = currentQuestion + 1;
     if (nextQuestion < (testContent?.questions.length || 0)) {
       setCurrentQuestion(nextQuestion);
+      setSelectedAnswer(null);
     } else {
       setShowScore(true);
       try {
@@ -130,15 +137,22 @@ export default function TestPage() {
     }
   };
 
+  const handlePreviousQuestion = () => {
+    if (currentQuestion > 0) {
+      setCurrentQuestion(currentQuestion - 1);
+      setSelectedAnswer(userAnswers[currentQuestion - 1]);
+    }
+  };
+
   if (loading) {
     return (
-      <div className="flex flex-col justify-center items-center min-h-screen bg-white mt-12">
+      <div className="flex flex-col justify-center items-center min-h-screen bg-gradient-to-br from-blue-50 to-white">
         <motion.div
           key={loadingStage}
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-3xl font-bold text-blue-600 mb-8"
+          className="text-3xl font-bold text-blue-600 mb-8 text-center"
         >
           <TypeAnimation
             sequence={[loadingStages[loadingStage]]}
@@ -149,51 +163,49 @@ export default function TestPage() {
           />
         </motion.div>
         <motion.div
-          animate={{
-            scale: [1, 1.2, 1],
-            rotate: [0, 360],
-          }}
-          transition={{
-            duration: 2,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-          className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full"
+          initial={{ width: 0 }}
+          animate={{ width: "60%" }}
+          transition={{ duration: 1.5, ease: "easeInOut", repeat: Infinity }}
+          className="h-2 bg-blue-600 rounded-full"
         />
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-4 flex items-center justify-center mt-12">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-4 flex items-center justify-center">
       <motion.div
         initial={{ opacity: 0, y: 50 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="max-w-3xl w-full mx-auto p-8 bg-white rounded-3xl shadow-2xl overflow-hidden"
+        className="max-w-4xl w-full mx-auto p-8 bg-white rounded-3xl shadow-2xl overflow-hidden"
       >
         {!showScore ? (
           <>
             <h1 className="text-4xl font-bold text-blue-600 mb-6 text-center">
               Тест
             </h1>
-            <div className="w-full bg-gray-200 rounded-full h-2 mb-6">
-              <motion.div
-                className="bg-blue-600 h-2 rounded-full"
-                initial={{ width: 0 }}
-                animate={{
-                  width: `${
-                    ((currentQuestion + 1) /
-                      (testContent?.questions.length || 1)) *
-                    100
-                  }%`,
-                }}
-                transition={{ duration: 0.5 }}
-              />
+            <div className="flex justify-between items-center mb-6">
+              <button
+                onClick={handlePreviousQuestion}
+                disabled={currentQuestion === 0}
+                className="flex items-center text-blue-600 disabled:text-gray-400"
+              >
+                <ArrowLeft className="mr-2" />
+                Предыдущий
+              </button>
+              <p className="text-lg text-blue-600">
+                Вопрос {currentQuestion + 1} из {testContent?.questions.length}
+              </p>
+              <button
+                onClick={handleNextQuestion}
+                disabled={selectedAnswer === null}
+                className="flex items-center text-blue-600 disabled:text-gray-400"
+              >
+                Следующий
+                <ArrowRight className="ml-2" />
+              </button>
             </div>
-            <p className="text-lg text-blue-600 mb-6 text-center">
-              Вопрос {currentQuestion + 1} из {testContent?.questions.length}
-            </p>
             <AnimatePresence mode="wait">
               <motion.div
                 key={currentQuestion}
@@ -207,22 +219,19 @@ export default function TestPage() {
                     testContent?.questions[currentQuestion].question || ""
                   )}
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-4">
                   {shuffledAnswers.map((answer, index) => (
                     <motion.button
                       key={index}
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      onClick={() =>
-                        handleAnswerOptionClick(
-                          testContent!.questions[
-                            currentQuestion
-                          ].answers.findIndex((a) => a === answer),
-                          answer.isCorrect
-                        )
-                      }
-                      className="p-4 bg-white border-2 border-gray-200 hover:border-blue-600 hover:bg-blue-50 rounded-xl shadow-sm transition duration-300 text-left text-black"
+                      onClick={() => handleAnswerSelect(index)}
+                      className={`w-full p-6 text-left text-lg rounded-xl transition duration-300 ${
+                        selectedAnswer === index
+                          ? "bg-blue-100 border-2 border-blue-600"
+                          : "bg-white border-2 border-gray-200 hover:border-blue-600"
+                      }`}
                     >
                       {renderLatex(answer.text)}
                     </motion.button>
@@ -242,7 +251,7 @@ export default function TestPage() {
               Результаты теста
             </h2>
             <div className="mb-8 p-6 bg-blue-50 rounded-xl">
-              <p className="text-4xl font-bold text-blue-600">
+              <p className="text-6xl font-bold text-blue-600">
                 {score} / {testContent?.questions.length}
               </p>
               <p className="text-xl text-blue-600 mt-2">правильных ответов</p>
@@ -260,10 +269,10 @@ export default function TestPage() {
                     {renderLatex(question.question)}
                   </p>
                   {question.answers.map((answer, aIndex) => (
-                    <p
+                    <div
                       key={aIndex}
                       className={`
-                      py-2 px-4 rounded-lg mb-2
+                      flex items-center py-3 px-4 rounded-lg mb-2 text-lg
                       ${userAnswers[qIndex] === aIndex ? "font-bold" : ""}
                       ${answer.isCorrect ? "bg-green-100 text-green-800" : ""}
                       ${
@@ -278,12 +287,15 @@ export default function TestPage() {
                       }
                     `}
                     >
-                      {renderLatex(answer.text)}
-                      {userAnswers[qIndex] === aIndex &&
-                        !answer.isCorrect &&
-                        " (Ваш ответ)"}
-                      {answer.isCorrect && " (Правильный ответ)"}
-                    </p>
+                      {answer.isCorrect ? (
+                        <CheckCircle className="w-6 h-6 mr-2 text-green-600" />
+                      ) : userAnswers[qIndex] === aIndex ? (
+                        <XCircle className="w-6 h-6 mr-2 text-red-600" />
+                      ) : (
+                        <div className="w-6 h-6 mr-2" />
+                      )}
+                      <span>{renderLatex(answer.text)}</span>
+                    </div>
                   ))}
                 </motion.div>
               ))}
