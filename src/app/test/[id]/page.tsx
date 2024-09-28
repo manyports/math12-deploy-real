@@ -1,11 +1,9 @@
-"use client";
-
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import "katex/dist/katex.min.css";
 import { ArrowLeft, ArrowRight, CheckCircle, XCircle } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { InlineMath } from "react-katex";
 import { TypeAnimation } from "react-type-animation";
 
@@ -103,13 +101,12 @@ export default function TestPage() {
 
   const handleAnswerSelect = (answerIndex: number) => {
     setSelectedAnswer(answerIndex);
+    handleNextQuestion(answerIndex);
   };
 
-  const handleNextQuestion = async () => {
-    if (selectedAnswer === null) return;
-
-    const isCorrect = shuffledAnswers[selectedAnswer].isCorrect;
-    setUserAnswers([...userAnswers, selectedAnswer]);
+  const handleNextQuestion = async (selectedAnswerIndex: number) => {
+    const isCorrect = shuffledAnswers[selectedAnswerIndex].isCorrect;
+    setUserAnswers([...userAnswers, selectedAnswerIndex]);
 
     if (isCorrect) {
       setScore(score + 1);
@@ -194,14 +191,7 @@ export default function TestPage() {
               <p className="text-lg text-blue-600">
                 Вопрос {currentQuestion + 1} из {testContent?.questions.length}
               </p>
-              <button
-                onClick={handleNextQuestion}
-                disabled={selectedAnswer === null}
-                className="flex items-center text-blue-600 disabled:text-gray-400"
-              >
-                Следующий
-                <ArrowRight className="ml-2" />
-              </button>
+              <div className="w-24"></div> {/* Placeholder for balance */}
             </div>
             <AnimatePresence mode="wait">
               <motion.div
