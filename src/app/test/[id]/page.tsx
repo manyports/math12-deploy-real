@@ -1,5 +1,3 @@
-"use client";
-
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import katex from "katex";
@@ -34,39 +32,40 @@ function shuffleArray<T>(array: T[]): T[] {
 
 function renderLatex(text: string | undefined | null): React.ReactNode {
   if (text == null) {
-    return null; 
+    return null;
   }
 
   const latexRegex = /\\\((.*?)\\\)|\\\[(.*?)\\\]|\$(.*?)\$|(\\\w+\{.*?\})/g;
   const parts = text.split(latexRegex);
 
-  return parts.map((part, index) => {
-    if (index % 5 === 0) {
-      return <React.Fragment key={index}>{part}</React.Fragment>;
-    } else {
-      const latexContent = part ? part.replace(/^\$|\$$/g, '') : '';
-      if (latexContent) {
-        try {
-          return (
-            <span
-              key={index}
-              dangerouslySetInnerHTML={{
-                __html: katex.renderToString(latexContent, {
-                  throwOnError: false,
-                  displayMode: index % 5 === 2, 
-                }),
-              }}
-            />
-          );
-        } catch (error) {
-          console.error("LaTeX rendering error:", error);
-          return <span key={index}>{part}</span>;
+  return parts
+    .map((part, index) => {
+      if (index % 5 === 0) {
+        return <React.Fragment key={index}>{part}</React.Fragment>;
+      } else {
+        const latexContent = part ? part.replace(/^\$|\$$/g, "") : "";
+        if (latexContent) {
+          try {
+            return (
+              <span
+                key={index}
+                dangerouslySetInnerHTML={{
+                  __html: katex.renderToString(latexContent, {
+                    throwOnError: false,
+                    displayMode: index % 5 === 2,
+                  }),
+                }}
+              />
+            );
+          } catch (error) {
+            console.error("LaTeX rendering error:", error);
+            return <span key={index}>{part}</span>;
+          }
         }
       }
-    }
-  }).filter(Boolean);
+    })
+    .filter(Boolean);
 }
-
 
 export default function TestPage() {
   const { id } = useParams();
@@ -106,7 +105,12 @@ export default function TestPage() {
         },
         { withCredentials: true }
       );
-      setTestContent(testResponse.data.test);
+
+      // Ensure proper parsing of JSON data
+      const parsedTestContent = JSON.parse(
+        JSON.stringify(testResponse.data.test)
+      );
+      setTestContent(parsedTestContent);
     } catch (error) {
       console.error("Error fetching test:", error);
       setTestContent(null);
@@ -196,6 +200,10 @@ export default function TestPage() {
     );
   }
 
+  if (!testContent) {
+    return <div>Error loading test content</div>;
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-4 flex items-center justify-center">
       <div className="w-full max-w-4xl mx-auto p-8 bg-white rounded-3xl shadow-2xl">
@@ -214,7 +222,7 @@ export default function TestPage() {
                 Предыдущий
               </button>
               <p className="text-lg text-blue-600">
-                Вопрос {currentQuestion + 1} из {testContent?.questions.length}
+                Вопрос {currentQuestion + 1} из {testContent.questions.length}
               </p>
               <div className="w-24"></div>
             </div>
@@ -227,9 +235,7 @@ export default function TestPage() {
                 transition={{ duration: 0.5 }}
               >
                 <h2 className="text-2xl font-semibold mb-6 text-center text-black">
-                  {renderLatex(
-                    testContent?.questions[currentQuestion]?.question || ""
-                  )}
+                  {renderLatex(testContent.questions[currentQuestion].question)}
                 </h2>
                 <div className="space-y-4">
                   {shuffledAnswers.map((answer, index) => (
@@ -264,12 +270,12 @@ export default function TestPage() {
             </h2>
             <div className="mb-8 p-6 bg-blue-50 rounded-xl">
               <p className="text-6xl font-bold text-blue-600">
-                {score} / {testContent?.questions.length}
+                {score} / {testContent.questions.length}
               </p>
               <p className="text-xl text-blue-600 mt-2">правильных ответов</p>
             </div>
             <div className="space-y-6 max-h-[60vh] overflow-y-auto px-4">
-              {testContent?.questions.map((question, qIndex) => (
+              {testContent.questions.map((question, qIndex) => (
                 <motion.div
                   key={qIndex}
                   initial={{ opacity: 0, y: 20 }}
