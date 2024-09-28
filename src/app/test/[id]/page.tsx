@@ -1,3 +1,5 @@
+"use client";
+
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import "katex/dist/katex.min.css";
@@ -191,7 +193,7 @@ export default function TestPage() {
               <p className="text-lg text-blue-600">
                 Вопрос {currentQuestion + 1} из {testContent?.questions.length}
               </p>
-              <div className="w-24"></div> {/* Placeholder for balance */}
+              <div className="w-24"></div>
             </div>
             <AnimatePresence mode="wait">
               <motion.div
