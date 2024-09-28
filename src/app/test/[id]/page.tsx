@@ -30,41 +30,36 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-function renderLatex(text: string | undefined | null): React.ReactNode {
-  if (text == null) {
-    return null;
-  }
-
+function renderLatex(text: string): React.ReactNode {
   const latexRegex = /\\\((.*?)\\\)|\\\[(.*?)\\\]|\$(.*?)\$|(\\\w+\{.*?\})/g;
   const parts = text.split(latexRegex);
 
-  return parts
-    .map((part, index) => {
-      if (index % 5 === 0) {
-        return <React.Fragment key={index}>{part}</React.Fragment>;
-      } else {
-        const latexContent = part ? part.replace(/^\$|\$$/g, "") : "";
-        if (latexContent) {
-          try {
-            return (
-              <span
-                key={index}
-                dangerouslySetInnerHTML={{
-                  __html: katex.renderToString(latexContent, {
-                    throwOnError: false,
-                    displayMode: index % 5 === 2,
-                  }),
-                }}
-              />
-            );
-          } catch (error) {
-            console.error("LaTeX rendering error:", error);
-            return <span key={index}>{part}</span>;
-          }
+  return parts.map((part, index) => {
+    if (index % 5 === 0) {
+      return <React.Fragment key={index}>{part}</React.Fragment>;
+    } else {
+      const latexContent = part ? part.trim() : '';
+      if (latexContent) {
+        try {
+          return (
+            <span
+              key={index}
+              dangerouslySetInnerHTML={{
+                __html: katex.renderToString(latexContent, {
+                  throwOnError: false,
+                  displayMode: false,
+                }),
+              }}
+            />
+          );
+        } catch (error) {
+          console.error("LaTeX rendering error:", error);
+          return <span key={index}>{part}</span>;
         }
       }
-    })
-    .filter(Boolean);
+    }
+    return null;
+  }).filter(Boolean);
 }
 
 export default function TestPage() {
@@ -105,8 +100,6 @@ export default function TestPage() {
         },
         { withCredentials: true }
       );
-
-      // Ensure proper parsing of JSON data
       const parsedTestContent = JSON.parse(
         JSON.stringify(testResponse.data.test)
       );
@@ -205,60 +198,60 @@ export default function TestPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-4 flex items-center justify-center">
-      <div className="w-full max-w-4xl mx-auto p-8 bg-white rounded-3xl shadow-2xl">
-        {!showScore ? (
-          <>
-            <h1 className="text-4xl font-bold text-blue-600 mb-6 text-center">
-              Тест
-            </h1>
-            <div className="flex justify-between items-center mb-6">
-              <button
-                onClick={handlePreviousQuestion}
-                disabled={currentQuestion === 0}
-                className="flex items-center text-blue-600 disabled:text-gray-400"
-              >
-                <ArrowLeft className="mr-2" />
-                Предыдущий
-              </button>
-              <p className="text-lg text-blue-600">
-                Вопрос {currentQuestion + 1} из {testContent.questions.length}
-              </p>
-              <div className="w-24"></div>
-            </div>
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentQuestion}
-                initial={{ opacity: 0, y: 50 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -50 }}
-                transition={{ duration: 0.5 }}
-              >
-                <h2 className="text-2xl font-semibold mb-6 text-center text-black">
-                  {renderLatex(testContent.questions[currentQuestion].question)}
-                </h2>
-                <div className="space-y-4">
-                  {shuffledAnswers.map((answer, index) => (
-                    <motion.button
-                      key={index}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: index * 0.1 }}
-                      onClick={() => handleAnswerSelect(index)}
-                      className={`w-full p-6 text-left text-lg rounded-xl transition duration-300 ${
-                        selectedAnswer === index
-                          ? "bg-blue-100 border-2 border-blue-600"
-                          : "bg-white border-2 border-gray-200 hover:border-blue-600"
-                      }`}
-                    >
-                      {renderLatex(answer.text)}
-                    </motion.button>
-                  ))}
-                </div>
-              </motion.div>
-            </AnimatePresence>
-          </>
-        ) : (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-4 flex items-center justify-center">
+        <div className="w-full max-w-4xl mx-auto p-8 bg-white rounded-3xl shadow-2xl">
+          {!showScore ? (
+            <>
+              <h1 className="text-4xl font-bold text-blue-600 mb-6 text-center">
+                Тест
+              </h1>
+              <div className="flex justify-between items-center mb-6">
+                <button
+                  onClick={handlePreviousQuestion}
+                  disabled={currentQuestion === 0}
+                  className="flex items-center text-blue-600 disabled:text-gray-400"
+                >
+                  <ArrowLeft className="mr-2" />
+                  Предыдущий
+                </button>
+                <p className="text-lg text-blue-600">
+                  Вопрос {currentQuestion + 1} из {testContent?.questions.length}
+                </p>
+                <div className="w-24"></div>
+              </div>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={currentQuestion}
+                  initial={{ opacity: 0, y: 50 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -50 }}
+                  transition={{ duration: 0.5 }}
+                >
+                  <h2 className="text-2xl font-semibold mb-6 text-center text-black">
+                    {renderLatex(testContent?.questions[currentQuestion]?.question || "")}
+                  </h2>
+                  <div className="space-y-4">
+                    {shuffledAnswers.map((answer, index) => (
+                      <motion.button
+                        key={index}
+                        initial={{ opacity: 0, x: -20 }}
+                        animate={{ opacity: 1, x: 0 }}
+                        transition={{ delay: index * 0.1 }}
+                        onClick={() => handleAnswerSelect(index)}
+                        className={`w-full p-6 text-left text-lg rounded-xl transition duration-300 ${
+                          selectedAnswer === index
+                            ? "bg-blue-100 border-2 border-blue-600"
+                            : "bg-white border-2 border-gray-200 hover:border-blue-600"
+                        }`}
+                      >
+                        {renderLatex(answer.text)}
+                      </motion.button>
+                    ))}
+                  </div>
+                </motion.div>
+              </AnimatePresence>
+            </>
+          ) : (
           <motion.div
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
