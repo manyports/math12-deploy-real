@@ -148,37 +148,40 @@ export default function DashboardPage() {
             </TabsList>
             <TabsContent value="recent">
               <div className="space-y-4">
-                {userTests.slice(0, 5).map((test, index) => (
-                  <motion.div
-                    key={test._id}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.3, delay: index * 0.1 }}
-                    className="p-4 bg-gray-50 rounded-lg"
-                  >
-                    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
-                      <div>
-                        <h3 className="font-semibold text-blue-600">
-                          {test.topicId.topic}
-                        </h3>
-                        <p className="text-sm text-gray-600">
-                          Класс: {test.topicId.class} | Четверть:{" "}
-                          {test.topicId.term}
-                        </p>
+                {userTests
+                  .slice(0, 5)
+                  .reverse()
+                  .map((test, index) => (
+                    <motion.div
+                      key={test._id}
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.3, delay: index * 0.1 }}
+                      className="p-4 bg-gray-50 rounded-lg"
+                    >
+                      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-2">
+                        <div>
+                          <h3 className="font-semibold text-blue-600">
+                            {test.topicId.topic}
+                          </h3>
+                          <p className="text-sm text-gray-600">
+                            Класс: {test.topicId.class} | Четверть:{" "}
+                            {test.topicId.term}
+                          </p>
+                        </div>
+                        <div className="text-lg font-bold text-blue-600 mt-2 sm:mt-0">
+                          {test.score} / {test.totalQuestions}
+                        </div>
                       </div>
-                      <div className="text-lg font-bold text-blue-600 mt-2 sm:mt-0">
-                        {test.score} / {test.totalQuestions}
-                      </div>
-                    </div>
-                    <Progress
-                      value={(test.score / test.totalQuestions) * 100}
-                      className="h-2"
-                    />
-                    <p className="text-sm text-gray-500 mt-2">
-                      Дата: {new Date(test.date).toLocaleDateString()}
-                    </p>
-                  </motion.div>
-                ))}
+                      <Progress
+                        value={(test.score / test.totalQuestions) * 100}
+                        className="h-2"
+                      />
+                      <p className="text-sm text-gray-500 mt-2">
+                        Дата: {new Date(test.date).toLocaleDateString()}
+                      </p>
+                    </motion.div>
+                  ))}
               </div>
             </TabsContent>
             <TabsContent value="best">
