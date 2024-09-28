@@ -215,7 +215,7 @@ export default function TestPage() {
               >
                 <h2 className="text-2xl font-semibold mb-6 text-center text-black">
                   {renderLatex(
-                    testContent?.questions[currentQuestion].question || ""
+                    testContent?.questions[currentQuestion]?.question || ""
                   )}
                 </h2>
                 <div className="space-y-4">
