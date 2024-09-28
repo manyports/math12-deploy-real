@@ -162,24 +162,21 @@ export default function TestPage() {
             cursor={false}
           />
         </motion.div>
-        <motion.div
-          initial={{ width: 0 }}
-          animate={{ width: "60%" }}
-          transition={{ duration: 1.5, ease: "easeInOut", repeat: Infinity }}
-          className="h-2 bg-blue-600 rounded-full"
-        />
+        <div className="w-64 bg-gray-200 rounded-full h-2">
+          <motion.div
+            initial={{ width: 0 }}
+            animate={{ width: "100%" }}
+            transition={{ duration: 1.5, ease: "easeInOut", repeat: Infinity }}
+            className="h-full bg-blue-600 rounded-full"
+          />
+        </div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-4 flex items-center justify-center">
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="max-w-4xl w-full mx-auto p-8 bg-white rounded-3xl shadow-2xl overflow-hidden"
-      >
+      <div className="w-full max-w-4xl mx-auto p-8 bg-white rounded-3xl shadow-2xl">
         {!showScore ? (
           <>
             <h1 className="text-4xl font-bold text-blue-600 mb-6 text-center">
@@ -302,7 +299,7 @@ export default function TestPage() {
             </div>
           </motion.div>
         )}
-      </motion.div>
+      </div>
     </div>
   );
 }
