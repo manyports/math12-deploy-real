@@ -32,7 +32,11 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-function renderLatex(text: string) {
+function renderLatex(text: string | undefined | null): React.ReactNode {
+  if (text == null) {
+    return null; 
+  }
+
   const latexRegex = /\\\((.*?)\\\)|\\\[(.*?)\\\]|\$(.*?)\$|(\\\w+\{.*?\})/g;
   const parts = text.split(latexRegex);
 
@@ -40,7 +44,7 @@ function renderLatex(text: string) {
     if (index % 5 === 0) {
       return <React.Fragment key={index}>{part}</React.Fragment>;
     } else {
-      const latexContent = part.replace(/^\$|\$$/g, '');
+      const latexContent = part ? part.replace(/^\$|\$$/g, '') : '';
       if (latexContent) {
         try {
           return (
@@ -62,6 +66,7 @@ function renderLatex(text: string) {
     }
   }).filter(Boolean);
 }
+
 
 export default function TestPage() {
   const { id } = useParams();
