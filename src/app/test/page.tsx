@@ -7,13 +7,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "./skeleton";
 
@@ -29,6 +23,7 @@ export default function Component() {
   const [topics, setTopics] = useState<Topic[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
+  const [expandedCard, setExpandedCard] = useState<string | null>(null);
 
   useEffect(() => {
     setIsLoading(true);
@@ -55,6 +50,10 @@ export default function Component() {
 
   const openTest = (topic: Topic) => {
     router.push(`/test/${topic._id}`);
+  };
+
+  const toggleCard = (id: string) => {
+    setExpandedCard(expandedCard === id ? null : id);
   };
 
   return (
@@ -109,7 +108,10 @@ export default function Component() {
                 transition={{ duration: 0.3 }}
                 className="group"
               >
-                <Card className="h-full transition-shadow duration-300 hover:shadow-md border-blue-600 border-opacity-50">
+                <Card
+                  className="h-full transition-shadow duration-300 hover:shadow-md border-blue-600 border-opacity-50 cursor-pointer"
+                  onClick={() => toggleCard(topic._id)}
+                >
                   <CardHeader>
                     <CardTitle
                       className="truncate text-black"
@@ -127,16 +129,28 @@ export default function Component() {
                       <Calendar size={16} className="mr-2 text-blue-600" />
                       <span>Четверть: {topic.term}</span>
                     </div>
+                    <AnimatePresence>
+                      {expandedCard === topic._id && (
+                        <motion.div
+                          initial={{ opacity: 0, height: 0 }}
+                          animate={{ opacity: 1, height: "auto" }}
+                          exit={{ opacity: 0, height: 0 }}
+                          transition={{ duration: 0.3 }}
+                        >
+                          <Button
+                            className="w-full mt-4 bg-blue-600 hover:bg-blue-700 text-white"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              openTest(topic);
+                            }}
+                          >
+                            <Book className="mr-2" size={16} />
+                            Начать тест
+                          </Button>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </CardContent>
-                  <CardFooter className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    <Button
-                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
-                      onClick={() => openTest(topic)}
-                    >
-                      <Book className="mr-2" size={16} />
-                      Начать тест
-                    </Button>
-                  </CardFooter>
                 </Card>
               </motion.div>
             ))}
