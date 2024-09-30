@@ -15,6 +15,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "./skeleton";
 
 interface Topic {
   _id: string;
@@ -27,16 +28,22 @@ export default function Component() {
   const router = useRouter();
   const [topics, setTopics] = useState<Topic[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
     axios
       .get("https://www.api.math12.studio/api/topics", {
         withCredentials: true,
       })
       .then((response) => {
         setTopics(response.data);
+        setIsLoading(false);
       })
-      .catch((error) => console.error("Error fetching topics:", error));
+      .catch((error) => {
+        console.error("Error fetching topics:", error);
+        setIsLoading(false);
+      });
   }, []);
 
   const filteredTopics = topics.filter(
@@ -51,8 +58,8 @@ export default function Component() {
   };
 
   return (
-    <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8 mt-12">
-      <h1 className="text-3xl font-bold mb-8 text-center">
+    <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8 mt-12 bg-white">
+      <h1 className="text-3xl font-bold mb-8 text-center text-black">
         Математические тесты
       </h1>
       <div className="mb-8 relative max-w-md mx-auto">
@@ -61,15 +68,33 @@ export default function Component() {
           placeholder="Поиск по теме, классу или четверти..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-10"
+          className="pl-10 border-blue-600 focus:ring-blue-600 focus:border-blue-600"
         />
         <Search
-          className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+          className="absolute left-3 top-1/2 transform -translate-y-1/2 text-blue-600"
           size={20}
         />
       </div>
       <AnimatePresence>
-        {filteredTopics.length > 0 ? (
+        {isLoading ? (
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            {[...Array(6)].map((_, index) => (
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+              >
+                <Skeleton />
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : filteredTopics.length > 0 ? (
           <motion.div
             className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
             initial={{ opacity: 0 }}
@@ -82,25 +107,32 @@ export default function Component() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.3 }}
+                className="group"
               >
-                <Card>
+                <Card className="h-full transition-shadow duration-300 hover:shadow-md border-blue-600 border-opacity-50">
                   <CardHeader>
-                    <CardTitle className="truncate" title={topic.topic}>
+                    <CardTitle
+                      className="truncate text-black"
+                      title={topic.topic}
+                    >
                       {topic.topic}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-2">
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <GraduationCap size={16} className="mr-2" />
+                    <div className="flex items-center text-sm text-black">
+                      <GraduationCap size={16} className="mr-2 text-blue-600" />
                       <span>Класс: {topic.class}</span>
                     </div>
-                    <div className="flex items-center text-sm text-muted-foreground">
-                      <Calendar size={16} className="mr-2" />
+                    <div className="flex items-center text-sm text-black">
+                      <Calendar size={16} className="mr-2 text-blue-600" />
                       <span>Четверть: {topic.term}</span>
                     </div>
                   </CardContent>
-                  <CardFooter>
-                    <Button className="w-full" onClick={() => openTest(topic)}>
+                  <CardFooter className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    <Button
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+                      onClick={() => openTest(topic)}
+                    >
                       <Book className="mr-2" size={16} />
                       Начать тест
                     </Button>
@@ -116,9 +148,11 @@ export default function Component() {
             exit={{ opacity: 0, y: -20 }}
             className="text-center py-12"
           >
-            <Search className="mx-auto text-primary mb-4" size={48} />
-            <h2 className="text-xl font-semibold mb-2">Ничего не найдено</h2>
-            <p className="text-muted-foreground">
+            <Search className="mx-auto text-blue-600 mb-4" size={48} />
+            <h2 className="text-xl font-semibold mb-2 text-black">
+              Ничего не найдено
+            </h2>
+            <p className="text-black">
               По вашему запросу &quot;{searchQuery}&quot; не найдено ни одного
               теста. Попробуйте изменить параметры поиска.
             </p>
