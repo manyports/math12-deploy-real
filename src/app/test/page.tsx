@@ -1,11 +1,16 @@
 "use client";
 
-import { useState, useEffect } from 'react';
-import axios from 'axios';
-import { motion, AnimatePresence } from 'framer-motion';
-import Lenis from '@studio-freight/lenis';
-import { useRouter } from 'next/navigation';
-import { FaSearch, FaChalkboardTeacher, FaCalendarAlt, FaBookOpen, FaExclamationTriangle } from 'react-icons/fa';
+import axios from "axios";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  AlertCircle,
+  Book,
+  ChevronDown,
+  ChevronUp,
+  Search,
+} from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 
 interface Topic {
   _id: string;
@@ -16,41 +21,26 @@ interface Topic {
 
 export default function Test() {
   const router = useRouter();
-
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    });
-
-    const raf = (time: number) => {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    };
-
-    requestAnimationFrame(raf);
-
-    return () => {
-      lenis.destroy();
-    };
-  }, []);
-
   const [topics, setTopics] = useState<Topic[]>([]);
   const [selectedTopic, setSelectedTopic] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState<string>('');
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
   useEffect(() => {
-    axios.get('https://www.api.math12.studio/api/topics', { withCredentials: true })
-      .then(response => {
+    axios
+      .get("https://www.api.math12.studio/api/topics", {
+        withCredentials: true,
+      })
+      .then((response) => {
         setTopics(response.data);
       })
-      .catch(error => console.error('Error fetching topics:', error));
+      .catch((error) => console.error("Error fetching topics:", error));
   }, []);
 
-  const filteredTopics = topics.filter(topic =>
-    topic.topic.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    topic.class.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    topic.term.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredTopics = topics.filter(
+    (topic) =>
+      topic.topic.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      topic.class.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      topic.term.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   const handleClick = (id: string) => {
@@ -62,67 +52,78 @@ export default function Test() {
   };
 
   return (
-    <div className="min-h-screen py-6 sm:py-12 px-4 sm:px-6 lg:px-8 mt-12">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold mb-6 sm:mb-12 text-center text-blue-600 tracking-tight">
+    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-3xl mx-auto">
+        <h1 className="text-3xl font-bold mb-8 text-center text-black">
           Математические тесты
         </h1>
-        <div className="mb-6 sm:mb-8 relative">
+        <div className="mb-8 relative">
           <input
             type="text"
             placeholder="Поиск по теме, классу или четверти..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 sm:py-3 pl-10 sm:pl-12 text-base sm:text-lg border-2 border-blue-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition duration-300 ease-in-out"
+            className="w-full px-4 py-2 pl-10 text-black border-b-2 border-gray-200 focus:border-blue-600 focus:outline-none transition duration-300"
           />
-          <FaSearch className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2 text-blue-400" size={20} />
+          <Search
+            className="absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-400"
+            size={20}
+          />
         </div>
         <AnimatePresence>
           {filteredTopics.length > 0 ? (
-            <motion.div 
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, staggerChildren: 0.1 }}
+            <motion.div
+              className="space-y-4"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.5 }}
             >
-              {filteredTopics.map(topic => (
+              {filteredTopics.map((topic) => (
                 <motion.div
                   key={topic._id}
-                  className="bg-white p-4 sm:p-6 rounded-xl sm:rounded-2xl shadow-md sm:shadow-lg cursor-pointer overflow-hidden"
-                  onClick={() => handleClick(topic._id)}
-                  whileHover={{ scale: 1.02, boxShadow: "0 8px 16px rgba(0,0,0,0.1)" }}
-                  whileTap={{ scale: 0.98 }}
-                  layout
+                  className="border-b border-gray-200 pb-4"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3 }}
                 >
-                  <h2 className="text-xl sm:text-2xl font-bold mb-2 sm:mb-3 text-blue-700">{topic.topic}</h2>
-                  <div className="flex items-center mb-1 sm:mb-2 text-sm sm:text-base text-gray-600">
-                    <FaChalkboardTeacher className="mr-2" />
-                    <p>Класс: {topic.class}</p>
-                  </div>
-                  <div className="flex items-center mb-3 sm:mb-4 text-sm sm:text-base text-gray-600">
-                    <FaCalendarAlt className="mr-2" />
-                    <p>Четверть: {topic.term}</p>
+                  <div
+                    className="flex justify-between items-center cursor-pointer"
+                    onClick={() => handleClick(topic._id)}
+                  >
+                    <h2 className="text-xl font-semibold text-black">
+                      {topic.topic}
+                    </h2>
+                    {selectedTopic === topic._id ? (
+                      <ChevronUp size={20} />
+                    ) : (
+                      <ChevronDown size={20} />
+                    )}
                   </div>
                   <AnimatePresence>
                     {selectedTopic === topic._id && (
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
-                        animate={{ opacity: 1, height: 'auto' }}
+                        animate={{ opacity: 1, height: "auto" }}
                         exit={{ opacity: 0, height: 0 }}
                         transition={{ duration: 0.3 }}
+                        className="mt-4 space-y-2"
                       >
-                        <motion.button
-                          className="mt-2 sm:mt-4 w-full bg-blue-600 text-white px-4 sm:px-6 py-2 sm:py-3 rounded-full hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center text-sm sm:text-base"
-                          whileHover={{ scale: 1.03 }}
-                          whileTap={{ scale: 0.97 }}
+                        <p className="text-sm text-gray-600">
+                          Класс: {topic.class}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          Четверть: {topic.term}
+                        </p>
+                        <button
+                          className="mt-2 w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center"
                           onClick={(e) => {
                             e.stopPropagation();
                             openTest(topic);
                           }}
                         >
-                          <FaBookOpen className="mr-2" />
-                          Начать тест!
-                        </motion.button>
+                          <Book className="mr-2" size={16} />
+                          Начать тест
+                        </button>
                       </motion.div>
                     )}
                   </AnimatePresence>
@@ -136,10 +137,13 @@ export default function Test() {
               exit={{ opacity: 0, y: -20 }}
               className="text-center py-12"
             >
-              <FaExclamationTriangle className="mx-auto text-yellow-500 mb-4" size={48} />
-              <h2 className="text-2xl font-bold text-gray-700 mb-2">Ничего не найдено</h2>
-              <p className="text-gray-500">
-                По вашему запросу &quot;{searchQuery}&quot; не найдено ни одного теста. Попробуйте изменить параметры поиска. Если ошибка повторяется, попробуйте войти в аккаунт.
+              <AlertCircle className="mx-auto text-blue-600 mb-4" size={48} />
+              <h2 className="text-xl font-semibold text-black mb-2">
+                Ничего не найдено
+              </h2>
+              <p className="text-gray-600">
+                По вашему запросу &quot;{searchQuery}&quot; не найдено ни одного
+                теста. Попробуйте изменить параметры поиска.
               </p>
             </motion.div>
           )}
