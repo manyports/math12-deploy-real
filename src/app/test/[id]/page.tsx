@@ -38,13 +38,17 @@ function renderLatex(text: string): React.ReactNode {
   return splitText.map((part, index) => {
     if (part.startsWith("$$") && part.endsWith("$$")) {
       const latex = part.slice(2, -2);
-      return renderKaTeX(latex, index, true);
+      return renderKaTeX(escapeLatex(latex), index, true);
     } else if (part.startsWith("$") && part.endsWith("$")) {
       const latex = part.slice(1, -1);
-      return renderKaTeX(latex, index, false);
+      return renderKaTeX(escapeLatex(latex), index, false);
     }
     return <span key={index}>{part}</span>;
   });
+}
+
+function escapeLatex(latex: string): string {
+  return latex.replace(/\\/g, "\\\\");
 }
 
 function renderKaTeX(
