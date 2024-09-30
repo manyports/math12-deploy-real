@@ -1,5 +1,3 @@
-"use client";
-
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import katex from "katex";
@@ -33,46 +31,36 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 function renderLatex(text: string): React.ReactNode {
-  const splitText = text.split(/(\$\$.*?\$\$|\$.*?\$)/g);
-
-  return splitText.map((part, index) => {
+  const parts = text.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$)/);
+  return parts.map((part, index) => {
     if (part.startsWith("$$") && part.endsWith("$$")) {
-      const latex = part.slice(2, -2);
-      return renderKaTeX(escapeLatex(latex), index, true);
+      return (
+        <span
+          key={index}
+          dangerouslySetInnerHTML={{
+            __html: katex.renderToString(part.slice(2, -2), {
+              displayMode: true,
+              throwOnError: false,
+            }),
+          }}
+        />
+      );
     } else if (part.startsWith("$") && part.endsWith("$")) {
-      const latex = part.slice(1, -1);
-      return renderKaTeX(escapeLatex(latex), index, false);
+      return (
+        <span
+          key={index}
+          dangerouslySetInnerHTML={{
+            __html: katex.renderToString(part.slice(1, -1), {
+              displayMode: false,
+              throwOnError: false,
+            }),
+          }}
+        />
+      );
+    } else {
+      return <span key={index}>{part}</span>;
     }
-    return <span key={index}>{part}</span>;
   });
-}
-
-function escapeLatex(latex: string): string {
-  return latex.replace(/\\/g, "\\\\");
-}
-
-function renderKaTeX(
-  latex: string,
-  key: number,
-  displayMode: boolean
-): React.ReactNode {
-  try {
-    return (
-      <span
-        key={key}
-        dangerouslySetInnerHTML={{
-          __html: katex.renderToString(latex, {
-            throwOnError: false,
-            displayMode: displayMode,
-            strict: false,
-          }),
-        }}
-      />
-    );
-  } catch (error) {
-    console.error("LaTeX rendering error:", error);
-    return <span key={key}>{latex}</span>;
-  }
 }
 
 export default function TestPage() {
