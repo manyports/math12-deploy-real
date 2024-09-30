@@ -1,3 +1,5 @@
+"use client";
+
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import katex from "katex";
