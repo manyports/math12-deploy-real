@@ -32,27 +32,29 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-function renderLatex(text: string): React.ReactNode {
-  const parts = text.split(/(\$\$[\s\S]*?\$\$|\$[\s\S]*?\$)/);
+function renderLatex(text : string) {
+  const parts = text.split(/(\\\\[^\\]+\\\\|\$[^$]+\$)/);
   return parts.map((part, index) => {
-    if (part.startsWith("$$") && part.endsWith("$$")) {
+    if (part.startsWith('\\\\(') && part.endsWith('\\\\)')) {
+      const latex = part.slice(2, -2);
       return (
         <span
           key={index}
           dangerouslySetInnerHTML={{
-            __html: katex.renderToString(part.slice(2, -2), {
-              displayMode: true,
+            __html: katex.renderToString(latex, {
+              displayMode: false,
               throwOnError: false,
             }),
           }}
         />
       );
-    } else if (part.startsWith("$") && part.endsWith("$")) {
+    } else if (part.startsWith('$') && part.endsWith('$')) {
+      const latex = part.slice(1, -1);
       return (
         <span
           key={index}
           dangerouslySetInnerHTML={{
-            __html: katex.renderToString(part.slice(1, -1), {
+            __html: katex.renderToString(latex, {
               displayMode: false,
               throwOnError: false,
             }),
