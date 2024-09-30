@@ -33,30 +33,42 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 function renderLatex(text: string): React.ReactNode {
-  const splitText = text.split(/(\$.*?\$)/g);
+  const splitText = text.split(/(\$\$.*?\$\$|\$.*?\$)/g);
 
   return splitText.map((part, index) => {
-    if (part.startsWith("$") && part.endsWith("$")) {
+    if (part.startsWith("$$") && part.endsWith("$$")) {
+      const latex = part.slice(2, -2);
+      return renderKaTeX(latex, index, true);
+    } else if (part.startsWith("$") && part.endsWith("$")) {
       const latex = part.slice(1, -1);
-      try {
-        return (
-          <span
-            key={index}
-            dangerouslySetInnerHTML={{
-              __html: katex.renderToString(latex, {
-                throwOnError: false,
-                displayMode: false,
-              }),
-            }}
-          />
-        );
-      } catch (error) {
-        console.error("LaTeX rendering error:", error);
-        return <span key={index}>{part}</span>;
-      }
+      return renderKaTeX(latex, index, false);
     }
     return <span key={index}>{part}</span>;
   });
+}
+
+function renderKaTeX(
+  latex: string,
+  key: number,
+  displayMode: boolean
+): React.ReactNode {
+  try {
+    return (
+      <span
+        key={key}
+        dangerouslySetInnerHTML={{
+          __html: katex.renderToString(latex, {
+            throwOnError: false,
+            displayMode: displayMode,
+            strict: false,
+          }),
+        }}
+      />
+    );
+  } catch (error) {
+    console.error("LaTeX rendering error:", error);
+    return <span key={key}>{latex}</span>;
+  }
 }
 
 export default function TestPage() {
