@@ -6,6 +6,16 @@ import { Book, Calendar, GraduationCap, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+
 interface Topic {
   _id: string;
   class: string;
@@ -13,7 +23,7 @@ interface Topic {
   term: string;
 }
 
-export default function Test() {
+export default function Component() {
   const router = useRouter();
   const [topics, setTopics] = useState<Topic[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -41,85 +51,80 @@ export default function Test() {
   };
 
   return (
-    <div className="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8 mt-12">
-      <div className="max-w-6xl mx-auto">
-        <h1 className="text-3xl font-bold mb-8 text-center text-black">
-          Математические тесты
-        </h1>
-        <div className="mb-8 relative max-w-md mx-auto">
-          <input
-            type="text"
-            placeholder="Поиск по теме, классу или четверти..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full px-4 py-2 pl-10 text-black border-b-2 border-gray-200 focus:border-blue-600 focus:outline-none transition duration-300"
-          />
-          <Search
-            className="absolute left-0 top-1/2 transform -translate-y-1/2 text-gray-400"
-            size={20}
-          />
-        </div>
-        <AnimatePresence>
-          {filteredTopics.length > 0 ? (
-            <motion.div
-              className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.5 }}
-            >
-              {filteredTopics.map((topic) => (
-                <motion.div
-                  key={topic._id}
-                  className="bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow duration-300"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.3 }}
-                >
-                  <div className="p-6 space-y-4">
-                    <h2
-                      className="text-xl font-semibold text-black truncate"
-                      title={topic.topic}
-                    >
+    <div className="container mx-auto py-12 px-4 sm:px-6 lg:px-8 mt-12">
+      <h1 className="text-3xl font-bold mb-8 text-center">
+        Математические тесты
+      </h1>
+      <div className="mb-8 relative max-w-md mx-auto">
+        <Input
+          type="text"
+          placeholder="Поиск по теме, классу или четверти..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="pl-10"
+        />
+        <Search
+          className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground"
+          size={20}
+        />
+      </div>
+      <AnimatePresence>
+        {filteredTopics.length > 0 ? (
+          <motion.div
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+          >
+            {filteredTopics.map((topic) => (
+              <motion.div
+                key={topic._id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Card>
+                  <CardHeader>
+                    <CardTitle className="truncate" title={topic.topic}>
                       {topic.topic}
-                    </h2>
-                    <div className="flex items-center text-sm text-gray-600">
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-2">
+                    <div className="flex items-center text-sm text-muted-foreground">
                       <GraduationCap size={16} className="mr-2" />
                       <span>Класс: {topic.class}</span>
                     </div>
-                    <div className="flex items-center text-sm text-gray-600">
+                    <div className="flex items-center text-sm text-muted-foreground">
                       <Calendar size={16} className="mr-2" />
                       <span>Четверть: {topic.term}</span>
                     </div>
-                    <button
-                      className="w-full bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 transition-colors duration-300 flex items-center justify-center"
-                      onClick={() => openTest(topic)}
-                    >
+                  </CardContent>
+                  <CardFooter>
+                    <Button className="w-full" onClick={() => openTest(topic)}>
                       <Book className="mr-2" size={16} />
                       Начать тест
-                    </button>
-                  </div>
-                </motion.div>
-              ))}
-            </motion.div>
-          ) : (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-              className="text-center py-12"
-            >
-              <Search className="mx-auto text-blue-600 mb-4" size={48} />
-              <h2 className="text-xl font-semibold text-black mb-2">
-                Ничего не найдено
-              </h2>
-              <p className="text-gray-600">
-                По вашему запросу &quot;{searchQuery}&quot; не найдено ни одного
-                теста. Попробуйте изменить параметры поиска.
-              </p>
-            </motion.div>
-          )}
-        </AnimatePresence>
-      </div>
+                    </Button>
+                  </CardFooter>
+                </Card>
+              </motion.div>
+            ))}
+          </motion.div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="text-center py-12"
+          >
+            <Search className="mx-auto text-primary mb-4" size={48} />
+            <h2 className="text-xl font-semibold mb-2">Ничего не найдено</h2>
+            <p className="text-muted-foreground">
+              По вашему запросу &quot;{searchQuery}&quot; не найдено ни одного
+              теста. Попробуйте изменить параметры поиска.
+            </p>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
