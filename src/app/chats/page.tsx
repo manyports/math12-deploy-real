@@ -51,7 +51,7 @@ const ChatComponent = () => {
   }, []);
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br mt-15">
+    <div className="flex flex-col h-screen bg-gradient-to-br mt-16">
       <header className="bg-white bg-opacity-10 backdrop-blur-md shadow-md p-4 sticky top-0 z-10">
         <div className="max-w-4xl mx-auto flex justify-between items-center">
           <div className="flex items-center space-x-4">
