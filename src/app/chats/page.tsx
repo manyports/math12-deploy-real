@@ -181,28 +181,29 @@ export default function ChatComponent() {
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => handleRegenerate(message.id)}
-                          className="text-xs"
-                        >
-                          <RefreshCw className="h-3 w-3 mr-1" />
-                          Регенерировать
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>
-                        <p>Регенерировать ответ AI</p>
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
                 </div>
               )}
             </motion.div>
           ))}
+          {loading && currentAiMessage && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-col"
+            >
+              <div className="p-3 rounded-lg bg-gray-100 text-black">
+                <p className="font-semibold mb-1">AI</p>
+                <div
+                  className="prose"
+                  dangerouslySetInnerHTML={{ __html: currentAiMessage }}
+                />
+                <p className="text-xs mt-1 opacity-70">
+                  {format(new Date(), "HH:mm:ss")}
+                </p>
+              </div>
+            </motion.div>
+          )}
           {loading && currentAiMessage && (
             <motion.div
               initial={{ opacity: 0, y: 20 }}
