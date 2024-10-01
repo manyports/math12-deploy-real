@@ -1,4 +1,5 @@
 "use client";
+
 import React, {
   createContext,
   ReactNode,
@@ -8,9 +9,10 @@ import React, {
 } from "react";
 
 interface Message {
-  role: "human" | "ai";
+  id: string;
+  role: "user" | "ai";
   content: string;
-  timestamp: number;
+  timestamp: Date;
 }
 
 interface ChatContextType {
@@ -20,6 +22,7 @@ interface ChatContextType {
   loading: boolean;
   newChat: () => void;
   onSent: (prompt?: string) => void;
+  streamResponse: () => AsyncGenerator<string, void, unknown>;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -36,6 +39,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [input, setInput] = useState<string>("");
   const [messages, setMessages] = useState<Message[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const [currentStream, setCurrentStream] =
+    useState<ReadableStreamDefaultReader | null>(null);
 
   useEffect(() => {
     fetchChatHistory();
@@ -47,7 +52,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     response = response.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
     response = response.replace(/\*(.*?)\*/g, "<em>$1</em>");
     response = response.replace(/^# (.*?)$/gm, "<h1>$1</h1>");
-    response = response.replace(/^## (.*?)$/gm, "<h2>$1</2>");
+    response = response.replace(/^## (.*?)$/gm, "<h2>$1</h2>");
     response = response.replace(/^### (.*?)$/gm, "<h3>$1</h3>");
     response = response.replace(/\n/g, "<br>");
     response = response.replace(/^\* (.*?)$/gm, "<li>$1</li>");
@@ -69,33 +74,15 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       );
       if (response.ok) {
         const data = await response.json();
-        console.log("Raw chat history data:", data);
-
-        if (!data.history || !Array.isArray(data.history)) {
-          console.error("Unexpected data structure:", data);
-          return;
-        }
-
-        const processedMessages = data.history.map((message: Message) => {
-          const processed = {
-            ...message,
-            content:
-              message.role === "ai"
-                ? processGeminiResponse(message.content)
-                : message.content,
-          };
-          console.log("Processed message:", processed);
-          return processed;
-        });
-
-        console.log("Setting messages state:", processedMessages);
+        const processedMessages = data.history.map((message: Message) => ({
+          ...message,
+          timestamp: new Date(message.timestamp),
+          content:
+            message.role === "ai"
+              ? processGeminiResponse(message.content)
+              : message.content,
+        }));
         setMessages(processedMessages);
-      } else {
-        console.error(
-          "Error fetching chat history:",
-          response.status,
-          response.statusText
-        );
       }
     } catch (error) {
       console.error("Error in fetchChatHistory:", error);
@@ -114,48 +101,71 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const onSent = async (prompt?: string) => {
-    setLoading(true);
-    const finalPrompt = prompt || input;
-    const humanMessage: Message = {
-      role: "human",
-      content: finalPrompt,
-      timestamp: Date.now(),
-    };
-    setMessages((prevMessages) => [...prevMessages, humanMessage]);
-    setInput("");
+  async function* streamResponse(): AsyncGenerator<string, void, unknown> {
+    if (!currentStream) return;
 
     try {
-      const response = await fetch("https://www.api.math12.studio/api/chat", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ prompt: finalPrompt }),
-        credentials: "include",
-      });
+      while (true) {
+        const { done, value } = await currentStream.read();
+        if (done) break;
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch response from API");
+        const chunk = new TextDecoder().decode(value);
+        yield processGeminiResponse(chunk);
+      }
+    } finally {
+      currentStream.releaseLock();
+    }
+  }
+
+  const onSent = async (prompt?: string) => {
+    const finalPrompt = prompt || input;
+    if (!finalPrompt.trim()) return;
+
+    setLoading(true);
+    try {
+      const userMessage: Message = {
+        id: Date.now().toString(),
+        role: "user",
+        content: finalPrompt,
+        timestamp: new Date(),
+      };
+      setMessages((prev) => [...prev, userMessage]);
+      setInput("");
+
+      const response = await fetch(
+        "https://www.api.math12.studio/api/chat/stream",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ prompt: finalPrompt }),
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok || !response.body) {
+        throw new Error("Stream response failed");
       }
 
-      const data = await response.json();
-      console.log("Received AI response:", data);
-
+      const reader = response.body.getReader();
+      setCurrentStream(reader);
       const aiMessage: Message = {
+        id: (Date.now() + 1).toString(),
         role: "ai",
-        content: processGeminiResponse(data.text),
-        timestamp: Date.now(),
+        content: "",
+        timestamp: new Date(),
       };
-      setMessages((prevMessages) => [...prevMessages, aiMessage]);
+      setMessages((prev) => [...prev, aiMessage]);
     } catch (error) {
-      console.error("Error:", error);
+      console.error("Error in onSent:", error);
       const errorMessage: Message = {
+        id: (Date.now() + 1).toString(),
         role: "ai",
         content: "An error occurred while processing your request.",
-        timestamp: Date.now(),
+        timestamp: new Date(),
       };
-      setMessages((prevMessages) => [...prevMessages, errorMessage]);
+      setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setLoading(false);
     }
@@ -170,6 +180,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         loading,
         newChat,
         onSent,
+        streamResponse,
       }}
     >
       {children}

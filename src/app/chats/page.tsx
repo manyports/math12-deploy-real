@@ -1,160 +1,253 @@
-'use client';
+"use client";
 
-import { useChatContext } from '../../context/ChatContext';
-import { useEffect, useRef, useState } from 'react';
-import { format } from 'date-fns';
-import { motion, AnimatePresence } from 'framer-motion';
-import ReactTypingEffect from 'react-typing-effect';
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { format } from "date-fns";
+import { AnimatePresence, motion } from "framer-motion";
+import { ArrowUp, Copy, Plus, RefreshCw } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { useChatContext } from "../../context/ChatContext";
+
+interface Message {
+  id: string;
+  role: "user" | "ai";
+  content: string;
+  timestamp: Date;
+}
 
 declare global {
   interface Window {
-    MathJax: any;
+    MathJax?: {
+      typesetPromise: () => Promise<void>;
+    };
   }
 }
 
-const ChatComponent = () => {
-  const { input, setInput, messages, loading, onSent, newChat } = useChatContext();
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const [showScrollButton, setShowScrollButton] = useState(false);
+export default function ChatComponent() {
+  const {
+    input,
+    setInput,
+    messages,
+    loading,
+    onSent,
+    newChat,
+    streamResponse,
+  } = useChatContext();
+  const [copiedId, setCopiedId] = useState<string | null>(null);
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const [currentAiMessage, setCurrentAiMessage] = useState<string>("");
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setInput(e.target.value);
-  };
-
-  const handleSendMessage = () => {
+  const handleSend = () => {
     if (input.trim()) {
       onSent();
-      setInput('');
+      setInput("");
+      setCurrentAiMessage("");
     }
   };
 
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  const handleCopy = (content: string, id: string) => {
+    navigator.clipboard.writeText(content);
+    setCopiedId(id);
+    setTimeout(() => setCopiedId(null), 2000);
   };
+
+  const handleRegenerate = (id: string) => {
+    setCurrentAiMessage("");
+    onSent("Regenerate response for message " + id);
+  };
+
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTop = scrollAreaRef.current.scrollHeight;
+    }
+  }, [messages, currentAiMessage]);
 
   useEffect(() => {
     if (window.MathJax) {
       window.MathJax.typesetPromise();
     }
-    scrollToBottom();
-  }, [messages]);
+  }, [messages, currentAiMessage]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = document.documentElement.scrollTop;
-      setShowScrollButton(scrollTop > 300);
+    let isMounted = true;
+
+    const fetchStreamResponse = async () => {
+      if (loading) {
+        for await (const chunk of streamResponse()) {
+          if (isMounted) {
+            setCurrentAiMessage((prev) => prev + chunk);
+          }
+        }
+      }
     };
 
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
+    fetchStreamResponse();
+
+    return () => {
+      isMounted = false;
+    };
+  }, [loading, streamResponse]);
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br">
-      <header className="bg-white bg-opacity-10 backdrop-blur-md shadow-md p-4 sticky top-0 z-10">
-        <div className="max-w-4xl mx-auto flex justify-between items-center">
-          <h1 className="text-2xl font-bold text-blue-600">MathAI Chat 🤖</h1>
-          <div className="flex items-center space-x-4">
-            <button 
-              onClick={newChat} 
-              className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-md hover:bg-opacity-90 transition duration-300 ease-in-out"
+    <div className="flex flex-col h-screen bg-white text-black">
+      <div className="p-4 border-b border-gray-200">
+        <Button
+          onClick={newChat}
+          variant="outline"
+          className="flex items-center justify-center"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          Создать новый чат
+        </Button>
+      </div>
+      <ScrollArea ref={scrollAreaRef} className="flex-1 p-4 overflow-y-auto">
+        <div className="space-y-4">
+          {messages.map((message) => (
+            <motion.div
+              key={message.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-col"
             >
-              Новый чат
-            </button>
-          </div>
-        </div>
-      </header>
-
-      <main className="flex-grow overflow-auto p-4 space-y-4">
-        <div className="max-w-4xl mx-auto">
-          <AnimatePresence>
-            {messages.map((message, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.3 }}
-                className={`flex ${message.role === 'ai' ? 'justify-start' : 'justify-end'} mb-4`}
+              <div
+                className={`p-3 rounded-lg ${
+                  message.role === "ai"
+                    ? "bg-gray-100 text-black"
+                    : "bg-blue-600 text-white"
+                }`}
               >
-                <div
-                  className={`max-w-[80%] p-3 rounded-lg shadow-md ${
-                    message.role === 'ai'
-                      ? 'bg-white text-gray-800'
-                      : 'bg-blue-600 text-white'
-                  }`}
-                >
-                  <div className="prose">
-                    {message.role === 'ai' ? (
-                      <div dangerouslySetInnerHTML={{ __html: message.content }} />
-                    ) : (
-                      <p>{message.content}</p>
-                    )}
-                  </div>
-                  <small className={`text-xs mt-1 block ${message.role === 'ai' ? 'text-gray-500' : 'text-blue-200'}`}>
-                    {format(message.timestamp, 'HH:mm:ss')}
-                  </small>
-                </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-          {loading && (
-            <div className="flex justify-start mb-4">
-              <div className="bg-white bg-opacity-80 text-gray-800 p-3 rounded-lg shadow-md">
-                <ReactTypingEffect
-                  text={["Думаю...", "Обрабатываю запрос...", "Генерирую ответ..."]}
-                  speed={50}
-                  eraseSpeed={50}
-                  typingDelay={1000}
-                  eraseDelay={2000}
-                />
+                <p className="font-semibold mb-1">
+                  {message.role === "ai" ? "AI" : "Вы"}
+                </p>
+                {message.role === "ai" ? (
+                  <div
+                    className="prose"
+                    dangerouslySetInnerHTML={{ __html: message.content }}
+                  />
+                ) : (
+                  <p className="whitespace-pre-wrap break-words">
+                    {message.content}
+                  </p>
+                )}
+                <p className="text-xs mt-1 opacity-70">
+                  {format(message.timestamp, "HH:mm:ss")}
+                </p>
               </div>
-            </div>
-          )}
-          <div ref={messagesEndRef} />
-        </div>
-      </main>
-
-      <footer className="bg-white bg-opacity-10 backdrop-blur-md shadow-md p-4 sticky bottom-0">
-        <div className="max-w-4xl mx-auto">
-          <div className="relative">
-            <textarea
-              className="w-full bg-white bg-opacity-80 text-gray-800 border border-gray-300 rounded-lg py-2 px-4 pl-4 pr-12 resize-none focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-              placeholder="Введите ваше сообщение..."
-              rows={2}
-              value={input}
-              onChange={handleInputChange}
-            />
-            <button
-              className="absolute right-2 bottom-2 bg-blue-600 text-white rounded-full p-2 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 disabled:opacity-50 disabled:cursor-not-allowed transition duration-300 ease-in-out"
-              onClick={handleSendMessage}
-              disabled={loading}
+              {message.role === "ai" && (
+                <div className="flex justify-start mt-1 space-x-2">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() =>
+                            handleCopy(message.content, message.id)
+                          }
+                          className="text-xs"
+                        >
+                          <AnimatePresence>
+                            {copiedId === message.id ? (
+                              <motion.span
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                              >
+                                Скопировано!
+                              </motion.span>
+                            ) : (
+                              <motion.span
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                exit={{ opacity: 0 }}
+                              >
+                                <Copy className="h-3 w-3 mr-1" />
+                                Копировать
+                              </motion.span>
+                            )}
+                          </AnimatePresence>
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Копировать сообщение</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleRegenerate(message.id)}
+                          className="text-xs"
+                        >
+                          <RefreshCw className="h-3 w-3 mr-1" />
+                          Регенерировать
+                        </Button>
+                      </TooltipTrigger>
+                      <TooltipContent>
+                        <p>Регенерировать ответ AI</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div>
+              )}
+            </motion.div>
+          ))}
+          {loading && currentAiMessage && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3 }}
+              className="flex flex-col"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-5 h-5">
-                <path d="M3.478 2.404a.75.75 0 00-.926.941l2.432 7.905H13.5a.75.75 0 010 1.5H4.984l-2.432 7.905a.75.75 0 00.926.94 60.519 60.519 0 0018.445-8.986.75.75 0 000-1.218A60.517 60.517 0 003.478 2.404z" />
-              </svg>
-            </button>
-          </div>
+              <div className="p-3 rounded-lg bg-gray-100 text-black">
+                <p className="font-semibold mb-1">AI</p>
+                <div
+                  className="prose"
+                  dangerouslySetInnerHTML={{ __html: currentAiMessage }}
+                />
+                <p className="text-xs mt-1 opacity-70">
+                  {format(new Date(), "HH:mm:ss")}
+                </p>
+              </div>
+            </motion.div>
+          )}
         </div>
-      </footer>
-
-      <AnimatePresence>
-        {showScrollButton && (
-          <motion.button
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 20 }}
-            className="fixed bottom-20 right-4 bg-blue-600 text-white rounded-full p-3 shadow-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400 transition duration-300 ease-in-out"
-            onClick={scrollToBottom}
+      </ScrollArea>
+      <div className="p-4 border-t border-gray-200">
+        <div className="flex items-center space-x-2">
+          <Input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            placeholder="Введите ваше сообщение..."
+            className="flex-grow"
+            onKeyPress={(e) => {
+              if (e.key === "Enter" && !e.shiftKey) {
+                e.preventDefault();
+                handleSend();
+              }
+            }}
+          />
+          <Button
+            onClick={handleSend}
+            size="icon"
+            className="bg-blue-600 text-white rounded-full"
+            disabled={loading}
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-            </svg>
-          </motion.button>
-        )}
-      </AnimatePresence>
+            <ArrowUp className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
     </div>
   );
-};
-
-export default ChatComponent;
+}
