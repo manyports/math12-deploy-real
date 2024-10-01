@@ -4,8 +4,8 @@ import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
 import katex from "katex";
 import "katex/dist/katex.min.css";
-import { ArrowLeft, ArrowRight, CheckCircle, XCircle } from "lucide-react";
-import { useParams } from "next/navigation";
+import { ArrowLeft, CheckCircle, WifiOff, XCircle } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { TypeAnimation } from "react-type-animation";
 
@@ -32,10 +32,10 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-function renderLatex(text : string) {
+function renderLatex(text: string) {
   const parts = text.split(/(\\\\[^\\]+\\\\|\$[^$]+\$)/);
   return parts.map((part, index) => {
-    if (part.startsWith('\\\\(') && part.endsWith('\\\\)')) {
+    if (part.startsWith("\\\\(") && part.endsWith("\\\\)")) {
       const latex = part.slice(2, -2);
       return (
         <span
@@ -48,7 +48,7 @@ function renderLatex(text : string) {
           }}
         />
       );
-    } else if (part.startsWith('$') && part.endsWith('$')) {
+    } else if (part.startsWith("$") && part.endsWith("$")) {
       const latex = part.slice(1, -1);
       return (
         <span
@@ -68,9 +68,11 @@ function renderLatex(text : string) {
 }
 
 export default function TestPage() {
+  const router = useRouter();
   const { id } = useParams();
   const [testContent, setTestContent] = useState<TestContent | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
   const [loadingStage, setLoadingStage] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
@@ -86,6 +88,8 @@ export default function TestPage() {
   ];
 
   const fetchTest = useCallback(async () => {
+    setLoading(true);
+    setError(false);
     try {
       for (let i = 0; i < loadingStages.length; i++) {
         setLoadingStage(i);
@@ -108,7 +112,7 @@ export default function TestPage() {
       setTestContent(testResponse.data.test);
     } catch (error) {
       console.error("Error fetching test:", error);
-      setTestContent(null);
+      setError(true);
     } finally {
       setLoading(false);
     }
@@ -195,8 +199,44 @@ export default function TestPage() {
     );
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-4 flex items-center justify-center">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md mx-auto p-8 bg-white rounded-3xl shadow-2xl text-center"
+        >
+          <WifiOff className="w-16 h-16 mx-auto mb-6 text-blue-600" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-4">
+            Ошибка с интернетом
+          </h2>
+          <p className="text-gray-600 mb-8">
+            Не удалось загрузить тест. Пожалуйста, проверьте подключение к
+            интернету и попробуйте снова.
+          </p>
+          <div className="flex justify-center space-x-4">
+            <button
+              onClick={() => fetchTest()}
+              className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition duration-300"
+            >
+              Попробовать снова
+            </button>
+            <button
+              onClick={() => router.back()}
+              className="px-6 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition duration-300 flex items-center"
+            >
+              <ArrowLeft className="w-5 h-5 mr-2" />
+              Назад
+            </button>
+          </div>
+        </motion.div>
+      </div>
+    );
+  }
+
   if (!testContent) {
-    return <div>Error loading test content</div>;
+    return null;
   }
 
   return (
@@ -287,20 +327,20 @@ export default function TestPage() {
                     <div
                       key={aIndex}
                       className={`
-                      flex items-center py-3 px-4 rounded-lg mb-2 text-lg
-                      ${userAnswers[qIndex] === aIndex ? "font-bold" : ""}
-                      ${answer.isCorrect ? "bg-green-100 text-green-800" : ""}
-                      ${
-                        userAnswers[qIndex] === aIndex && !answer.isCorrect
-                          ? "bg-red-100 text-red-800"
-                          : ""
-                      }
-                      ${
-                        userAnswers[qIndex] !== aIndex && !answer.isCorrect
-                          ? "text-gray-700"
-                          : ""
-                      }
-                    `}
+                        flex items-center py-3 px-4 rounded-lg mb-2 text-lg
+                        ${userAnswers[qIndex] === aIndex ? "font-bold" : ""}
+                        ${answer.isCorrect ? "bg-green-100 text-green-800" : ""}
+                        ${
+                          userAnswers[qIndex] === aIndex && !answer.isCorrect
+                            ? "bg-red-100 text-red-800"
+                            : ""
+                        }
+                        ${
+                          userAnswers[qIndex] !== aIndex && !answer.isCorrect
+                            ? "text-gray-700"
+                            : ""
+                        }
+                      `}
                     >
                       {answer.isCorrect ? (
                         <CheckCircle className="w-6 h-6 mr-2 text-green-600" />
