@@ -82,7 +82,7 @@ export default function Component() {
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5 }}
           >
-            {[...Array(6)].map((_, index) => (
+            {[...Array(9)].map((_, index) => (
               <motion.div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
