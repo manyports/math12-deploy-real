@@ -282,13 +282,15 @@ export default function TestPage() {
                       animate={{ opacity: 1, x: 0 }}
                       transition={{ delay: index * 0.1 }}
                       onClick={() => handleAnswerSelect(index)}
-                      className={`w-full p-6 text-left text-lg rounded-xl transition duration-300 ${
+                      className={`w-full py-4 px-6 text-left text-lg rounded-xl transition duration-300 flex items-center ${
                         selectedAnswer === index
                           ? "bg-blue-100 border-2 border-blue-600"
                           : "bg-white border-2 border-gray-200 hover:border-blue-600"
                       }`}
                     >
-                      {renderLatex(answer.text)}
+                      <div className="flex-grow">
+                        {renderLatex(answer.text)}
+                      </div>
                     </motion.button>
                   ))}
                 </div>
