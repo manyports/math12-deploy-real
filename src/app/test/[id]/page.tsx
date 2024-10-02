@@ -316,7 +316,7 @@ export default function TestPage() {
                 </p>
                 <p className="text-xl text-blue-600 mt-2">правильных ответов</p>
               </div>
-              <div className="space-y-6 max-h-[60vh] overflow-y-auto px-4">
+              <div className="space-y-6 max-h-[50vh] overflow-y-auto px-4">
                 {testContent.questions.map((question, qIndex) => (
                   <motion.div
                     key={qIndex}
