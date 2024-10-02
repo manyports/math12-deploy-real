@@ -240,8 +240,8 @@ export default function TestPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-4 flex items-center justify-center">
-      <div className="w-full max-w-4xl mx-auto p-8 bg-white rounded-3xl shadow-2xl">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-4 flex flex-col">
+      <div className="flex-grow w-full max-w-4xl mx-auto p-8 bg-white rounded-3xl shadow-2xl">
         {!showScore ? (
           <>
             <h1 className="text-4xl font-bold text-blue-600 mb-6 text-center">
