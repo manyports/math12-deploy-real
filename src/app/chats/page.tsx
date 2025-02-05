@@ -34,21 +34,19 @@ const ChatComponent = () => {
   };
 
   useEffect(() => {
-    if (window.MathJax) {
-      window.MathJax.typesetPromise();
-    }
-    scrollToBottom();
-  }, [messages]);
-
-  useEffect(() => {
-    const handleScroll = () => {
-      const scrollTop = document.documentElement.scrollTop;
-      setShowScrollButton(scrollTop > 300);
+    const typesetMath = async () => {
+      try {
+        if (window.MathJax && window.MathJax.typeset) {
+          window.MathJax.typeset();
+        }
+      } catch (error) {
+        console.error('MathJax typesetting failed:', error);
+      }
     };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    typesetMath();
+    scrollToBottom();
+  }, [messages]);
 
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br mt-16">
