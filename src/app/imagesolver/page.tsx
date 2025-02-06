@@ -17,8 +17,8 @@ interface SolutionData {
 marked.use(
   markedKatex({
     throwOnError: false,
-    displayMode: false, 
-    output: 'html',
+    displayMode: false,
+    output: 'mathml',
   })
 );
 
@@ -92,12 +92,24 @@ export default function SolveMath() {
   };
 
   const renderLatex = () => {
-    const elements = document.getElementsByClassName("latex");
+    const elements = document.getElementsByClassName("katex-mathml");
     Array.from(elements).forEach((element) => {
-      katex.render(element.textContent || "", element as HTMLElement, {
-        throwOnError: false,
-        displayMode: true,
-      });
+      const formula = element.querySelector('annotation')?.textContent || '';
+      const displayMode = element.closest('.math.math-display') !== null;
+      
+      try {
+        const wrapper = document.createElement('div');
+        katex.render(formula, wrapper, {
+          throwOnError: false,
+          displayMode: displayMode,
+        });
+        
+        if (element.parentNode) {
+          element.parentNode.innerHTML = wrapper.innerHTML;
+        }
+      } catch (error) {
+        console.error('Failed to render LaTeX:', error);
+      }
     });
   };
 
