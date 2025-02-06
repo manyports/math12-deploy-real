@@ -106,6 +106,14 @@ export default function SolveMath() {
             -1
           )}</h3>`;
         }
+
+        if (/^\d+\.\s/.test(line)) {
+          return `<div class="ml-4 my-2">${line.replace(
+            /\$(.*?)\$/g,
+            (_, math) => `<span class="latex">$${math}$</span>`
+          )}</div>`;
+        }
+
         return line.replace(
           /\$(.*?)\$/g,
           (_, math) => `<span class="latex">$${math}$</span>`
