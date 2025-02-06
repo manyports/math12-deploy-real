@@ -6,11 +6,21 @@ import { Send, Upload, X } from "lucide-react";
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { Toaster, toast } from "react-hot-toast";
+import { marked } from 'marked';
+import markedKatex from 'marked-katex-extension';
 
 interface SolutionData {
   fullSolution: string;
   error?: string;
 }
+
+marked.use(
+  markedKatex({
+    throwOnError: false,
+    displayMode: false, 
+    output: 'html',
+  })
+);
 
 export default function SolveMath() {
   const [selectedImages, setSelectedImages] = useState<File[]>([]);
@@ -92,34 +102,11 @@ export default function SolveMath() {
   };
 
   const formatSolution = (solution: string): string => {
-    return solution
-      .split("\n")
-      .map((line) => {
-        if (line.startsWith("**") && line.endsWith("**")) {
-          return `<h3 class="text-xl font-bold mt-4 mb-2">${line.slice(
-            2,
-            -2
-          )}</h3>`;
-        } else if (line.startsWith("*") && line.endsWith("*")) {
-          return `<h3 class="text-xl font-bold mt-4 mb-2">${line.slice(
-            1,
-            -1
-          )}</h3>`;
-        }
-
-        if (/^\d+\.\s/.test(line)) {
-          return `<div class="ml-4 my-2">${line.replace(
-            /\$(.*?)\$/g,
-            (_, math) => `<span class="latex">$${math}$</span>`
-          )}</div>`;
-        }
-
-        return line.replace(
-          /\$(.*?)\$/g,
-          (_, math) => `<span class="latex">$${math}$</span>`
-        );
-      })
-      .join("<br>");
+    let processedSolution = solution.replace(/\\\[([\s\S]*?)\\\]/g, '$$$$1$$');
+    
+    processedSolution = processedSolution.replace(/\\\(([\s\S]*?)\\\)/g, '$$$1$');
+    
+    return marked(processedSolution) as string;
   };
 
   return (
