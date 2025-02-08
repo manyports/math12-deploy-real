@@ -2,8 +2,6 @@
 
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
-import katex from "katex";
-import "katex/dist/katex.min.css";
 import { ArrowLeft, CheckCircle, WifiOff, XCircle } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
@@ -33,38 +31,7 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 function renderLatex(text: string) {
-  const parts = text.split(/(\$\$[^$]+\$\$|\$[^$]+\$)/);
-  return parts.map((part, index) => {
-    if (part.startsWith("$$") && part.endsWith("$$")) {
-      const latex = part.slice(2, -2);
-      return (
-        <span
-          key={index}
-          className="block text-center my-2"
-          dangerouslySetInnerHTML={{
-            __html: katex.renderToString(latex, {
-              displayMode: true,
-              throwOnError: false,
-            }),
-          }}
-        />
-      );
-    } else if (part.startsWith("$") && part.endsWith("$")) {
-      const latex = part.slice(1, -1);
-      return (
-        <span
-          key={index}
-          dangerouslySetInnerHTML={{
-            __html: katex.renderToString(latex, {
-              displayMode: false,
-              throwOnError: false,
-            }),
-          }}
-        />
-      );
-    }
-    return <span key={index}>{part}</span>;
-  });
+  return <span>{text}</span>;
 }
 
 export default function TestPage() {
@@ -121,6 +88,46 @@ export default function TestPage() {
   useEffect(() => {
     fetchTest();
   }, [fetchTest]);
+
+  useEffect(() => {
+    const script = document.createElement('script');
+    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+    script.async = true;
+    
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$']],
+        displayMath: [['$$', '$$']],
+        processEscapes: true,
+      },
+      svg: {
+        fontCache: 'global'
+      },
+      startup: {
+        typeset: false 
+      }
+    };
+
+    document.head.appendChild(script);
+
+    return () => {
+      document.head.removeChild(script);
+    };
+  }, []);
+
+  useEffect(() => {
+    const typesetMath = async () => {
+      if (typeof window.MathJax !== 'undefined' && 'typesetPromise' in window.MathJax) {
+        try {
+          await window.MathJax.typesetPromise();
+        } catch (error) {
+          console.error('MathJax typesetting failed:', error);
+        }
+      }
+    };
+
+    typesetMath();
+  }, [currentQuestion, showScore]);
 
   const shuffledAnswers = useMemo(() => {
     if (!testContent || !testContent.questions[currentQuestion]) return [];
