@@ -2,16 +2,12 @@
 
 import axios from "axios";
 import { AnimatePresence, motion } from "framer-motion";
+import katex from "katex";
+import "katex/dist/katex.min.css";
 import { ArrowLeft, CheckCircle, WifiOff, XCircle } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { TypeAnimation } from "react-type-animation";
-
-declare global {
-  interface Window {
-    MathJax: any;
-  }
-}
 
 interface Answer {
   text: string;
@@ -36,19 +32,39 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-function LatexContent({ content }: { content: string }) {
-  return (
-    <span 
-      className="math-content"
-      dangerouslySetInnerHTML={{ 
-        __html: content
-      }} 
-    />
-  );
-}
-
 function renderLatex(text: string) {
-  return <LatexContent content={text} />;
+  const parts = text.split(/(\$\$[^$]+\$\$|\$[^$]+\$)/);
+  return parts.map((part, index) => {
+    if (part.startsWith("$$") && part.endsWith("$$")) {
+      const latex = part.slice(2, -2);
+      return (
+        <span
+          key={index}
+          className="block text-center my-2"
+          dangerouslySetInnerHTML={{
+            __html: katex.renderToString(latex, {
+              displayMode: true,
+              throwOnError: false,
+            }),
+          }}
+        />
+      );
+    } else if (part.startsWith("$") && part.endsWith("$")) {
+      const latex = part.slice(1, -1);
+      return (
+        <span
+          key={index}
+          dangerouslySetInnerHTML={{
+            __html: katex.renderToString(latex, {
+              displayMode: false,
+              throwOnError: false,
+            }),
+          }}
+        />
+      );
+    }
+    return <span key={index}>{part}</span>;
+  });
 }
 
 export default function TestPage() {
@@ -63,7 +79,6 @@ export default function TestPage() {
   const [showScore, setShowScore] = useState(false);
   const [userAnswers, setUserAnswers] = useState<number[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
-  const [mounted, setMounted] = useState(false);
 
   const loadingStages = [
     "Подключаемся к базе знаний...",
@@ -95,16 +110,6 @@ export default function TestPage() {
         { withCredentials: true }
       );
       setTestContent(testResponse.data.test);
-      
-      setTimeout(async () => {
-        if (window.MathJax?.typesetPromise) {
-          try {
-            await window.MathJax.typesetPromise();
-          } catch (error) {
-            console.error('MathJax typesetting error:', error);
-          }
-        }
-      }, 100);
     } catch (error) {
       console.error("Error fetching test:", error);
       setError(true);
@@ -114,77 +119,8 @@ export default function TestPage() {
   }, [id]);
 
   useEffect(() => {
-    setMounted(true);
-    return () => setMounted(false);
-  }, []);
-
-  useEffect(() => {
     fetchTest();
   }, [fetchTest]);
-
-  useEffect(() => {
-    const loadMathJax = async () => {
-      if (typeof window !== 'undefined') {
-        window.MathJax = {
-          loader: {load: ['[tex]/html']},
-          tex: {
-            packages: {'[+]': ['html']},
-            inlineMath: [['$', '$']],
-            displayMath: [['$$', '$$']],
-          },
-          options: {
-            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            ignoreHtmlClass: 'tex2jax_ignore',
-          },
-          startup: {
-            pageReady: () => {
-              return Promise.resolve();
-            }
-          }
-        };
-
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js';
-        script.async = true;
-        script.id = 'MathJax-script';
-
-        await new Promise((resolve) => {
-          script.onload = resolve;
-          document.head.appendChild(script);
-        });
-
-        if (window.MathJax?.typesetPromise) {
-          await window.MathJax.typesetPromise();
-        }
-      }
-    };
-
-    loadMathJax();
-
-    return () => {
-      const scriptToRemove = document.getElementById('MathJax-script');
-      if (scriptToRemove && scriptToRemove.parentNode) {
-        scriptToRemove.parentNode.removeChild(scriptToRemove);
-      }
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!testContent || !mounted) return;
-    
-    const renderMath = async () => {
-      if (window.MathJax?.typesetPromise) {
-        try {
-          await window.MathJax.typesetPromise();
-        } catch (error) {
-          console.error('MathJax typesetting error:', error);
-        }
-      }
-    };
-
-    const timeoutId = setTimeout(renderMath, 100);
-    return () => clearTimeout(timeoutId);
-  }, [testContent, mounted, currentQuestion]);
 
   const shuffledAnswers = useMemo(() => {
     if (!testContent || !testContent.questions[currentQuestion]) return [];
@@ -194,19 +130,6 @@ export default function TestPage() {
   const handleAnswerSelect = (answerIndex: number) => {
     setSelectedAnswer(answerIndex);
     handleNextQuestion(answerIndex);
-  };
-
-  const changeQuestion = async (nextQuestion: number) => {
-    setCurrentQuestion(nextQuestion);
-    setTimeout(async () => {
-      if (window.MathJax?.typesetPromise) {
-        try {
-          await window.MathJax.typesetPromise();
-        } catch (error) {
-          console.error('MathJax typesetting error:', error);
-        }
-      }
-    }, 100);
   };
 
   const handleNextQuestion = async (selectedAnswerIndex: number) => {
@@ -219,7 +142,7 @@ export default function TestPage() {
 
     const nextQuestion = currentQuestion + 1;
     if (nextQuestion < (testContent?.questions.length || 0)) {
-      await changeQuestion(nextQuestion);
+      setCurrentQuestion(nextQuestion);
       setSelectedAnswer(null);
     } else {
       setShowScore(true);
@@ -239,9 +162,9 @@ export default function TestPage() {
     }
   };
 
-  const handlePreviousQuestion = async () => {
+  const handlePreviousQuestion = () => {
     if (currentQuestion > 0) {
-      await changeQuestion(currentQuestion - 1);
+      setCurrentQuestion(currentQuestion - 1);
       setSelectedAnswer(userAnswers[currentQuestion - 1]);
     }
   };
@@ -348,7 +271,9 @@ export default function TestPage() {
                   transition={{ duration: 0.5 }}
                 >
                   <h2 className="text-xl font-semibold mb-6 text-center text-gray-800">
-                    <LatexContent content={testContent?.questions[currentQuestion]?.question || ""} />
+                    {renderLatex(
+                      testContent?.questions[currentQuestion]?.question || ""
+                    )}
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {shuffledAnswers.map((answer, index) => (
@@ -366,7 +291,7 @@ export default function TestPage() {
                       >
                         <div className="p-4 flex items-center justify-center h-full bg-gray-100">
                           <div className="text-center">
-                            <LatexContent content={answer.text} />
+                            {renderLatex(answer.text)}
                           </div>
                         </div>
                       </motion.button>
@@ -401,7 +326,7 @@ export default function TestPage() {
                     className="bg-white p-6 rounded-xl shadow-md"
                   >
                     <p className="font-semibold text-xl mb-4 text-black">
-                      <LatexContent content={question.question} />
+                      {renderLatex(question.question)}
                     </p>
                     {question.answers.map((answer, aIndex) => (
                       <div
@@ -433,7 +358,7 @@ export default function TestPage() {
                         ) : (
                           <div className="w-6 h-6 mr-2" />
                         )}
-                        <LatexContent content={answer.text} />
+                        <span>{renderLatex(answer.text)}</span>
                       </div>
                     ))}
                   </motion.div>
