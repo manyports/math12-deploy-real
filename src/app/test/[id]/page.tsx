@@ -69,6 +69,7 @@ export default function TestPage() {
   const [showScore, setShowScore] = useState(false);
   const [userAnswers, setUserAnswers] = useState<number[]>([]);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
+  const [mounted, setMounted] = useState(false);
 
   const loadingStages = [
     "Подключаемся к базе знаний...",
@@ -109,10 +110,17 @@ export default function TestPage() {
   }, [id]);
 
   useEffect(() => {
+    setMounted(true);
+    return () => setMounted(false);
+  }, []);
+
+  useEffect(() => {
     fetchTest();
   }, [fetchTest]);
 
   useEffect(() => {
+    if (!mounted) return;
+
     if (typeof window !== 'undefined') {
       const existingScript = document.getElementById('MathJax-script');
       if (existingScript) {
@@ -168,9 +176,11 @@ export default function TestPage() {
         }
       };
     }
-  }, []);
+  }, [mounted]);
 
   useEffect(() => {
+    if (!mounted) return;
+
     const typeset = () => {
       if (typeof window !== 'undefined' && window.MathJax && window.MathJax.Hub) {
         window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub]);
@@ -180,7 +190,7 @@ export default function TestPage() {
     const timeoutId = setTimeout(typeset, 100);
     
     return () => clearTimeout(timeoutId);
-  }, [currentQuestion, showScore, testContent]);
+  }, [currentQuestion, showScore, testContent, mounted]);
 
   const shuffledAnswers = useMemo(() => {
     if (!testContent || !testContent.questions[currentQuestion]) return [];
