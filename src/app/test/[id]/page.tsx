@@ -96,9 +96,15 @@ export default function TestPage() {
       );
       setTestContent(testResponse.data.test);
       
-      if (window.MathJax?.typesetPromise) {
-        await window.MathJax.typesetPromise();
-      }
+      setTimeout(async () => {
+        if (window.MathJax?.typesetPromise) {
+          try {
+            await window.MathJax.typesetPromise();
+          } catch (error) {
+            console.error('MathJax typesetting error:', error);
+          }
+        }
+      }, 100);
     } catch (error) {
       console.error("Error fetching test:", error);
       setError(true);
@@ -164,19 +170,21 @@ export default function TestPage() {
   }, []);
 
   useEffect(() => {
-    if (!testContent || !window.MathJax?.typesetPromise) return;
+    if (!testContent || !mounted) return;
     
     const renderMath = async () => {
-      try {
-        await window.MathJax.typesetPromise();
-      } catch (error) {
-        console.error('MathJax typesetting error:', error);
+      if (window.MathJax?.typesetPromise) {
+        try {
+          await window.MathJax.typesetPromise();
+        } catch (error) {
+          console.error('MathJax typesetting error:', error);
+        }
       }
     };
 
-    const timeoutId = setTimeout(renderMath, 0);
+    const timeoutId = setTimeout(renderMath, 100);
     return () => clearTimeout(timeoutId);
-  }, [currentQuestion]);
+  }, [testContent, mounted, currentQuestion]);
 
   const shuffledAnswers = useMemo(() => {
     if (!testContent || !testContent.questions[currentQuestion]) return [];
@@ -190,13 +198,15 @@ export default function TestPage() {
 
   const changeQuestion = async (nextQuestion: number) => {
     setCurrentQuestion(nextQuestion);
-    if (window.MathJax?.typesetPromise) {
-      try {
-        await window.MathJax.typesetPromise();
-      } catch (error) {
-        console.error('MathJax typesetting error:', error);
+    setTimeout(async () => {
+      if (window.MathJax?.typesetPromise) {
+        try {
+          await window.MathJax.typesetPromise();
+        } catch (error) {
+          console.error('MathJax typesetting error:', error);
+        }
       }
-    }
+    }, 100);
   };
 
   const handleNextQuestion = async (selectedAnswerIndex: number) => {
