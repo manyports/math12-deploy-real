@@ -7,6 +7,12 @@ import { useParams, useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { TypeAnimation } from "react-type-animation";
 
+declare global {
+  interface Window {
+    MathJax: any;
+  }
+}
+
 interface Answer {
   text: string;
   isCorrect: boolean;
@@ -40,13 +46,15 @@ const mathStyles = `
 `;
 
 function renderLatex(text: string) {
-  useEffect(() => {
-    if (window.MathJax && window.MathJax.Hub) {
-      window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub]);
-    }
-  }, [text]);
-
-  return <span className="math-tex" dangerouslySetInnerHTML={{ __html: text }} />;
+  return (
+    <span 
+      className="math-tex" 
+      key={text}
+      dangerouslySetInnerHTML={{ 
+        __html: text
+      }} 
+    />
+  );
 }
 
 export default function TestPage() {
@@ -105,54 +113,74 @@ export default function TestPage() {
   }, [fetchTest]);
 
   useEffect(() => {
-    const script = document.createElement('script');
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_CHTML';
-    script.async = true;
-    script.id = 'MathJax-script';
-
-    window.MathJax = {
-      Hub: {
-        Config: function() {
-          return {
-            tex2jax: {
-              inlineMath: [['$', '$']],
-              displayMath: [['$$', '$$']],
-              processEscapes: true
-            },
-            showMathMenu: false,
-            messageStyle: "none"
-          };
-        }
-      }
-    };
-
-    script.onload = () => {
-      window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub]);
-    };
-
-    document.head.appendChild(script);
-
-    return () => {
+    if (typeof window !== 'undefined') {
       const existingScript = document.getElementById('MathJax-script');
       if (existingScript) {
         document.head.removeChild(existingScript);
       }
-    };
+
+      window.MathJax = {
+        tex2jax: {
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']],
+          processEscapes: true,
+          processEnvironments: true
+        },
+        "HTML-CSS": { 
+          linebreaks: { automatic: true },
+          scale: 100,
+          styles: {
+            ".MathJax_Display": { margin: "0" }
+          }
+        },
+        SVG: {
+          linebreaks: { automatic: true }
+        },
+        showMathMenu: false,
+        showProcessingMessages: false,
+        messageStyle: "none",
+        showMathMenuMSIE: false,
+        tex: {
+          tags: 'ams',
+          multlineWidth: '85%',
+          inlineMath: [['$', '$'], ['\\(', '\\)']],
+          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+        }
+      };
+
+      const script = document.createElement('script');
+      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+      script.async = true;
+      script.id = 'MathJax-script';
+
+      script.onload = () => {
+        if (window.MathJax) {
+          window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub]);
+        }
+      };
+
+      document.head.appendChild(script);
+
+      return () => {
+        const scriptToRemove = document.getElementById('MathJax-script');
+        if (scriptToRemove) {
+          document.head.removeChild(scriptToRemove);
+        }
+      };
+    }
   }, []);
 
   useEffect(() => {
-    const typesetMath = async () => {
-      try {
-        if (window.MathJax && window.MathJax.Hub) {
-          window.MathJax.Hub.Queue(['Typeset', window.MathJax.Hub]);
-        }
-      } catch (error) {
-        console.error('MathJax typesetting failed:', error);
+    const typeset = () => {
+      if (typeof window !== 'undefined' && window.MathJax && window.MathJax.Hub) {
+        window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub]);
       }
     };
 
-    typesetMath();
-  }, [currentQuestion, showScore]);
+    const timeoutId = setTimeout(typeset, 100);
+    
+    return () => clearTimeout(timeoutId);
+  }, [currentQuestion, showScore, testContent]);
 
   const shuffledAnswers = useMemo(() => {
     if (!testContent || !testContent.questions[currentQuestion]) return [];
