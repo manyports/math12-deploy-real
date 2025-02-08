@@ -1,9 +1,9 @@
 interface MathJax {
   Hub: {
     Queue: (args: any[]) => void;
-    Typeset: (element?: Element) => void;
+    Config: (config: any) => void;
   };
-  tex2jax: {
+  tex2jax?: {
     inlineMath: string[][];
     displayMath: string[][];
     processEscapes: boolean;

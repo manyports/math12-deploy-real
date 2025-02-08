@@ -30,8 +30,23 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
+const mathStyles = `
+  .math-tex {
+    font-size: 1.1em;
+  }
+  .MathJax {
+    display: inline-block !important;
+  }
+`;
+
 function renderLatex(text: string) {
-  return <span dangerouslySetInnerHTML={{ __html: text }} />;
+  useEffect(() => {
+    if (window.MathJax && window.MathJax.Hub) {
+      window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub]);
+    }
+  }, [text]);
+
+  return <span className="math-tex" dangerouslySetInnerHTML={{ __html: text }} />;
 }
 
 export default function TestPage() {
@@ -96,13 +111,23 @@ export default function TestPage() {
     script.id = 'MathJax-script';
 
     window.MathJax = {
-      tex2jax: {
-        inlineMath: [['$', '$']],
-        displayMath: [['$$', '$$']],
-        processEscapes: true
-      },
-      showMathMenu: false,
-      messageStyle: "none"
+      Hub: {
+        Config: function() {
+          return {
+            tex2jax: {
+              inlineMath: [['$', '$']],
+              displayMath: [['$$', '$$']],
+              processEscapes: true
+            },
+            showMathMenu: false,
+            messageStyle: "none"
+          };
+        }
+      }
+    };
+
+    script.onload = () => {
+      window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub]);
     };
 
     document.head.appendChild(script);
@@ -248,6 +273,7 @@ export default function TestPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-4 flex items-center justify-center">
+      <style>{mathStyles}</style>
       <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden">
         <div className="bg-blue-600 text-white p-6">
           <h1 className="text-3xl font-bold text-center">Тест</h1>
