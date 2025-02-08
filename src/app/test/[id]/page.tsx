@@ -95,6 +95,10 @@ export default function TestPage() {
         { withCredentials: true }
       );
       setTestContent(testResponse.data.test);
+      
+      if (window.MathJax?.typesetPromise) {
+        await window.MathJax.typesetPromise();
+      }
     } catch (error) {
       console.error("Error fetching test:", error);
       setError(true);
@@ -143,7 +147,6 @@ export default function TestPage() {
           document.head.appendChild(script);
         });
 
-        // Сразу рендерим после загрузки MathJax
         if (window.MathJax?.typesetPromise) {
           await window.MathJax.typesetPromise();
         }
@@ -161,20 +164,19 @@ export default function TestPage() {
   }, []);
 
   useEffect(() => {
-    if (!testContent) return;
+    if (!testContent || !window.MathJax?.typesetPromise) return;
     
     const renderMath = async () => {
-      if (window.MathJax?.typesetPromise) {
-        try {
-          await window.MathJax.typesetPromise();
-        } catch (error) {
-          console.error('MathJax typesetting error:', error);
-        }
+      try {
+        await window.MathJax.typesetPromise();
+      } catch (error) {
+        console.error('MathJax typesetting error:', error);
       }
     };
 
-    renderMath();
-  }, [currentQuestion, testContent]); // Добавляем зависимость от testContent
+    const timeoutId = setTimeout(renderMath, 0);
+    return () => clearTimeout(timeoutId);
+  }, [currentQuestion]);
 
   const shuffledAnswers = useMemo(() => {
     if (!testContent || !testContent.questions[currentQuestion]) return [];
@@ -184,6 +186,17 @@ export default function TestPage() {
   const handleAnswerSelect = (answerIndex: number) => {
     setSelectedAnswer(answerIndex);
     handleNextQuestion(answerIndex);
+  };
+
+  const changeQuestion = async (nextQuestion: number) => {
+    setCurrentQuestion(nextQuestion);
+    if (window.MathJax?.typesetPromise) {
+      try {
+        await window.MathJax.typesetPromise();
+      } catch (error) {
+        console.error('MathJax typesetting error:', error);
+      }
+    }
   };
 
   const handleNextQuestion = async (selectedAnswerIndex: number) => {
@@ -196,7 +209,7 @@ export default function TestPage() {
 
     const nextQuestion = currentQuestion + 1;
     if (nextQuestion < (testContent?.questions.length || 0)) {
-      setCurrentQuestion(nextQuestion);
+      await changeQuestion(nextQuestion);
       setSelectedAnswer(null);
     } else {
       setShowScore(true);
@@ -216,9 +229,9 @@ export default function TestPage() {
     }
   };
 
-  const handlePreviousQuestion = () => {
+  const handlePreviousQuestion = async () => {
     if (currentQuestion > 0) {
-      setCurrentQuestion(currentQuestion - 1);
+      await changeQuestion(currentQuestion - 1);
       setSelectedAnswer(userAnswers[currentQuestion - 1]);
     }
   };
