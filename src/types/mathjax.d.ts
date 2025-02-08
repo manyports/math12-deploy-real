@@ -3,9 +3,13 @@ interface MathJaxConfig {
     inlineMath: string[][];
     displayMath: string[][];
     processEscapes: boolean;
+    packages?: string[];
   };
   svg: {
     fontCache: string;
+  };
+  options?: {
+    skipHtmlTags: string[];
   };
   startup?: {
     typeset: boolean;

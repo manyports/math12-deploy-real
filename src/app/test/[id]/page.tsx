@@ -31,7 +31,10 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 function renderLatex(text: string) {
-  return <span>{text}</span>;
+  if (text.includes('$')) {
+    return <span dangerouslySetInnerHTML={{ __html: text }} />;
+  }
+  return <span dangerouslySetInnerHTML={{ __html: `$${text}$` }} />;
 }
 
 export default function TestPage() {
@@ -99,19 +102,20 @@ export default function TestPage() {
         inlineMath: [['$', '$']],
         displayMath: [['$$', '$$']],
         processEscapes: true,
+        packages: ['base', 'ams', 'noerrors', 'noundefined']
       },
       svg: {
         fontCache: 'global'
       },
-      startup: {
-        typeset: false 
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
       }
     };
 
     document.head.appendChild(script);
 
     return () => {
-      document.head.removeChild(script);
+      script.remove();
     };
   }, []);
 
@@ -126,7 +130,11 @@ export default function TestPage() {
       }
     };
 
-    typesetMath();
+    const timer = setTimeout(() => {
+      typesetMath();
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [currentQuestion, showScore]);
 
   const shuffledAnswers = useMemo(() => {
