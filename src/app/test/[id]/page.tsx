@@ -123,8 +123,8 @@ export default function TestPage() {
 
     if (typeof window !== 'undefined') {
       const existingScript = document.getElementById('MathJax-script');
-      if (existingScript) {
-        document.head.removeChild(existingScript);
+      if (existingScript && existingScript.parentNode) {
+        existingScript.parentNode.removeChild(existingScript);
       }
 
       window.MathJax = {
@@ -171,8 +171,8 @@ export default function TestPage() {
 
       return () => {
         const scriptToRemove = document.getElementById('MathJax-script');
-        if (scriptToRemove) {
-          document.head.removeChild(scriptToRemove);
+        if (scriptToRemove && scriptToRemove.parentNode) {
+          scriptToRemove.parentNode.removeChild(scriptToRemove);
         }
       };
     }
