@@ -6,8 +6,6 @@ import { ArrowLeft, CheckCircle, WifiOff, XCircle } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { TypeAnimation } from "react-type-animation";
-import 'katex/dist/katex.min.css';
-import katex from 'katex';
 
 declare global {
   interface Window {
@@ -38,8 +36,25 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
+function LatexContent({ content }: { content: string }) {
+  useEffect(() => {
+    if (window.MathJax?.typesetPromise) {
+      window.MathJax.typesetPromise([]);
+    }
+  }, [content]);
+
+  return (
+    <span 
+      className="math-content"
+      dangerouslySetInnerHTML={{ 
+        __html: content
+      }} 
+    />
+  );
+}
+
 function renderLatex(text: string) {
-  return <span dangerouslySetInnerHTML={{ __html: text }} />;
+  return <LatexContent content={text} />;
 }
 
 export default function TestPage() {
@@ -104,45 +119,65 @@ export default function TestPage() {
   }, [fetchTest]);
 
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      window.MathJax = {
-        tex: {
-          inlineMath: [['$', '$']],
-          displayMath: [['$$', '$$']],
-          processEnvironments: true,
-          processRefs: true,
-        },
-        options: {
-          skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-          ignoreHtmlClass: 'tex2jax_ignore',
-        },
-        startup: {
-          pageReady: () => {
-            return Promise.resolve();
+    const loadMathJax = async () => {
+      if (typeof window !== 'undefined') {
+        window.MathJax = {
+          loader: {load: ['[tex]/html']},
+          tex: {
+            packages: {'[+]': ['html']},
+            inlineMath: [['$', '$']],
+            displayMath: [['$$', '$$']],
+          },
+          options: {
+            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+            ignoreHtmlClass: 'tex2jax_ignore',
+          },
+          startup: {
+            pageReady: () => {
+              return Promise.resolve();
+            }
           }
-        }
-      };
+        };
 
-      const script = document.createElement('script');
-      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
-      script.async = true;
-      script.id = 'MathJax-script';
-      document.head.appendChild(script);
+        const script = document.createElement('script');
+        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js';
+        script.async = true;
+        script.id = 'MathJax-script';
 
-      return () => {
-        const scriptToRemove = document.getElementById('MathJax-script');
-        if (scriptToRemove && scriptToRemove.parentNode) {
-          scriptToRemove.parentNode.removeChild(scriptToRemove);
+        await new Promise((resolve) => {
+          script.onload = resolve;
+          document.head.appendChild(script);
+        });
+
+        if (window.MathJax?.typesetPromise) {
+          await window.MathJax.typesetPromise();
         }
-      };
-    }
+      }
+    };
+
+    loadMathJax();
+
+    return () => {
+      const scriptToRemove = document.getElementById('MathJax-script');
+      if (scriptToRemove && scriptToRemove.parentNode) {
+        scriptToRemove.parentNode.removeChild(scriptToRemove);
+      }
+    };
   }, []);
 
   useEffect(() => {
-    if (typeof window !== 'undefined' && window.MathJax) {
-      window.MathJax.typesetPromise && window.MathJax.typesetPromise();
-    }
-  }, [currentQuestion, showScore]);
+    const updateMathJax = async () => {
+      if (typeof window !== 'undefined' && window.MathJax?.typesetPromise) {
+        try {
+          await window.MathJax.typesetPromise();
+        } catch (error) {
+          console.error('MathJax typesetting error:', error);
+        }
+      }
+    };
+
+    updateMathJax();
+  }, [currentQuestion, showScore, testContent]);
 
   const shuffledAnswers = useMemo(() => {
     if (!testContent || !testContent.questions[currentQuestion]) return [];
@@ -293,9 +328,7 @@ export default function TestPage() {
                   transition={{ duration: 0.5 }}
                 >
                   <h2 className="text-xl font-semibold mb-6 text-center text-gray-800">
-                    {renderLatex(
-                      testContent?.questions[currentQuestion]?.question || ""
-                    )}
+                    <LatexContent content={testContent?.questions[currentQuestion]?.question || ""} />
                   </h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     {shuffledAnswers.map((answer, index) => (
@@ -313,7 +346,7 @@ export default function TestPage() {
                       >
                         <div className="p-4 flex items-center justify-center h-full bg-gray-100">
                           <div className="text-center">
-                            {renderLatex(answer.text)}
+                            <LatexContent content={answer.text} />
                           </div>
                         </div>
                       </motion.button>
@@ -348,7 +381,7 @@ export default function TestPage() {
                     className="bg-white p-6 rounded-xl shadow-md"
                   >
                     <p className="font-semibold text-xl mb-4 text-black">
-                      {renderLatex(question.question)}
+                      <LatexContent content={question.question} />
                     </p>
                     {question.answers.map((answer, aIndex) => (
                       <div
@@ -380,7 +413,7 @@ export default function TestPage() {
                         ) : (
                           <div className="w-6 h-6 mr-2" />
                         )}
-                        <span>{renderLatex(answer.text)}</span>
+                        <LatexContent content={answer.text} />
                       </div>
                     ))}
                   </motion.div>
