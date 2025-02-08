@@ -31,10 +31,7 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 function renderLatex(text: string) {
-  if (text.includes('$')) {
-    return <span dangerouslySetInnerHTML={{ __html: text }} />;
-  }
-  return <span dangerouslySetInnerHTML={{ __html: `$${text}$` }} />;
+  return <span dangerouslySetInnerHTML={{ __html: text }} />;
 }
 
 export default function TestPage() {
@@ -94,47 +91,42 @@ export default function TestPage() {
 
   useEffect(() => {
     const script = document.createElement('script');
-    script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.9/MathJax.js?config=TeX-MML-AM_CHTML';
     script.async = true;
-    
+    script.id = 'MathJax-script';
+
     window.MathJax = {
-      tex: {
+      tex2jax: {
         inlineMath: [['$', '$']],
         displayMath: [['$$', '$$']],
-        processEscapes: true,
-        packages: ['base', 'ams', 'noerrors', 'noundefined']
+        processEscapes: true
       },
-      svg: {
-        fontCache: 'global'
-      },
-      options: {
-        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
-      }
+      showMathMenu: false,
+      messageStyle: "none"
     };
 
     document.head.appendChild(script);
 
     return () => {
-      script.remove();
+      const existingScript = document.getElementById('MathJax-script');
+      if (existingScript) {
+        document.head.removeChild(existingScript);
+      }
     };
   }, []);
 
   useEffect(() => {
     const typesetMath = async () => {
-      if (typeof window.MathJax !== 'undefined' && 'typesetPromise' in window.MathJax) {
-        try {
-          await window.MathJax.typesetPromise();
-        } catch (error) {
-          console.error('MathJax typesetting failed:', error);
+      try {
+        if (window.MathJax && window.MathJax.Hub) {
+          window.MathJax.Hub.Queue(['Typeset', window.MathJax.Hub]);
         }
+      } catch (error) {
+        console.error('MathJax typesetting failed:', error);
       }
     };
 
-    const timer = setTimeout(() => {
-      typesetMath();
-    }, 100);
-
-    return () => clearTimeout(timer);
+    typesetMath();
   }, [currentQuestion, showScore]);
 
   const shuffledAnswers = useMemo(() => {

@@ -1,25 +1,17 @@
-interface MathJaxConfig {
-  tex: {
+interface MathJax {
+  Hub: {
+    Queue: (args: any[]) => void;
+    Typeset: (element?: Element) => void;
+  };
+  tex2jax: {
     inlineMath: string[][];
     displayMath: string[][];
     processEscapes: boolean;
-    packages?: string[];
   };
-  svg: {
-    fontCache: string;
-  };
-  options?: {
-    skipHtmlTags: string[];
-  };
-  startup?: {
-    typeset: boolean;
-  };
-}
-
-interface MathJax extends MathJaxConfig {
-  typesetPromise: () => Promise<void>;
+  showMathMenu?: boolean;
+  messageStyle?: string;
 }
 
 interface Window {
-  MathJax: MathJax | MathJaxConfig;
+  MathJax: MathJax;
 } 
