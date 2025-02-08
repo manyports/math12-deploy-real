@@ -37,12 +37,6 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 function LatexContent({ content }: { content: string }) {
-  useEffect(() => {
-    if (window.MathJax?.typesetPromise) {
-      window.MathJax.typesetPromise([]);
-    }
-  }, [content]);
-
   return (
     <span 
       className="math-content"
@@ -119,65 +113,18 @@ export default function TestPage() {
   }, [fetchTest]);
 
   useEffect(() => {
-    const loadMathJax = async () => {
-      if (typeof window !== 'undefined') {
-        window.MathJax = {
-          loader: {load: ['[tex]/html']},
-          tex: {
-            packages: {'[+]': ['html']},
-            inlineMath: [['$', '$']],
-            displayMath: [['$$', '$$']],
-          },
-          options: {
-            skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
-            ignoreHtmlClass: 'tex2jax_ignore',
-          },
-          startup: {
-            pageReady: () => {
-              return Promise.resolve();
-            }
-          }
-        };
-
-        const script = document.createElement('script');
-        script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js';
-        script.async = true;
-        script.id = 'MathJax-script';
-
-        await new Promise((resolve) => {
-          script.onload = resolve;
-          document.head.appendChild(script);
-        });
-
-        if (window.MathJax?.typesetPromise) {
-          await window.MathJax.typesetPromise();
-        }
-      }
-    };
-
-    loadMathJax();
-
-    return () => {
-      const scriptToRemove = document.getElementById('MathJax-script');
-      if (scriptToRemove && scriptToRemove.parentNode) {
-        scriptToRemove.parentNode.removeChild(scriptToRemove);
-      }
-    };
-  }, []);
+    if (testContent && window.MathJax?.typesetPromise) {
+      window.MathJax.typesetPromise()
+        .catch(err => console.error('MathJax typesetting error:', err));
+    }
+  }, [testContent]);
 
   useEffect(() => {
-    const updateMathJax = async () => {
-      if (typeof window !== 'undefined' && window.MathJax?.typesetPromise) {
-        try {
-          await window.MathJax.typesetPromise();
-        } catch (error) {
-          console.error('MathJax typesetting error:', error);
-        }
-      }
-    };
-
-    updateMathJax();
-  }, [currentQuestion, showScore, testContent]);
+    if (window.MathJax?.typesetPromise) {
+      window.MathJax.typesetPromise()
+        .catch(err => console.error('MathJax typesetting error:', err));
+    }
+  }, [currentQuestion, showScore]);
 
   const shuffledAnswers = useMemo(() => {
     if (!testContent || !testContent.questions[currentQuestion]) return [];
