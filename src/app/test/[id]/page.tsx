@@ -6,6 +6,8 @@ import { ArrowLeft, CheckCircle, WifiOff, XCircle } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import { TypeAnimation } from "react-type-animation";
+import 'katex/dist/katex.min.css';
+import katex from 'katex';
 
 declare global {
   interface Window {
@@ -36,25 +38,8 @@ function shuffleArray<T>(array: T[]): T[] {
   return shuffled;
 }
 
-const mathStyles = `
-  .math-tex {
-    font-size: 1.1em;
-  }
-  .MathJax {
-    display: inline-block !important;
-  }
-`;
-
 function renderLatex(text: string) {
-  return (
-    <span 
-      className="math-tex" 
-      key={text}
-      dangerouslySetInnerHTML={{ 
-        __html: text
-      }} 
-    />
-  );
+  return <span dangerouslySetInnerHTML={{ __html: text }} />;
 }
 
 export default function TestPage() {
@@ -119,54 +104,29 @@ export default function TestPage() {
   }, [fetchTest]);
 
   useEffect(() => {
-    if (!mounted) return;
-
     if (typeof window !== 'undefined') {
-      const existingScript = document.getElementById('MathJax-script');
-      if (existingScript && existingScript.parentNode) {
-        existingScript.parentNode.removeChild(existingScript);
-      }
-
       window.MathJax = {
-        tex2jax: {
-          inlineMath: [['$', '$'], ['\\(', '\\)']],
-          displayMath: [['$$', '$$'], ['\\[', '\\]']],
-          processEscapes: true,
-          processEnvironments: true
-        },
-        "HTML-CSS": { 
-          linebreaks: { automatic: true },
-          scale: 100,
-          styles: {
-            ".MathJax_Display": { margin: "0" }
-          }
-        },
-        SVG: {
-          linebreaks: { automatic: true }
-        },
-        showMathMenu: false,
-        showProcessingMessages: false,
-        messageStyle: "none",
-        showMathMenuMSIE: false,
         tex: {
-          tags: 'ams',
-          multlineWidth: '85%',
-          inlineMath: [['$', '$'], ['\\(', '\\)']],
-          displayMath: [['$$', '$$'], ['\\[', '\\]']]
+          inlineMath: [['$', '$']],
+          displayMath: [['$$', '$$']],
+          processEnvironments: true,
+          processRefs: true,
+        },
+        options: {
+          skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code'],
+          ignoreHtmlClass: 'tex2jax_ignore',
+        },
+        startup: {
+          pageReady: () => {
+            return Promise.resolve();
+          }
         }
       };
 
       const script = document.createElement('script');
-      script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML';
+      script.src = 'https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
       script.async = true;
       script.id = 'MathJax-script';
-
-      script.onload = () => {
-        if (window.MathJax) {
-          window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub]);
-        }
-      };
-
       document.head.appendChild(script);
 
       return () => {
@@ -176,21 +136,13 @@ export default function TestPage() {
         }
       };
     }
-  }, [mounted]);
+  }, []);
 
   useEffect(() => {
-    if (!mounted) return;
-
-    const typeset = () => {
-      if (typeof window !== 'undefined' && window.MathJax && window.MathJax.Hub) {
-        window.MathJax.Hub.Queue(["Typeset", window.MathJax.Hub]);
-      }
-    };
-
-    const timeoutId = setTimeout(typeset, 100);
-    
-    return () => clearTimeout(timeoutId);
-  }, [currentQuestion, showScore, testContent, mounted]);
+    if (typeof window !== 'undefined' && window.MathJax) {
+      window.MathJax.typesetPromise && window.MathJax.typesetPromise();
+    }
+  }, [currentQuestion, showScore]);
 
   const shuffledAnswers = useMemo(() => {
     if (!testContent || !testContent.questions[currentQuestion]) return [];
@@ -311,7 +263,6 @@ export default function TestPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-white p-4 flex items-center justify-center">
-      <style>{mathStyles}</style>
       <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden">
         <div className="bg-blue-600 text-white p-6">
           <h1 className="text-3xl font-bold text-center">Тест</h1>
