@@ -79,7 +79,6 @@ export default function SpecialTestPage() {
   const { testId } = useParams();
   const [testContent, setTestContent] = useState<TestContent | null>(null);
   const [loading, setLoading] = useState(true);
-  const [loadingStage, setLoadingStage] = useState(0);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [score, setScore] = useState(0);
   const [showScore, setShowScore] = useState(false);
@@ -87,19 +86,8 @@ export default function SpecialTestPage() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [error, setError] = useState(false);
 
-  const loadingStages = [
-    "Подключаемся к базе знаний...",
-    "Анализируем ваши результаты...",
-    "Формируем особенный тест...",
-    "Почти готово...",
-  ];
-
   const fetchTest = async () => {
     try {
-      for (let i = 0; i < loadingStages.length; i++) {
-        setLoadingStage(i);
-        await new Promise((resolve) => setTimeout(resolve, 1500));
-      }
       const response = await axios.get(
         "https://www.api.math12.studio/api/getDailyTest",
         { withCredentials: true }
@@ -162,36 +150,6 @@ export default function SpecialTestPage() {
       setSelectedAnswer(userAnswers[currentQuestion - 1]);
     }
   };
-
-  if (loading) {
-    return (
-      <div className="flex flex-col justify-center items-center min-h-screen bg-gradient-to-br from-blue-50 to-white">
-        <motion.div
-          key={loadingStage}
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-3xl font-bold text-blue-600 mb-8 text-center"
-        >
-          <TypeAnimation
-            sequence={[loadingStages[loadingStage]]}
-            wrapper="span"
-            speed={50}
-            style={{ display: "inline-block" }}
-            cursor={false}
-          />
-        </motion.div>
-        <div className="w-64 bg-gray-200 rounded-full h-2">
-          <motion.div
-            initial={{ width: 0 }}
-            animate={{ width: "100%" }}
-            transition={{ duration: 1.5, ease: "easeInOut", repeat: Infinity }}
-            className="h-full bg-blue-600 rounded-full"
-          />
-        </div>
-      </div>
-    );
-  }
 
   if (error) {
     return (
