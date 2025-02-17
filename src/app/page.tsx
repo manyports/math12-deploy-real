@@ -450,7 +450,7 @@ export default function LandingPage() {
             transition={{ duration: 0.8, delay: 0.2, ease: "easeOut" }}
             className="text-2xl mb-8 text-gray-600"
           >
-            Революция в изучении математики на основе силлабуса НИШ
+            Революция в изучении математики на основе силлабуса по Казахстану
           </motion.p>
           <motion.div
             initial={{ opacity: 0, scale: 0.5 }}

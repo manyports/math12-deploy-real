@@ -10,8 +10,8 @@ import { Analytics } from "@vercel/analytics/react"
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "math12.studio - ваш ИИ репетитор математики НИШ",
-  description: "ИИ-стартап, нацеленный на развитие математических знаний у казахстанцев на базе силлабуса НИШ 😎",
+  title: "math12.studio - ваш ИИ репетитор по математике",
+  description: "ИИ-стартап, нацеленный на развитие математических знаний у казахстанцев на базе силлабуса по Казахстану 😎",
 };
 
 export default function RootLayout({
@@ -35,11 +35,11 @@ export default function RootLayout({
       data-code="bG2VUg6L0jd4o31kxeBltdQCrY5hBqPh">
       </Script>
         <Script id="MathJax-script" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" strategy="afterInteractive" />
-        <meta property="og:title" content="math12.studio - ваш ИИ репетитор математики НИШ" />
-        <meta property="og:description" content="ИИ-стартап, нацеленный на развитие математических знаний у казахстанцев на базе силлабуса НИШ 😎" />
+        <meta property="og:title" content="math12.studio - ваш ИИ репетитор по математике" />
+        <meta property="og:description" content="ИИ-стартап, нацеленный на развитие математических знаний у казахстанцев на базе силлабуса по Казахстану 😎" />
         <meta property="og:image" content="https://utfs.io/f/55096462-99f2-42fa-8ba0-79e1ed992be3-934hm2.png" />
         <meta property="og:type" content="website" />
-        <meta name="description" content="ИИ-стартап, нацеленный на развитие математических знаний у казахстанцев на базе силлабуса НИШ 😎"></meta>
+        <meta name="description" content="ИИ-стартап, нацеленный на развитие математических знаний у казахстанцев на базе силлабуса по Казахстану 😎"></meta>
         <link rel="canonical" href="https://math12.studio/" />
       </head>
       <body className={inter.className}>
