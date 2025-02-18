@@ -27,7 +27,9 @@ interface Question {
 
 interface TestContent {
   id: string;
-  questions: Question[];
+  questions: {
+    questions: Question[];
+  }[];
 }
 
 function shuffleArray<T>(array: T[]): T[] {
@@ -118,8 +120,8 @@ export default function SpecialTestPage() {
   }, []);
 
   const shuffledAnswers = useMemo(() => {
-    if (!testContent || !testContent.questions[currentQuestion]) return [];
-    return shuffleArray(testContent.questions[currentQuestion].answers);
+    if (!testContent || !testContent.questions[currentQuestion]?.questions[0]) return [];
+    return shuffleArray(testContent.questions[currentQuestion].questions[0].answers);
   }, [testContent, currentQuestion]);
 
   const handleAnswerSelect = (answerIndex: number) => {
@@ -236,7 +238,7 @@ export default function SpecialTestPage() {
               >
                 <h2 className="text-2xl font-semibold mb-6 text-center text-black">
                   {renderLatex(
-                    testContent?.questions[currentQuestion]?.question || ""
+                    testContent?.questions[currentQuestion]?.questions[0]?.question || ""
                   )}
                 </h2>
                 <div className="space-y-4">
@@ -277,7 +279,7 @@ export default function SpecialTestPage() {
               <p className="text-xl text-blue-600 mt-2">правильных ответов</p>
             </div>
             <div className="space-y-6 max-h-[60vh] overflow-y-auto px-4">
-              {testContent.questions.map((question, qIndex) => (
+              {testContent.questions.map((questionGroup, qIndex) => (
                 <motion.div
                   key={qIndex}
                   initial={{ opacity: 0, y: 20 }}
@@ -286,9 +288,9 @@ export default function SpecialTestPage() {
                   className="bg-white p-6 rounded-xl shadow-md"
                 >
                   <p className="font-semibold text-xl mb-4 text-black">
-                    {renderLatex(question.question)}
+                    {renderLatex(questionGroup.questions[0].question)}
                   </p>
-                  {question.answers.map((answer, aIndex) => (
+                  {questionGroup.questions[0].answers.map((answer, aIndex) => (
                     <div
                       key={aIndex}
                       className={`
