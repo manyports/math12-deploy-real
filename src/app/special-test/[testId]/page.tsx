@@ -40,16 +40,17 @@ function shuffleArray<T>(array: T[]): T[] {
 }
 
 function renderLatex(text: string) {
-  const parts = text.split(/(\\\\[^\\]+\\\\|\$[^$]+\$)/);
+  const parts = text.split(/(\$\$[^$]+\$\$|\$[^$]+\$|\\\\[^\\]+\\\\)/);
   return parts.map((part, index) => {
-    if (part.startsWith("\\\\(") && part.endsWith("\\\\)")) {
+    if (part.startsWith("$$") && part.endsWith("$$")) {
       const latex = part.slice(2, -2);
       return (
         <span
           key={index}
+          className="block text-center my-2"
           dangerouslySetInnerHTML={{
             __html: katex.renderToString(latex, {
-              displayMode: false,
+              displayMode: true,
               throwOnError: false,
             }),
           }}
@@ -68,9 +69,21 @@ function renderLatex(text: string) {
           }}
         />
       );
-    } else {
-      return <span key={index}>{part}</span>;
+    } else if (part.startsWith("\\\\") && part.endsWith("\\\\")) {
+      const latex = part.slice(2, -2);
+      return (
+        <span
+          key={index}
+          dangerouslySetInnerHTML={{
+            __html: katex.renderToString(latex, {
+              displayMode: false,
+              throwOnError: false,
+            }),
+          }}
+        />
+      );
     }
+    return <span key={index}>{part}</span>;
   });
 }
 
